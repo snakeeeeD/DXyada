@@ -156,10 +156,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_CLOSE:  // 「x」ボタンが押されたら
 	{
-		int res = MessageBoxA(NULL, "終了しますか？", "確認", MB_OKCANCEL);
-		if (res == IDOK) {
 			DestroyWindow(hWnd);  // 「WM_DESTROY」メッセージを送る
-		}
 	}
 	break;
 
@@ -192,7 +189,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_ACTIVATE:
 		if (wParam == WA_INACTIVE) {
-			if (isFullscreen && !isMassageBoxShowed); {
+			if (isFullscreen && !isMassageBoxShowed){
 				ShowWindow(hWnd, SW_MINIMIZE);
 			}
 		}
