@@ -169,11 +169,19 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_isOnGround = false;
     }
 
+    //おためっし
+    if (input.GetKeyPress(VK_RETURN)) {
+        m_player.SetPivot(0, -75, 0);
+        t += 1;
+        m_player.SetAngle(t);
+
+    }
     // 最終的な位置セット
     m_player.SetPos(pos.x, pos.y, pos.z);
 
     // Objectのアニメーション更新
     m_player.Update(deltaTime);
+
 }
 
 

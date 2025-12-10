@@ -44,6 +44,7 @@ private:
     float m_animTime = 0.0f;
     int m_currentFrame = 0;
 
+    DirectX::XMFLOAT3 m_pivot = { 0, 0, 0 };
 
 public:
     float numU = 0;
@@ -79,5 +80,6 @@ public:
         ID3D11Buffer* constantBuffer
     );
 
-  
+    void SetPivot(float x, float y, float z) { m_pivot = { x, y, z }; }
+
 };

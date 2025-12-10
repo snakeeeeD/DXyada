@@ -1,6 +1,6 @@
 #include "Object.h"
 #include"Camera2D.h"
-
+using namespace DirectX;
 // 初期化
 HRESULT Object::Init(const char* imgname, int sx, int sy) {
     m_splitX = sx;
@@ -75,11 +75,25 @@ void Object::Draw(
     // --- 定数バッファの更新 ---
     ConstBuffer cb{};
     DirectX::XMMATRIX matrixProj = DirectX::XMMatrixOrthographicLH(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 3.0f);
-    DirectX::XMMATRIX matrixScale = DirectX::XMMatrixScaling(m_size.x, m_size.y, m_size.z);
-    DirectX::XMMATRIX matrixRot = DirectX::XMMatrixRotationZ(m_angle * 3.14159265f / 180);
-    DirectX::XMMATRIX matrixTrans = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
-    DirectX::XMMATRIX matrixWorld = matrixScale * matrixRot * matrixTrans;
     DirectX::XMMATRIX matrixView = DirectX::XMMatrixTranslation(-g_cameraPos.x, -g_cameraPos.y, 0.0f);
+
+
+    // 既存
+    XMMATRIX matrixScale = XMMatrixScaling(m_size.x, m_size.y, m_size.z);
+    XMMATRIX matrixRot = XMMatrixRotationZ(m_angle * XM_PI / 180.0f);
+    XMMATRIX matrixTrans = XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
+
+    // Pivot 移動行列
+    XMMATRIX matPivot = XMMatrixTranslation(m_pivot.x, m_pivot.y, m_pivot.z);
+    XMMATRIX matNegPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, -m_pivot.z);
+
+    // 新しい World 行列（安全版）
+    XMMATRIX matrixWorld =
+        matrixScale *
+        matNegPivot *  
+        matrixRot *     
+        matPivot *       
+        matrixTrans;    
 
 
     float u = numU / m_splitX;
