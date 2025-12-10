@@ -247,6 +247,9 @@
     <ClCompile Include="SceneGameOver.cpp">
       <Filter>ソース ファイル\10-Scene管理\04-SneneGameover</Filter>
     </ClCompile>
+    <ClCompile Include="04-Ribbon.cpp">
+      <Filter>ソース ファイル\02-Object管理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
