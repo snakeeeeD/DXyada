@@ -6,6 +6,7 @@ void SceneManager::Init(SceneID id)
 
     switch (id) {
     case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
+    case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
     case SCENE_GAME: m_currentScene = new SceneGame(); break;
     case SCENE_GAMEOVER: m_currentScene = new SceneGameOver(); break;
     }
@@ -18,6 +19,7 @@ void SceneManager::Update()
 {
     if (m_currentScene)
         m_currentScene->Update(*this);
+
 }
 
 void SceneManager::Draw()
@@ -46,9 +48,11 @@ void SceneManager::ChangeScene(SceneID id)
 
     // V‚µ‚¢ƒV[ƒ“‚ğì¬
     m_currentID = id;
+    int stage = m_selectedStage;
     switch (id) {
     case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
-    case SCENE_GAME: m_currentScene = new SceneGame(); break;
+    case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
+    case SCENE_GAME: m_currentScene = new SceneGame(stage); break;
     case SCENE_GAMEOVER: m_currentScene = new SceneGameOver(); break;
     }
 

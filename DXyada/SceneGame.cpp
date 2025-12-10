@@ -5,7 +5,7 @@
 extern Input input;
 
 void SceneGame::Init() {
-    m_stageManager.LoadStage(1);
+    m_stageManager.LoadStage(m_stage);
 
     m_collision = new CollisionManager();
 
@@ -16,7 +16,7 @@ void SceneGame::Init() {
         m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
     }
     for (auto& enemy : m_stageManager.GetEnemy()) {
-        m_collision->AddMoved(enemy.GetObject());
+        m_collision->AddStatic(enemy.GetObject());
         m_collision->SetTag(enemy.GetObject(), ColliderTag::Enemy);
     }
 

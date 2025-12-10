@@ -23,3 +23,8 @@ void Camera::Update(const DirectX::XMFLOAT3& targetPos)
     g_cameraPos = m_pos;
 
 }
+
+void Camera::Reset() {
+    m_offset = { 0.0f, 0.0f ,0.0f};
+    m_zoom = 1.0f;
+}

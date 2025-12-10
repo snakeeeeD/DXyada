@@ -15,7 +15,10 @@ private:
     Camera m_camera;
     CollisionManager* m_collision;
 
+    int m_stage = 1;
 public:
+    SceneGame(int stage) :m_stage(stage) {};
+
     SceneGame() = default;
     ~SceneGame() override { UnInit(); }
 

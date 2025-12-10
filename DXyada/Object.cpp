@@ -154,6 +154,7 @@ void Object::UnInit() {
 }
 
 
+
 // セッター・ゲッター
 void Object::SetPos(float x, float y, float z) { m_pos = { x,y,z }; }
 void Object::SetSize(float x, float y, float z) { m_size = { x,y,z }; }

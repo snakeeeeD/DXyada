@@ -84,12 +84,6 @@
     <Filter Include="ソース ファイル\10-Scene管理\01-SceneTitle">
       <UniqueIdentifier>{a5bfd51a-da1a-4c3a-999c-dcf27dddb3a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\02-SceneGame">
-      <UniqueIdentifier>{c511b55b-af00-4abc-829a-208ca6366d2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\03-SneneGameover">
-      <UniqueIdentifier>{613c841e-04bd-435f-b226-da0a58529a27}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\20-Stage管理">
       <UniqueIdentifier>{6131d0ba-d451-4f8d-bd59-60cefc0a455c}</UniqueIdentifier>
     </Filter>
@@ -98,6 +92,18 @@
     </Filter>
     <Filter Include="ソース ファイル\20-Stage管理\01-Stage1">
       <UniqueIdentifier>{8fb6f33c-c491-4f98-acce-357b5e859dd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\10-Scene管理\02-SceneSelect">
+      <UniqueIdentifier>{9b3d95ea-973e-4adc-8e0d-8f177839cc34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\10-Scene管理\03-SceneGame">
+      <UniqueIdentifier>{c511b55b-af00-4abc-829a-208ca6366d2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\10-Scene管理\04-SneneGameover">
+      <UniqueIdentifier>{613c841e-04bd-435f-b226-da0a58529a27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\20-Stage管理\02-Stage2">
+      <UniqueIdentifier>{09d407db-ce62-4897-916c-8e35667dcd8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,10 +138,10 @@
       <Filter>ソース ファイル\10-Scene管理\01-SceneTitle</Filter>
     </ClInclude>
     <ClInclude Include="SceneGame.h">
-      <Filter>ソース ファイル\10-Scene管理\02-SceneGame</Filter>
+      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
     </ClInclude>
     <ClInclude Include="SceneGameOver.h">
-      <Filter>ソース ファイル\10-Scene管理\03-SneneGameover</Filter>
+      <Filter>ソース ファイル\10-Scene管理\04-SneneGameover</Filter>
     </ClInclude>
     <ClInclude Include="StageBase.h">
       <Filter>ソース ファイル\20-Stage管理\00-StageBase</Filter>
@@ -170,6 +176,12 @@
     <ClInclude Include="stb_image.h">
       <Filter>ソース ファイル\04-描画関係\04-std_image</Filter>
     </ClInclude>
+    <ClInclude Include="SceneSelect.h">
+      <Filter>ソース ファイル\10-Scene管理\02-SceneSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage2.h">
+      <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp">
@@ -197,7 +209,7 @@
       <Filter>ソース ファイル\10-Scene管理\01-SceneTitle</Filter>
     </ClCompile>
     <ClCompile Include="SceneGame.cpp">
-      <Filter>ソース ファイル\10-Scene管理\02-SceneGame</Filter>
+      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
     </ClCompile>
     <ClCompile Include="Stage1.cpp">
       <Filter>ソース ファイル\20-Stage管理\01-Stage1</Filter>
@@ -225,6 +237,15 @@
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>ソース ファイル\04-描画関係\04-std_image</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSelect.cpp">
+      <Filter>ソース ファイル\10-Scene管理\02-SceneSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage2.cpp">
+      <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGameOver.cpp">
+      <Filter>ソース ファイル\10-Scene管理\04-SneneGameover</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

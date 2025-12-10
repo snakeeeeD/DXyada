@@ -7,6 +7,9 @@ void StageManager::LoadStage(int stageNumber) {
     case 1:
         m_currentStage = std::unique_ptr<StageBase>(static_cast<StageBase*>(new Stage1()));
         break;
+    case 2:
+        m_currentStage = std::unique_ptr<StageBase>(static_cast<StageBase*>(new Stage2()));
+        break;
     default:
         m_currentStage = nullptr;
         break;
@@ -38,8 +41,12 @@ void StageManager::Uninit() {
 
 std::vector<Platform>& StageManager::GetPlatforms() {
     Stage1* stage1 = dynamic_cast<Stage1*>(m_currentStage.get());
+    Stage2* stage2 = dynamic_cast<Stage2*>(m_currentStage.get());
     if (stage1) {
         return const_cast<std::vector<Platform>&>(stage1->GetPlatforms());
+    } 
+    if (stage2) {
+        return const_cast<std::vector<Platform>&>(stage2->GetPlatforms());
     }
     static std::vector<Platform> empty;
     return empty;
@@ -48,8 +55,12 @@ std::vector<Platform>& StageManager::GetPlatforms() {
 
 std::vector<Enemy>& StageManager::GetEnemy() {
     Stage1* stage1 = dynamic_cast<Stage1*>(m_currentStage.get());
+    Stage2* stage2 = dynamic_cast<Stage2*>(m_currentStage.get());
     if (stage1) {
         return const_cast<std::vector<Enemy>&>(stage1->GetEnemy());
+    }
+    if (stage2) {
+        return const_cast<std::vector<Enemy>&>(stage2->GetEnemy());
     }
     static std::vector<Enemy> empty;
     return empty;

@@ -44,6 +44,7 @@ private:
     float m_animTime = 0.0f;
     int m_currentFrame = 0;
 
+
 public:
     float numU = 0;
     float numV = 0;
@@ -61,6 +62,7 @@ public:
     void SetAngle(float a);
     void SetColor(float r, float g, float b, float a);
 
+
     DirectX::XMFLOAT3 GetPos() const;
     DirectX::XMFLOAT3 GetSize() const;
 
@@ -76,4 +78,6 @@ public:
         ID3D11PixelShader* ps,
         ID3D11Buffer* constantBuffer
     );
+
+  
 };

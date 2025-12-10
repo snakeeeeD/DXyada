@@ -1,6 +1,7 @@
 #include "CollisionManager.h"
 #include <algorithm>
 #include"Stage1.h"
+#include"Stage2.h"
 #include "SceneManager.h"
 
 using namespace DirectX;
@@ -94,7 +95,7 @@ void CollisionManager::CheckAll()
             //Aがプレイヤー、BがEnemyの場合
             if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy) {
                 if (m_sceneMgr) {
-                    m_sceneMgr->ChangeScene(SCENE_TITLE);
+                    m_sceneMgr->ChangeScene(SCENE_GAMEOVER);
                 }
             }
         }

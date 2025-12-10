@@ -143,9 +143,11 @@
     <ClInclude Include="SceneGameOver.h" />
     <ClInclude Include="SceneID.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneSelect.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="Stage1.h" />
+    <ClInclude Include="Stage2.h" />
     <ClInclude Include="StageBase.h" />
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="stb_image.h" />
@@ -163,10 +165,13 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SceneGame.cpp" />
+    <ClCompile Include="SceneGameOver.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="Stage1.cpp" />
+    <ClCompile Include="Stage2.cpp" />
     <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />

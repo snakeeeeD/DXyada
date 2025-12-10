@@ -6,7 +6,9 @@ extern Input input;
 Object m_title;
 void SceneTitle::Init() {
     // タイトル画面初期化
-    m_title.Init("asset/aa.png");
+    g_cameraPos = { 0, 0, 0 };
+
+    m_title.Init("asset/title.png");
     m_title.SetPos(0, 0, 0);
     m_title.SetSize(1920, 1080, 0);
 }
@@ -16,7 +18,7 @@ void SceneTitle::Update(SceneManager& mgr) {
 
     // スペースキーでゲーム開始
     if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonPress(XINPUT_A)) {
-        mgr.ChangeScene(SCENE_GAME);
+        mgr.ChangeScene(SCENE_SELECT);
     }
 }
 
