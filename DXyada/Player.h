@@ -19,6 +19,8 @@ class Player{
 		float m_width = 100.0f;     
 		float m_height = 150.0f;    
 
+		int m_inputDir = 0;	//プレイヤーの左右入力優先用　0：入力なし　1：左入力　-1：右入力
+
 	public:
 		Tag tag = Tag::Player;
 
