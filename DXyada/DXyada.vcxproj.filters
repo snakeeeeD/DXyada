@@ -182,6 +182,9 @@
     <ClInclude Include="StageManager.h">
       <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
     </ClInclude>
+    <ClInclude Include="Ribbon.h">
+      <Filter>ソース ファイル\02-Object管理</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp">
