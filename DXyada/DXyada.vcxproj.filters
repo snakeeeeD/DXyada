@@ -113,9 +113,6 @@
     <ClInclude Include="SceneManager.h">
       <Filter>ソース ファイル\01-Manager管理\02-SceneManager</Filter>
     </ClInclude>
-    <ClInclude Include="StageManager.h">
-      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
     </ClInclude>
@@ -182,6 +179,9 @@
     <ClInclude Include="Stage2.h">
       <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
     </ClInclude>
+    <ClInclude Include="StageManager.h">
+      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp">
@@ -207,9 +207,6 @@
     </ClCompile>
     <ClCompile Include="SceneTitle.cpp">
       <Filter>ソース ファイル\10-Scene管理\01-SceneTitle</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGame.cpp">
-      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
     </ClCompile>
     <ClCompile Include="Stage1.cpp">
       <Filter>ソース ファイル\20-Stage管理\01-Stage1</Filter>
@@ -249,6 +246,9 @@
     </ClCompile>
     <ClCompile Include="04-Ribbon.cpp">
       <Filter>ソース ファイル\02-Object管理</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

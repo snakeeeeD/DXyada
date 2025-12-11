@@ -15,6 +15,8 @@ private:
     Camera m_camera;
     CollisionManager* m_collision;
 
+    Object m_background;
+
     int m_stage = 1;
 public:
     SceneGame(int stage) :m_stage(stage) {};

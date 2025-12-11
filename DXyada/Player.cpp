@@ -27,6 +27,10 @@ void Player::Init() {
     m_isOnGround = true;
 
     deltaTime = 1.0f / 240.0f; // Update 毎に進む秒数
+
+     m_guideline.Init("asset/block.png", 1, 1);
+     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
+     m_guideline.SetSize(300, 20, 0);
 }
 
 void Player::SetPos(float Pos_X,float Pos_Y) {
@@ -36,13 +40,14 @@ void Player::SetPos(float Pos_X,float Pos_Y) {
 void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy) {
     input.Update();
 
-    auto pos = m_player.GetPos();
+    auto pos = m_player.GetPos();   //プレイヤーの位置を取得
 
     /*
   *  stick.x: 左(-1)〜右(1)
   *  stick.y: 下(-1)〜上(1)
   */
     DirectX::XMFLOAT2 stick = input.GetLeftAnalogStick(); // -1～1
+    DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();
 
     const float threshold = 0.5f; // これだけ倒したら入力と判定
 
@@ -162,6 +167,50 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
     }
 
+    float aimRightStick = 0.3;
+
+    bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
+
+        //右スティックを倒すと指示線表示
+        if (aiming)
+        {
+
+            //ガイドライン表示
+            m_guideline.SetColor(1, 1, 1, 0.5);
+
+            //プレイヤーの位置取得
+            auto p = m_player.GetPos();
+
+            //指示線の位置をプレイヤーの中心へ
+            m_guideline.SetPos(p.x, p.y, p.z);
+
+
+            //角度を右スティック方向に合わせる
+            float angleRad = atan2(rightStick.y, rightStick.x);
+
+            m_guideline.SetPos(p.x + 150, p.y, p.z);
+
+            //ラジアンを度へ変換
+            float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
+
+            //回転の中心を左端に移動
+            m_guideline.SetPivot(-150, 0, 0);
+
+            //角度を設定
+            m_guideline.SetAngle(angleDeg);
+
+            //指示線を更新
+            m_guideline.Update(deltaTime);
+
+        }
+        else
+        {
+            //透明に
+            m_guideline.SetColor(1, 1, 1, 0);
+        }
+ 
+
+
     // ジャンプ入力（地面にいる場合のみ）
     if (m_isOnGround && input.GetKeyTrigger(VK_SPACE) ||( m_isOnGround && input.GetButtonTrigger(XINPUT_A)))
     {
@@ -169,13 +218,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_isOnGround = false;
     }
 
-    //おためっし
-    if (input.GetKeyPress(VK_RETURN)) {
-        m_player.SetPivot(0, -75, 0);
-        t += 1;
-        m_player.SetAngle(t);
-
-    }
     // 最終的な位置セット
     m_player.SetPos(pos.x, pos.y, pos.z);
 
@@ -186,6 +228,15 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
 
 void Player::Draw() {
+
+    m_guideline.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
+
     m_player.Draw(
         g_pDeviceContext,
         g_pInputLayout,
@@ -193,8 +244,11 @@ void Player::Draw() {
         g_pPixelShader,
         g_pConstantBuffer
     );
+
 }
 
 void Player::Uninit() {
     m_player.UnInit();
+    m_guideline.UnInit();
 }
+

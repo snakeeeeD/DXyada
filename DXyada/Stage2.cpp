@@ -41,12 +41,12 @@ void Stage2::Update() {
 
 void Stage2::Draw() {
 
-    m_background.Draw(
+    /*m_background.Draw(
         g_pDeviceContext,
         g_pInputLayout,
         g_pVertexShader,
         g_pPixelShader,
-        g_pConstantBuffer);
+        g_pConstantBuffer);*/
 
     for (auto& plat : m_platforms) {
         plat.Draw();

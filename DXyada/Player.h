@@ -10,6 +10,7 @@ extern DirectX::XMFLOAT3 g_StartPlayer;
 class Player{
 	private:
 		Object m_player;
+		Object m_guideline;
 		float deltaTime;//ˆê“x“Ç‚İ‚Ş‚½‚Ñ‚É‰½•b•ª‚·‚·‚Ş‚©
 
 		float m_velY = 0.0f;        

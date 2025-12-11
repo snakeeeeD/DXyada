@@ -11,6 +11,25 @@ void SceneGame::Init() {
 
     m_player.Init();
 
+    switch (m_stage)
+    {
+    case 1:
+        //”wŒi
+        m_background.Init("asset/aa.png");
+        m_background.SetPos(0, 0, 0);
+        m_background.SetSize(19200, 10800, 0);
+        break;
+    case 2:
+        //”wŒi
+        m_background.Init("asset/back.png");
+        m_background.SetPos(0, 0, 0);
+        m_background.SetSize(19200, 10800, 0);
+    default:
+        break;
+    }
+  
+   
+
     for (auto& plat : m_stageManager.GetPlatforms()) {
         m_collision->AddStatic(plat.GetObject());
         m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
@@ -40,11 +59,20 @@ void SceneGame::Update(SceneManager& mgr) {
 }
 
 void SceneGame::Draw() {
-    m_stageManager.Draw();
+    m_background.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer);
+
     m_player.Draw();
+    m_stageManager.Draw();
+    
 }
 
 void SceneGame::UnInit() {
+    m_background.UnInit();
     m_stageManager.Uninit();
     m_player.Uninit();
 }
