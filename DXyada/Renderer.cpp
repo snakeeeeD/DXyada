@@ -52,75 +52,74 @@ ID3D11BlendState* g_pBlendState;
 
 
 //画面比率設定
-HRESULT ResizeWindow(int width, int height) {
-	if (!g_pSwapChain)return S_FALSE;
+HRESULT ResizeWindow(int width, int height)
+{
+	if (!g_pSwapChain) return S_FALSE;
 
-	if (g_pRenderTargetView) {
-		g_pRenderTargetView->Release();
-		g_pRenderTargetView = nullptr;
-	}
+	SAFE_RELEASE(g_pRenderTargetView);
+	SAFE_RELEASE(g_pDepthStencilView);
 
-	if (g_pDepthStencilView) {
-		g_pDepthStencilView->Release();
-		g_pDepthStencilView = nullptr;
-	}
-
+	// バッファサイズ変更
 	g_pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 
-	ID3D11Texture2D* renderTarget;
-	HRESULT hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&renderTarget);
+	// 新しい RenderTargetView 作成
+	ID3D11Texture2D* renderTarget = nullptr;
+	HRESULT hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&renderTarget);
+	if (FAILED(hr)) return hr;
 
-	if (FAILED(hr))return hr;
-	hr = g_pDevice->CreateRenderTargetView(renderTarget, NULL, &g_pRenderTargetView);
+	hr = g_pDevice->CreateRenderTargetView(renderTarget, nullptr, &g_pRenderTargetView);
 	renderTarget->Release();
-	if (FAILED(hr))return hr;
+	if (FAILED(hr)) return hr;
 
-	ID3D11Texture2D* depthStencile{};
-	D3D11_TEXTURE2D_DESC textureDesc{};
-	textureDesc.Width = width;
-	textureDesc.Height = height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_UNKNOWN;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
-	hr = g_pDevice->CreateTexture2D(&textureDesc, NULL, &depthStencile);
+	// 新しい DepthStencil 作成
+	ID3D11Texture2D* depthTex = nullptr;
+	D3D11_TEXTURE2D_DESC depthDesc = {};
+	depthDesc.Width = width;
+	depthDesc.Height = height;
+	depthDesc.MipLevels = 1;
+	depthDesc.ArraySize = 1;
+	depthDesc.Format = DXGI_FORMAT_D16_UNORM;
+	depthDesc.SampleDesc.Count = 1;
+	depthDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	if (FAILED(hr))return hr;
+	hr = g_pDevice->CreateTexture2D(&depthDesc, nullptr, &depthTex);
+	if (FAILED(hr)) return hr;
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencileViewDesc{};
-	depthStencileViewDesc.Format = textureDesc.Format;
-	depthStencileViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depthStencileViewDesc.Flags = 0;
-	hr = g_pDevice->CreateDepthStencilView(depthStencile, &depthStencileViewDesc, &g_pDepthStencilView);
-	if (FAILED(hr))return hr;
-	depthStencile->Release();
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = depthDesc.Format;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
+	hr = g_pDevice->CreateDepthStencilView(depthTex, &dsvDesc, &g_pDepthStencilView);
+	depthTex->Release();
+	if (FAILED(hr)) return hr;
+
+	// ★正しい viewport 設定
 	float windowAspect = (float)width / (float)height;
 	float targetAspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 
-	D3D11_VIEWPORT vi = {};
-	if (windowAspect > targetAspect) {
-		vi.Height = (float)height;
-		vi.Width = height * targetAspect;
-		vi.TopLeftX = (width - vi.Width) / 2.0f;
-		vi.TopLeftY = 0.0f;
-	}
-	else {
-		vi.Height = (float)height;
-		vi.Width = height * targetAspect;
-		vi.TopLeftX = 0.0f;
-		vi.TopLeftY = (height - vi.Height) / 2.0f;
-	}
-	vi.MinDepth = 0.0f;
-	vi.MaxDepth = 0.0f;
+	D3D11_VIEWPORT vp = {};
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
 
-	g_pDeviceContext->RSSetViewports(1, &vi);
+	if (windowAspect > targetAspect)
+	{
+		// 横が余る
+		vp.Height = (float)height;
+		vp.Width = vp.Height * targetAspect;
+		vp.TopLeftX = (width - vp.Width) * 0.5f;
+		vp.TopLeftY = 0.0f;
+	}
+	else
+	{
+		// 縦が余る
+		vp.Width = (float)width;
+		vp.Height = vp.Width / targetAspect;
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = (height - vp.Height) * 0.5f;
+	}
 
+	g_pDeviceContext->RSSetViewports(1, &vp);
 	return S_OK;
 }
 

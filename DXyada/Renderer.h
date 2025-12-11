@@ -2,7 +2,7 @@
 #include <d3d11.h>  // DirectX11を使うためのヘッダーファイル
 #include<DirectXMath.h>//数学関連のヘッダファイル
 
-#define SCREEN_WIDTH (1880)	// ウインドウの幅
+#define SCREEN_WIDTH (1920)	// ウインドウの幅
 #define SCREEN_HEIGHT (1080)	// ウインドウの高さ
 
 // 関数のプロトタイプ宣言
