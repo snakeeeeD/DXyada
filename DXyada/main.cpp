@@ -112,7 +112,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 		else {
 			QueryPerformanceCounter(&liWork);
 			nowCount = liWork.QuadPart;
-			if (nowCount >= oldCount + frequency / 240) {
+			if (nowCount >= oldCount + frequency / 60) {
 
 				game.Update();
 				game.Draw();

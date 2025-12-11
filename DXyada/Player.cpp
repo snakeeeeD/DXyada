@@ -26,8 +26,6 @@ void Player::Init() {
     m_jumpPower = 600.0f;   // ジャンプ初速度
     m_isOnGround = true;
 
-    deltaTime = 1.0f / 240.0f; // Update 毎に進む秒数
-
      m_guideline.Init("asset/block.png", 1, 1);
      m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
      m_guideline.SetSize(300, 20, 0);

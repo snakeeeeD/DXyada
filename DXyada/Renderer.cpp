@@ -1,5 +1,3 @@
-//¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
-//«Renderer.cpp‚ÖˆÚ“®
 #define _CRT_SECURE_NO_WARNINGS
 #include <d3dcompiler.h>
 #pragma comment (lib, "d3d11.lib")

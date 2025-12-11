@@ -81,7 +81,7 @@ void Stage1::Init() {
 }
 
 void Stage1::Update() {
-    float dt = 1.0f / 240.0f;
+    float dt = 1.0f / 60.0f;
 
     // プレイヤー更新（Stage 内で完結）
     m_player.Update(dt, m_platforms, m_enemies);
