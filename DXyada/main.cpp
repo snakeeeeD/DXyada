@@ -167,22 +167,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		else if (LOWORD(wParam) == VK_F11) {
 			isFullscreen = !isFullscreen;
+
 			if (isFullscreen) {
-				//g_pSwapChain->SetFullscreenState(TRUE, NULL);
-				//ShowWindow(hWnd,SW_MAXIMIZE);
-				SetWindowLongPtr(hWnd, GWL_STYLE, WS_POPUP | WS_MINIMIZEBOX);
-				int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-				int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-				SetWindowPos(hWnd, HWND_TOP, 0, 0, screenWidth, screenHeight, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-			g_pSwapChain->ResizeBuffers(
-				0, screenWidth, screenHeight,
-				DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+
+				// 1. すべての「枠となるスタイル」を削除
+				LONG style = GetWindowLong(hWnd, GWL_STYLE);
+				style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+				style |= WS_POPUP;
+				SetWindowLong(hWnd, GWL_STYLE, style);
+
+				// 2. 画面サイズ取得
+				int screenW = GetSystemMetrics(SM_CXSCREEN);
+				int screenH = GetSystemMetrics(SM_CYSCREEN);
+
+				// 3. ウィンドウを手前に固定しつつ全画面化
+				SetWindowPos(
+					hWnd,
+					HWND_TOPMOST,
+					0, 0,
+					screenW, screenH,
+					SWP_FRAMECHANGED | SWP_SHOWWINDOW
+				);
+
+				// 4. 正しいクライアントサイズで DX をリサイズ
+				RECT rc;
+				GetClientRect(hWnd, &rc);
+				ResizeWindow(rc.right - rc.left, rc.bottom - rc.top);
 			}
 			else {
-				//g_pSwapChain->SetFullscreenState(FALSE, NULL);
-				//ShowWindow(hWnd, SW_RESTORE);
+				// ウィンドウモードへ戻す
 				SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-				SetWindowPos(hWnd, HWND_TOP, 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+				SetWindowPos(hWnd, HWND_TOP, 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT,
+					SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+				RECT rc;
+				GetClientRect(hWnd, &rc);
+				int clientW = rc.right - rc.left;
+				int clientH = rc.bottom - rc.top;
+
+				g_pSwapChain->ResizeBuffers(0, clientW, clientH,
+					DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 			}
 		}
 		break;

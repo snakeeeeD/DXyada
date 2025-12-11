@@ -228,15 +228,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
 
 void Player::Draw() {
-
-    m_guideline.Draw(
-        g_pDeviceContext,
-        g_pInputLayout,
-        g_pVertexShader,
-        g_pPixelShader,
-        g_pConstantBuffer
-    );
-
     m_player.Draw(
         g_pDeviceContext,
         g_pInputLayout,
@@ -244,7 +235,6 @@ void Player::Draw() {
         g_pPixelShader,
         g_pConstantBuffer
     );
-
 }
 
 void Player::Uninit() {

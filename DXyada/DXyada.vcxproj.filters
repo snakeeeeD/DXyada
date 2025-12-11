@@ -190,9 +190,6 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>ソース ファイル\01-Manager管理\02-SceneManager</Filter>
     </ClCompile>
-    <ClCompile Include="StageManager.cpp">
-      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
     </ClCompile>

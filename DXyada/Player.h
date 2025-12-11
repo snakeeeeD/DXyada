@@ -11,6 +11,8 @@ class Player{
 	private:
 		Object m_player;
 		Object m_guideline;
+
+
 		float deltaTime;//ˆê“x“Ç‚İ‚Ş‚½‚Ñ‚É‰½•b•ª‚·‚·‚Ş‚©
 
 		float m_velY = 0.0f;        
@@ -28,6 +30,7 @@ class Player{
 		Tag tag = Tag::Player;
 
 		Object* GetObject() { return &m_player; }
+		Object* GetGuideLineObject() { return &m_guideline; }
 		void Init();
 		void SetPos(float Pos_X, float Pos_Y);
 		void Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy);

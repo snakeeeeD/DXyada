@@ -1,23 +1,25 @@
 #pragma once
-#include <vector>
-#include "Platform.h"
-#include "Enemy.h"
-#include "Texture.h"
-#include"StageBase.h"
-
+#include "StageBase.h"
 
 class Stage2 : public StageBase {
 private:
-    std::vector<Platform> m_platforms;
-    std::vector<Enemy> m_enemy;
     Object m_background;
-    Enemy enemy1;
+    Player m_player;
+    Camera m_camera;
+    CollisionManager* m_collision;
+
+    std::vector<Platform> m_platforms;
+    std::vector<Enemy> m_enemies;
+
+    std::vector<DrawItem> m_drawList;
+
+    bool m_isPlayerDead = false;
 
 public:
     void Init() override;
     void Update() override;
     void Draw() override;
     void UnInit() override;
-    const std::vector<Platform>& GetPlatforms() const { return m_platforms; }
-    const std::vector<Enemy>& GetEnemy() const { return m_enemy; }
+
+    bool IsPlayerDead() override { return m_isPlayerDead; }
 };

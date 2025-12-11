@@ -1,79 +1,46 @@
-#include "SceneManager.h" 
 #include "SceneGame.h"
+#include "SceneManager.h"
 #include "Input.h"
 
 extern Input input;
 
-void SceneGame::Init() {
-    m_stageManager.LoadStage(m_stage);
-
-    m_collision = new CollisionManager();
-
-    m_player.Init();
-
-    switch (m_stage)
-    {
-    case 1:
-        //背景
-        m_background.Init("asset/aa.png");
-        m_background.SetPos(0, 0, 0);
-        m_background.SetSize(19200, 10800, 0);
-        break;
-    case 2:
-        //背景
-        m_background.Init("asset/back.png");
-        m_background.SetPos(0, 0, 0);
-        m_background.SetSize(19200, 10800, 0);
-    default:
-        break;
-    }
-  
-   
-
-    for (auto& plat : m_stageManager.GetPlatforms()) {
-        m_collision->AddStatic(plat.GetObject());
-        m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
-    }
-    for (auto& enemy : m_stageManager.GetEnemy()) {
-        m_collision->AddStatic(enemy.GetObject());
-        m_collision->SetTag(enemy.GetObject(), ColliderTag::Enemy);
-    }
-
-    m_collision->AddDynamic(m_player.GetObject());
-    m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
+SceneGame::SceneGame(int stageNum)
+{
+    m_stageNumber = stageNum;
 }
 
-void SceneGame::Update(SceneManager& mgr) {
+void SceneGame::Init()
+{
+    // 選択されたステージ番号でロード
+    m_stageManager.LoadStage(m_stageNumber);
+}
 
-    m_collision->SetSceneManager(&mgr);
-
+void SceneGame::Update(SceneManager& mgr)
+{
+    // エスケープでタイトルへ
     if (input.GetKeyTrigger(VK_ESCAPE)) {
         mgr.ChangeScene(SCENE_TITLE);
         return;
     }
 
-    m_player.Update(1.0f / 240.0f, m_stageManager.GetPlatforms(), m_stageManager.GetEnemy());
-    m_camera.Update(m_player.GetObject()->GetPos());
+    // ステージ更新
     m_stageManager.Update();
-    m_collision->CheckAll();
+
+    // プレイヤー死亡判定
+    StageBase* stage = m_stageManager.GetStage();
+    if (stage && stage->IsPlayerDead()) {
+        //mgr.ChangeScene(SCENE_GAMEOVER);
+        return;
+    }
 }
 
-void SceneGame::Draw() {
-    m_background.Draw(
-        g_pDeviceContext,
-        g_pInputLayout,
-        g_pVertexShader,
-        g_pPixelShader,
-        g_pConstantBuffer);
-
-    m_player.Draw();
+void SceneGame::Draw()
+{
     m_stageManager.Draw();
-    
 }
 
-void SceneGame::UnInit() {
-    m_background.UnInit();
+void SceneGame::UnInit()
+{
     m_stageManager.Uninit();
-    m_player.Uninit();
 }
 
