@@ -65,6 +65,10 @@ void DebugStage::Init()
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
+
+    item.obj = m_player.GetGuideLineObject();
+    item.layer = DrawLayer::BackObject;
+    m_drawList.push_back(item);
 }
 
 void DebugStage::Update()

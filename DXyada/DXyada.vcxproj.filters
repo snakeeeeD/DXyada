@@ -105,6 +105,9 @@
     <Filter Include="ソース ファイル\20-Stage管理\02-Stage2">
       <UniqueIdentifier>{09d407db-ce62-4897-916c-8e35667dcd8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\20-Stage管理\999-DebugStage">
+      <UniqueIdentifier>{39b67fe7-c4a4-4730-9a85-48483f57b436}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -185,6 +188,7 @@
     <ClInclude Include="Ribbon.h">
       <Filter>ソース ファイル\02-Object管理</Filter>
     </ClInclude>
+    <ClInclude Include="DebugStage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp">
@@ -249,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="SceneGame.cpp">
       <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugStage.cpp">
+      <Filter>ソース ファイル\20-Stage管理\999-DebugStage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

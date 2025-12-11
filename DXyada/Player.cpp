@@ -11,7 +11,7 @@ void Player::Init() {
 
     m_player.Init("asset/char01.png", 3, 4);
     m_player.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
-    m_player.SetSize(100, 150, 0);
+    m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
     m_player.AddAnimation({ "Down",0,0,2,3,true,1 });
@@ -28,7 +28,7 @@ void Player::Init() {
 
      m_guideline.Init("asset/block.png", 1, 1);
      m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
-     m_guideline.SetSize(300, 20, 0);
+     m_guideline.SetSize((m_height * 3.5), 20, 0);  //身長の3.5倍の長さ
 }
 
 void Player::SetPos(float Pos_X,float Pos_Y) {
@@ -113,21 +113,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
     }
 
-    //左入力状態なら左移動
-    if (m_inputDir == 1)
-    {
-        pos.x -= 200.0f * deltaTime; 
-        m_player.PlayAnimation("Left");
-    }
-
-    //右入力状態なら右移動
-   if (m_inputDir == -1)
-    {
-        pos.x += 200.0f * deltaTime;
-        m_player.PlayAnimation("Right");
-    }
-  
-
     //ボタンを押していなかったらアイドルのアニメーション
    if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
        || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
@@ -179,20 +164,17 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             //プレイヤーの位置取得
             auto p = m_player.GetPos();
 
-            //指示線の位置をプレイヤーの中心へ
-            m_guideline.SetPos(p.x, p.y, p.z);
-
-
             //角度を右スティック方向に合わせる
             float angleRad = atan2(rightStick.y, rightStick.x);
 
-            m_guideline.SetPos(p.x + 150, p.y, p.z);
+            //プレイヤーの中心に指示線の左端が来るように
+            m_guideline.SetPos(p.x + ((m_height * 3.5)/2), p.y, p.z);
 
             //ラジアンを度へ変換
             float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
 
             //回転の中心を左端に移動
-            m_guideline.SetPivot(-150, 0, 0);
+            m_guideline.SetPivot( ( ( -m_height * 3.5) / 2), 0, 0);
 
             //角度を設定
             m_guideline.SetAngle(angleDeg);
@@ -200,13 +182,43 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             //指示線を更新
             m_guideline.Update(deltaTime);
 
+            if (m_inputDir == 0)
+            {
+                if (rightStick.x > 0)
+                {
+                    m_player.PlayAnimation("Right");
+                }
+                else if (rightStick.x < 0)
+                {
+
+                    m_player.PlayAnimation("Left");
+                }
+                else
+                {
+                    m_player.PlayAnimation("Idle");
+                }
+            }
+         
         }
         else
         {
             //透明に
             m_guideline.SetColor(1, 1, 1, 0);
         }
- 
+
+        //左入力状態なら左移動
+        if (m_inputDir == 1)
+        {
+            pos.x -= 200.0f * deltaTime;
+            m_player.PlayAnimation("Left");
+        }
+
+        //右入力状態なら右移動
+        if (m_inputDir == -1)
+        {
+            pos.x += 200.0f * deltaTime;
+            m_player.PlayAnimation("Right");
+        }
 
 
     // ジャンプ入力（地面にいる場合のみ）
