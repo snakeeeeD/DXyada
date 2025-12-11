@@ -11,7 +11,7 @@ void Player::Init() {
 
     m_player.Init("asset/char01.png", 3, 4);
     m_player.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
-    m_player.SetSize(100, 150, 0);
+    m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
     m_player.AddAnimation({ "Down",0,0,2,3,true,1 });
@@ -26,7 +26,9 @@ void Player::Init() {
     m_jumpPower = 600.0f;   // ジャンプ初速度
     m_isOnGround = true;
 
-    deltaTime = 1.0f / 240.0f; // Update 毎に進む秒数
+     m_guideline.Init("asset/block.png", 1, 1);
+     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
+     m_guideline.SetSize((m_height * 3.5), 20, 0);  //身長の3.5倍の長さ
 }
 
 void Player::SetPos(float Pos_X,float Pos_Y) {
@@ -36,13 +38,14 @@ void Player::SetPos(float Pos_X,float Pos_Y) {
 void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy) {
     input.Update();
 
-    auto pos = m_player.GetPos();
+    auto pos = m_player.GetPos();   //プレイヤーの位置を取得
 
     /*
   *  stick.x: 左(-1)〜右(1)
   *  stick.y: 下(-1)〜上(1)
   */
     DirectX::XMFLOAT2 stick = input.GetLeftAnalogStick(); // -1～1
+    DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();
 
     const float threshold = 0.5f; // これだけ倒したら入力と判定
 
@@ -110,21 +113,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
     }
 
-    //左入力状態なら左移動
-    if (m_inputDir == 1)
-    {
-        pos.x -= 200.0f * deltaTime; 
-        m_player.PlayAnimation("Left");
-    }
-
-    //右入力状態なら右移動
-   if (m_inputDir == -1)
-    {
-        pos.x += 200.0f * deltaTime;
-        m_player.PlayAnimation("Right");
-    }
-  
-
     //ボタンを押していなかったらアイドルのアニメーション
    if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
        || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
@@ -162,6 +150,77 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
     }
 
+    float aimRightStick = 0.3;
+
+    bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
+
+        //右スティックを倒すと指示線表示
+        if (aiming)
+        {
+
+            //ガイドライン表示
+            m_guideline.SetColor(1, 1, 1, 0.5);
+
+            //プレイヤーの位置取得
+            auto p = m_player.GetPos();
+
+            //角度を右スティック方向に合わせる
+            float angleRad = atan2(rightStick.y, rightStick.x);
+
+            //プレイヤーの中心に指示線の左端が来るように
+            m_guideline.SetPos(p.x + ((m_height * 3.5)/2), p.y, p.z);
+
+            //ラジアンを度へ変換
+            float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
+
+            //回転の中心を左端に移動
+            m_guideline.SetPivot( ( ( -m_height * 3.5) / 2), 0, 0);
+
+            //角度を設定
+            m_guideline.SetAngle(angleDeg);
+
+            //指示線を更新
+            m_guideline.Update(deltaTime);
+
+            if (m_inputDir == 0)
+            {
+                if (rightStick.x > 0)
+                {
+                    m_player.PlayAnimation("Right");
+                }
+                else if (rightStick.x < 0)
+                {
+
+                    m_player.PlayAnimation("Left");
+                }
+                else
+                {
+                    m_player.PlayAnimation("Idle");
+                }
+            }
+         
+        }
+        else
+        {
+            //透明に
+            m_guideline.SetColor(1, 1, 1, 0);
+        }
+
+        //左入力状態なら左移動
+        if (m_inputDir == 1)
+        {
+            pos.x -= 200.0f * deltaTime;
+            m_player.PlayAnimation("Left");
+        }
+
+        //右入力状態なら右移動
+        if (m_inputDir == -1)
+        {
+            pos.x += 200.0f * deltaTime;
+            m_player.PlayAnimation("Right");
+        }
+
+
     // ジャンプ入力（地面にいる場合のみ）
     if (m_isOnGround && input.GetKeyTrigger(VK_SPACE) ||( m_isOnGround && input.GetButtonTrigger(XINPUT_A)))
     {
@@ -169,13 +228,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_isOnGround = false;
     }
 
-    //おためっし
-    if (input.GetKeyPress(VK_RETURN)) {
-        m_player.SetPivot(0, -75, 0);
-        t += 1;
-        m_player.SetAngle(t);
-
-    }
     // 最終的な位置セット
     m_player.SetPos(pos.x, pos.y, pos.z);
 
@@ -197,4 +249,6 @@ void Player::Draw() {
 
 void Player::Uninit() {
     m_player.UnInit();
+    m_guideline.UnInit();
 }
+

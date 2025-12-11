@@ -4,22 +4,53 @@
 #include "StageBase.h"
 #include "Stage1.h"
 #include "Stage2.h"
+#include "DebugStage.h"
 
 class StageManager {
 private:
     std::unique_ptr<StageBase> m_currentStage;
 
 public:
-    StageManager() {}
-    ~StageManager() { Uninit(); }
+    void LoadStage(int stageNumber) {
+        Uninit();
 
-    void LoadStage(int stageNumber);
-    void Update();
-    void Draw();
-    void Uninit();
+        switch (stageNumber) {
+        case 1:
+            m_currentStage = std::make_unique<Stage1>();
+            break;
+        case 2:
+            m_currentStage = std::make_unique<Stage2>();
+            break;
+        case 99:
+            m_currentStage = std::make_unique<DebugStage>();
+            break;
+        default:
+            m_currentStage = nullptr;
+            break;
+        }
 
-    std::vector<Platform>& GetPlatforms();
-    std::vector<Enemy>& GetEnemy();
+        if (m_currentStage)
+            m_currentStage->Init();
+    }
 
-   // Stage* GetCurrentStage() { return m_currentStage; }
+    void Update() {
+        if (m_currentStage)
+            m_currentStage->Update();
+    }
+
+    void Draw() {
+        if (m_currentStage)
+            m_currentStage->Draw();
+    }
+
+    void Uninit() {
+        if (m_currentStage) {
+            m_currentStage->UnInit();
+            m_currentStage.reset();
+        }
+    }
+
+    StageBase* GetStage() {
+        return m_currentStage.get();
+    }
 };

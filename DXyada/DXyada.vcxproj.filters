@@ -105,6 +105,9 @@
     <Filter Include="ソース ファイル\20-Stage管理\02-Stage2">
       <UniqueIdentifier>{09d407db-ce62-4897-916c-8e35667dcd8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\20-Stage管理\999-DebugStage">
+      <UniqueIdentifier>{39b67fe7-c4a4-4730-9a85-48483f57b436}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -112,9 +115,6 @@
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>ソース ファイル\01-Manager管理\02-SceneManager</Filter>
-    </ClInclude>
-    <ClInclude Include="StageManager.h">
-      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
@@ -182,6 +182,13 @@
     <ClInclude Include="Stage2.h">
       <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
     </ClInclude>
+    <ClInclude Include="StageManager.h">
+      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Ribbon.h">
+      <Filter>ソース ファイル\02-Object管理</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugStage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp">
@@ -189,9 +196,6 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>ソース ファイル\01-Manager管理\02-SceneManager</Filter>
-    </ClCompile>
-    <ClCompile Include="StageManager.cpp">
-      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
@@ -207,9 +211,6 @@
     </ClCompile>
     <ClCompile Include="SceneTitle.cpp">
       <Filter>ソース ファイル\10-Scene管理\01-SceneTitle</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGame.cpp">
-      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
     </ClCompile>
     <ClCompile Include="Stage1.cpp">
       <Filter>ソース ファイル\20-Stage管理\01-Stage1</Filter>
@@ -249,6 +250,12 @@
     </ClCompile>
     <ClCompile Include="04-Ribbon.cpp">
       <Filter>ソース ファイル\02-Object管理</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugStage.cpp">
+      <Filter>ソース ファイル\20-Stage管理\999-DebugStage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,14 +1,17 @@
-#include "Stage2.h"
+#include "DebugStage.h"
 #include "Renderer.h"
 #include <algorithm>
 
-void Stage2::Init()
+void DebugStage::Init()
 {
+
+    g_cameraPos = { 0, 0, 0 };
+
     m_collision = new CollisionManager();
 
     // プレイヤー初期位置
     m_player.Init();
-    m_player.GetObject()->SetPos(150, -50, 0);
+    m_player.GetObject()->SetPos(0, -200, 0);
 
     // 背景
     m_background.Init("asset/aa.png");
@@ -17,22 +20,14 @@ void Stage2::Init()
 
 
     // 足場
-    Platform p1; p1.Init("asset/block.png", 0, -200, 100, 50);
-    Platform p2; p2.Init("asset/block.png", 150, -150, 100, 50);
-    Platform p3; p3.Init("asset/block.png", 1000, -150, 1800, 50);
-    Platform p4; p4.Init("asset/block.png", 1000, 350, 1800, 50);
+    Platform p1; p1.Init("asset/block.png", 0, -600, 1800, 600);
 
-    m_platforms = { p1, p2, p3, p4 };
+    m_platforms = { p1 };
 
     for (auto& plat : m_platforms) {
         m_collision->AddStatic(plat.GetObject());
         m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
     }
-
-    // 敵
-    Enemy e;
-    e.Init("asset/title.png", 300, -75, 100, 100);
-    m_enemies.push_back(e);
 
     for (auto& enemy : m_enemies) {
         m_collision->AddStatic(enemy.GetObject());
@@ -70,9 +65,13 @@ void Stage2::Init()
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
+
+    item.obj = m_player.GetGuideLineObject();
+    item.layer = DrawLayer::BackObject;
+    m_drawList.push_back(item);
 }
 
-void Stage2::Update()
+void DebugStage::Update()
 {
     float dt = 1.0f / 60.0f;
 
@@ -85,18 +84,18 @@ void Stage2::Update()
     }
 
     // カメラ追従
-    m_camera.Update(m_player.GetObject()->GetPos());
+ //   m_camera.Update(m_player.GetObject()->GetPos());
 
     // 衝突判定
     m_collision->CheckAll();
 
     // 死亡判定（プレイヤーのHPで判定）
     //if (m_player.GetHP() <= 0) {
-       m_isPlayerDead = true;
+    m_isPlayerDead = true;
     //}
 }
 
-void Stage2::Draw()
+void DebugStage::Draw()
 {
     std::sort(
         m_drawList.begin(),
@@ -121,7 +120,7 @@ void Stage2::Draw()
     }
 }
 
-void Stage2::UnInit()
+void DebugStage::UnInit()
 {
     for (auto& plat : m_platforms) plat.UnInit();
     for (auto& enemy : m_enemies) enemy.UnInit();

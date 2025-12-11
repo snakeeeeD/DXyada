@@ -1,9 +1,10 @@
-#include "SceneManager.h" 
 #include "SceneGame.h"
+#include "SceneManager.h"
 #include "Input.h"
 
 extern Input input;
 
+<<<<<<< HEAD
 void SceneGame::Init() {
     m_stageManager.LoadStage(m_stage);
 
@@ -23,30 +24,45 @@ void SceneGame::Init() {
     m_collision->AddDynamic(m_player.GetObject());
     m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
 
+=======
+SceneGame::SceneGame(int stageNum)
+{
+    m_stageNumber = stageNum;
+>>>>>>> 6e89df0d86a05429919e9271224159caaad8c44b
 }
 
-void SceneGame::Update(SceneManager& mgr) {
+void SceneGame::Init()
+{
+    // 選択されたステージ番号でロード
+    m_stageManager.LoadStage(m_stageNumber);
+}
 
-    m_collision->SetSceneManager(&mgr);
-
+void SceneGame::Update(SceneManager& mgr)
+{
+    // エスケープでタイトルへ
     if (input.GetKeyTrigger(VK_ESCAPE)) {
         mgr.ChangeScene(SCENE_TITLE);
         return;
     }
 
-    m_player.Update(1.0f / 240.0f, m_stageManager.GetPlatforms(), m_stageManager.GetEnemy());
-    m_camera.Update(m_player.GetObject()->GetPos());
+    // ステージ更新
     m_stageManager.Update();
-    m_collision->CheckAll();
+
+    // プレイヤー死亡判定
+    StageBase* stage = m_stageManager.GetStage();
+    if (stage && stage->IsPlayerDead()) {
+        //mgr.ChangeScene(SCENE_GAMEOVER);
+        return;
+    }
 }
 
-void SceneGame::Draw() {
+void SceneGame::Draw()
+{
     m_stageManager.Draw();
-    m_player.Draw();
 }
 
-void SceneGame::UnInit() {
+void SceneGame::UnInit()
+{
     m_stageManager.Uninit();
-    m_player.Uninit();
 }
 

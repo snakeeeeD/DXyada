@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="DebugStage.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Ribbon.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneGameOver.h" />
@@ -157,6 +159,7 @@
     <ClCompile Include="04-Ribbon.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="DebugStage.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="input.cpp" />
@@ -173,7 +176,6 @@
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="Stage1.cpp" />
     <ClCompile Include="Stage2.cpp" />
-    <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>

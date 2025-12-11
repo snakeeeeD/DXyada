@@ -1,29 +1,17 @@
 #pragma once
 #include "SceneBase.h"
+#include "StageBase.h"
 #include "StageManager.h"
-#include "Player.h"
-#include "CollisionManager.h"
-#include "Renderer.h"
-#include "Camera2D.h"
-
-class SceneManager;
 
 class SceneGame : public SceneBase {
 private:
-    Player m_player;
+    int m_stageNumber = 1;
     StageManager m_stageManager;
-    Camera m_camera;
-    CollisionManager* m_collision;
 
-    int m_stage = 1;
 public:
-    SceneGame(int stage) :m_stage(stage) {};
-
-    SceneGame() = default;
-    ~SceneGame() override { UnInit(); }
-
-    void Init() override;
-    void Update(SceneManager& mgr) override;
-    void Draw() override;
-    void UnInit() override;
+    SceneGame(int stageNum = 1);
+    virtual void Init() override;
+    virtual void Update(SceneManager& mgr) override;
+    virtual void Draw() override;
+    virtual void UnInit() override;
 };

@@ -16,7 +16,7 @@ public:
     ~SceneManager() { UnInit(); }
 
     void SetSelectedStage(int stage) { m_selectedStage = stage; }
-    int  GetSelectedStage() const { return m_selectedStage; }
+    int GetSelectedStage() const { return m_selectedStage; }
 
     void Init(SceneID id);
     void Update();

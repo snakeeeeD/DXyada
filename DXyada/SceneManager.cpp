@@ -52,7 +52,7 @@ void SceneManager::ChangeScene(SceneID id)
     switch (id) {
     case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
     case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
-    case SCENE_GAME: m_currentScene = new SceneGame(stage); break;
+    case SCENE_GAME:m_currentScene = new SceneGame(m_selectedStage);break;
     case SCENE_GAMEOVER: m_currentScene = new SceneGameOver(); break;
     }
 
