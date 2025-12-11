@@ -4,6 +4,7 @@
 #include "StageBase.h"
 #include "Stage1.h"
 #include "Stage2.h"
+#include "DebugStage.h"
 
 class StageManager {
 private:
@@ -19,6 +20,9 @@ public:
             break;
         case 2:
             m_currentStage = std::make_unique<Stage2>();
+            break;
+        case 99:
+            m_currentStage = std::make_unique<DebugStage>();
             break;
         default:
             m_currentStage = nullptr;

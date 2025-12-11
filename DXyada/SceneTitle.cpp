@@ -20,6 +20,11 @@ void SceneTitle::Update(SceneManager& mgr) {
     if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonPress(XINPUT_A)) {
         mgr.ChangeScene(SCENE_SELECT);
     }
+
+    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
+        mgr.SetSelectedStage(99);
+        mgr.ChangeScene(SCENE_GAME);
+    }
 }
 
 void SceneTitle::Draw() {
