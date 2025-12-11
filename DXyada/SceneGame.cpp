@@ -22,6 +22,7 @@ void SceneGame::Init() {
 
     m_collision->AddDynamic(m_player.GetObject());
     m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
+
 }
 
 void SceneGame::Update(SceneManager& mgr) {
