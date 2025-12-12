@@ -95,7 +95,6 @@ void CollisionManager::CheckAll()
             //Aがプレイヤー、BがEnemyの場合
             if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy) {
                 if (m_sceneMgr) {
-                    m_sceneMgr->ChangeScene(SCENE_GAMEOVER);
                 }
             }
         }

@@ -4,25 +4,6 @@
 
 extern Input input;
 
-//void SceneGame::Init() {
-//    m_stageManager.LoadStage(m_stage);
-//
-//    m_collision = new CollisionManager();
-//
-//    m_player.Init();
-//
-//    for (auto& plat : m_stageManager.GetPlatforms()) {
-//        m_collision->AddStatic(plat.GetObject());
-//        m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
-//    }
-//    for (auto& enemy : m_stageManager.GetEnemy()) {
-//        m_collision->AddStatic(enemy.GetObject());
-//        m_collision->SetTag(enemy.GetObject(), ColliderTag::Enemy);
-//    }
-//
-//    m_collision->AddDynamic(m_player.GetObject());
-//    m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
-
 SceneGame::SceneGame(int stageNum)
 {
     m_stageNumber = stageNum;
@@ -32,27 +13,83 @@ void SceneGame::Init()
 {
     // 選択されたステージ番号でロード
     m_stageManager.LoadStage(m_stageNumber);
+
+
 }
 
 void SceneGame::Update(SceneManager& mgr)
 {
-    // エスケープでタイトルへ
-    if (input.GetKeyTrigger(VK_ESCAPE)) {
-        mgr.ChangeScene(SCENE_TITLE);
-        return;
-    }
+    input.Update();
 
-    // ステージ更新
-    m_stageManager.Update();
+    switch (m_state)
+    {
+    case GameState::Playing:
+        UpdatePlaying(mgr);
+        break;
 
-    // プレイヤー死亡判定
-    StageBase* stage = m_stageManager.GetStage();
-    if (stage && stage->IsPlayerDead()) {
-        //mgr.ChangeScene(SCENE_GAMEOVER);
-        return;
+    case GameState::Pouse:
+        UpdatePouse(mgr);
+        break;
+
+    case GameState::Result:
+        UpdatePouse(mgr);
+        break;
+
+    case GameState::GameOver:
+        UpdateGameOver(mgr);
+        break;
     }
 }
 
+void SceneGame::UpdatePlaying(SceneManager& mgr) {
+
+        //エスケープでタイトルに
+        if (input.GetKeyTrigger(VK_ESCAPE)) {
+            m_state = GameState::Pouse;
+        }
+
+        if (input.GetKeyTrigger(VK_UP)) {
+            m_state = GameState::GameOver;
+        }
+
+        // ステージ更新
+        m_stageManager.Update();
+
+        // プレイヤー死亡判定
+        StageBase* stage = m_stageManager.GetStage();
+        if (stage && stage->IsPlayerDead()) {
+            
+            return;
+        }
+}
+void SceneGame::UpdatePouse(SceneManager& mgr) {
+    if (input.GetKeyTrigger(VK_ESCAPE)) {
+        m_state = GameState::Playing;
+    }
+    if (input.GetKeyTrigger(VK_RETURN))
+    {
+        mgr.ChangeScene(SCENE_GAME);
+    }
+    if (input.GetKeyTrigger(VK_SPACE))
+    {
+        mgr.ChangeScene(SCENE_SELECT);
+    }
+}
+void SceneGame::UpdateResult(SceneManager& mgr) {
+
+}
+void SceneGame::UpdateGameOver(SceneManager& mgr) {
+    if (input.GetKeyTrigger(VK_RETURN))
+    {
+        mgr.ChangeScene(SCENE_GAME);
+    }
+
+    // Esc でタイトルに戻る
+    if (input.GetKeyTrigger(VK_ESCAPE))
+    {
+        mgr.ChangeScene(SCENE_TITLE);
+    }
+}
 void SceneGame::Draw()
 {
     m_stageManager.Draw();

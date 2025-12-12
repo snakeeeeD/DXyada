@@ -8,7 +8,6 @@ void SceneManager::Init(SceneID id)
     case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
     case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
     case SCENE_GAME: m_currentScene = new SceneGame(); break;
-    case SCENE_GAMEOVER: m_currentScene = new SceneGameOver(); break;
     }
 
     if (m_currentScene)
@@ -53,7 +52,6 @@ void SceneManager::ChangeScene(SceneID id)
     case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
     case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
     case SCENE_GAME:m_currentScene = new SceneGame(m_selectedStage);break;
-    case SCENE_GAMEOVER: m_currentScene = new SceneGameOver(); break;
     }
 
     if (m_currentScene)

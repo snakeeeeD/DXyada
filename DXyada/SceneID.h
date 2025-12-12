@@ -3,6 +3,5 @@
 enum SceneID {
     SCENE_TITLE,
     SCENE_SELECT,
-    SCENE_GAME,
-    SCENE_GAMEOVER
+    SCENE_GAME
 };

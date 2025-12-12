@@ -1,7 +1,6 @@
 #include "Stage1.h"
 #include "SceneGame.h"
 #include <algorithm>
-
 void Stage1::Init() {
     m_collision = new CollisionManager();
 

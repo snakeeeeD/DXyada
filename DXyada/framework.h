@@ -13,3 +13,8 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+void Log(const char* msg) {
+	OutputDebugStringA(msg);
+	OutputDebugStringA("\n");
+}
