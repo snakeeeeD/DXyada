@@ -15,6 +15,14 @@ void SceneGame::Init()
     m_stageManager.LoadStage(m_stageNumber);
 
 
+    Pouse_BackGround.Init("asset/Pouse.png");
+    Pouse_BackGround.SetPos(0, 0, 0);
+    Pouse_BackGround.SetColor(1, 1, 1,0.5);
+    Pouse_BackGround.SetSize(0, 0, 0);
+
+    GameOver_BackGround.Init("asset/GameOver.png");
+    GameOver_BackGround.SetPos(0, 0, 0);
+    GameOver_BackGround.SetSize(0, 0, 0);
 }
 
 void SceneGame::Update(SceneManager& mgr)
@@ -42,6 +50,8 @@ void SceneGame::Update(SceneManager& mgr)
 }
 
 void SceneGame::UpdatePlaying(SceneManager& mgr) {
+    GameOver_BackGround.SetSize(0, 0, 0);
+    Pouse_BackGround.SetSize(0, 0, 0);
 
         //エスケープでタイトルに
         if (input.GetKeyTrigger(VK_ESCAPE)) {
@@ -63,6 +73,8 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
         }
 }
 void SceneGame::UpdatePouse(SceneManager& mgr) {
+    Pouse_BackGround.SetSize(1920, 1080, 0);
+
     if (input.GetKeyTrigger(VK_ESCAPE)) {
         m_state = GameState::Playing;
     }
@@ -79,20 +91,38 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
 
 }
 void SceneGame::UpdateGameOver(SceneManager& mgr) {
+    GameOver_BackGround.SetSize(1920, 1080, 0);
+
     if (input.GetKeyTrigger(VK_RETURN))
     {
         mgr.ChangeScene(SCENE_GAME);
     }
 
-    // Esc でタイトルに戻る
+    // Esc でステージ選択に戻る
     if (input.GetKeyTrigger(VK_ESCAPE))
     {
-        mgr.ChangeScene(SCENE_TITLE);
+        mgr.ChangeScene(SCENE_SELECT);
     }
 }
 void SceneGame::Draw()
 {
     m_stageManager.Draw();
+
+    Pouse_BackGround.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
+
+    GameOver_BackGround.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
 }
 
 void SceneGame::UnInit()

@@ -15,8 +15,10 @@ class SceneGame : public SceneBase {
 private:
     int m_stageNumber = 1;
     StageManager m_stageManager;
-
     GameState m_state = GameState::Playing;
+
+    Object Pouse_BackGround;
+    Object GameOver_BackGround;
 
     int m_cursor = 0;
 

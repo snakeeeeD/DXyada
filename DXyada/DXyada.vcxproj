@@ -142,7 +142,6 @@
     <ClInclude Include="Ribbon.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneGame.h" />
-    <ClInclude Include="SceneGameOver.h" />
     <ClInclude Include="SceneID.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneSelect.h" />
@@ -169,7 +168,6 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SceneGame.cpp" />
-    <ClCompile Include="SceneGameOver.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneTitle.cpp" />

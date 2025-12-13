@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Texture.h"
 #include "Object.h"
+#include "framework.h"
 
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
@@ -36,7 +37,6 @@ void Player::SetPos(float Pos_X,float Pos_Y) {
 }
 
 void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy) {
-    input.Update();
 
     auto pos = m_player.GetPos();   //プレイヤーの位置を取得
 
@@ -226,8 +226,12 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     {
         m_velY = -m_jumpPower; // 上方向にジャンプ
         m_isOnGround = false;
+        Log("じゃーんぷ");
     }
 
+    if (m_isOnGround) {
+        Log("toberu");
+    }
     // 最終的な位置セット
     m_player.SetPos(pos.x, pos.y, pos.z);
 

@@ -99,9 +99,6 @@
     <Filter Include="ソース ファイル\10-Scene管理\03-SceneGame">
       <UniqueIdentifier>{c511b55b-af00-4abc-829a-208ca6366d2f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\04-SneneGameover">
-      <UniqueIdentifier>{613c841e-04bd-435f-b226-da0a58529a27}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\20-Stage管理\02-Stage2">
       <UniqueIdentifier>{09d407db-ce62-4897-916c-8e35667dcd8e}</UniqueIdentifier>
     </Filter>
@@ -139,9 +136,6 @@
     </ClInclude>
     <ClInclude Include="SceneGame.h">
       <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGameOver.h">
-      <Filter>ソース ファイル\10-Scene管理\04-SneneGameover</Filter>
     </ClInclude>
     <ClInclude Include="StageBase.h">
       <Filter>ソース ファイル\20-Stage管理\00-StageBase</Filter>
@@ -244,9 +238,6 @@
     </ClCompile>
     <ClCompile Include="Stage2.cpp">
       <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGameOver.cpp">
-      <Filter>ソース ファイル\10-Scene管理\04-SneneGameover</Filter>
     </ClCompile>
     <ClCompile Include="04-Ribbon.cpp">
       <Filter>ソース ファイル\02-Object管理</Filter>
