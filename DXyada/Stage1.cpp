@@ -24,7 +24,7 @@ void Stage1::Init() {
     Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1800, 50);
 
     Enemy e;
-    e.Init("asset/title.png", -100, -175, 100, 100);
+    e.Init("asset/title.png", 300, -50, 100, 100);
     m_enemies.push_back(e);
 
     m_platforms = { plat1, plat2, plat3 };
@@ -88,6 +88,24 @@ void Stage1::Update() {
     // 敵更新
     for (auto& enemy : m_enemies) {
         enemy.Update(dt);
+
+        //プレイヤーと敵との衝突判定
+        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+        auto enemyAABB = m_collision->GetAABB(enemy.GetObject());
+
+        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
+        {
+            // ノックバック方向を計算（プレイヤー位置 - 敵位置）
+            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+            DirectX::XMFLOAT3 enemyPos = enemy.GetObject()->GetPos();
+
+            DirectX::XMFLOAT2 knockbackDir = {
+                playerPos.x - enemyPos.x,
+                playerPos.y - enemyPos.y
+            };
+
+            m_player.TakeDamage(1, knockbackDir);
+        }
     }
 
     // カメラ更新
@@ -97,9 +115,9 @@ void Stage1::Update() {
     m_collision->CheckAll();
 
     // 死亡判定（あなたの処理に合わせて書き換え可能）
-  //  if (m_player.GetHP() <= 0) {
-    m_isPlayerDead = true;
-    //}
+    if (m_player.isDead()) {  // ← この条件を追加
+        m_isPlayerDead = true;
+    }
 }
 
 void Stage1::Draw() {

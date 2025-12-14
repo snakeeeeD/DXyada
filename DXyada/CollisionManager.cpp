@@ -84,6 +84,13 @@ void CollisionManager::CheckAll()
 
             if (!CheckOverlap(a, b)) continue;
 
+            //Aがプレイヤー、BがEnemyの場合
+            if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy) {
+                if (m_sceneMgr) {
+                }
+                continue;
+            }
+
             // MTV 計算して押し戻し
             XMFLOAT2 mtv = GetMTV(a, b);
 
@@ -91,12 +98,6 @@ void CollisionManager::CheckAll()
             pos.x += mtv.x;
             pos.y += mtv.y;
             dynObj->SetPos(pos.x, pos.y, pos.z);
-
-            //Aがプレイヤー、BがEnemyの場合
-            if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy) {
-                if (m_sceneMgr) {
-                }
-            }
         }
     }
 

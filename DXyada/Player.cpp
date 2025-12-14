@@ -27,9 +27,52 @@ void Player::Init() {
     m_jumpPower = 600.0f;   // ジャンプ初速度
     m_isOnGround = true;
 
-     m_guideline.Init("asset/block.png", 1, 1);
-     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
-     m_guideline.SetSize((m_height * 3.5), 20, 0);  //身長の3.5倍の長さ
+    //HP初期化
+    m_maxhp = 3;    //仮
+    m_hp = m_maxhp;
+    m_isInvincible = false;
+    m_Invincibletimer = 0.0f;
+    m_InvincibleDuration = 2.0f;    //二秒間無敵
+    
+    //ノックバック初期化
+    m_isKnockback = false;
+    m_knockbackTimer = 0.0f;
+    m_knockbackDuration = 0.6f;  // 0.3秒間ノックバック
+    m_knockbackVelocity = { 0.0f, 0.0f };
+    
+    m_guideline.Init("asset/block.png", 1, 1);
+    m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
+    m_guideline.SetSize((m_height * 3.5), 20, 0);  //身長の3.5倍の長さ
+}
+
+void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
+{
+    if (m_isInvincible || m_hp <= 0) return;
+
+    m_hp -= damage;
+    if (m_hp < 0) m_hp = 0;
+
+    //ダメージを受けたら無敵時間開始
+    m_isInvincible = true;
+    m_Invincibletimer = 0.0f;
+
+    //ノックバック開始
+    m_isKnockback = true;
+    m_knockbackTimer = 0.0f;
+
+    //ノックバック方向を初期化して速度を設定
+    float length = sqrt(knockbackDir.x * knockbackDir.x + knockbackDir.y * knockbackDir.y);
+    if (length > 0.0f)
+    {
+        m_knockbackVelocity.x = (knockbackDir.x / length) * 400.0f;  // ノックバック速度
+        m_knockbackVelocity.y = (knockbackDir.y / length) * 400.0f;  // 上方向も少し
+    }
+
+    // 上方向に最低限のノックバック速度を保証
+    if (m_knockbackVelocity.y > -200.0f) 
+    {  
+        m_knockbackVelocity.y = -400.0f;
+    }
 }
 
 void Player::SetPos(float Pos_X,float Pos_Y) {
@@ -37,6 +80,44 @@ void Player::SetPos(float Pos_X,float Pos_Y) {
 }
 
 void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy) {
+
+    //Hpが0以下なら更新しない
+    if (m_hp <= 0)
+    {
+        return;
+    }
+
+    //無敵時間の更新
+    if (m_isInvincible)
+    {
+        m_Invincibletimer += deltaTime;
+        if (m_Invincibletimer >= m_InvincibleDuration)
+        {
+            m_isInvincible = false;
+            m_Invincibletimer = 0.0f;
+        }
+
+        //無敵時間中を点滅
+        float blincspeed = 10.0f;
+        float alpha = (sin(m_Invincibletimer * blincspeed) + 1.0f) * 0.5f;
+        m_player.SetColor(1, 1, 1, alpha * 0.5f + 0.5f);
+    }
+    else
+    {
+        m_player.SetColor(1, 1, 1, 1);
+    }
+
+    //ノックバック更新
+    if (m_isKnockback)
+    {
+        m_knockbackTimer += deltaTime;
+        if (m_knockbackTimer >= m_knockbackDuration)
+        {
+            m_isKnockback = false;
+            m_knockbackTimer = 0.0f;
+            m_knockbackVelocity = { 0.0f, 0.0f };
+        }
+    }
 
     auto pos = m_player.GetPos();   //プレイヤーの位置を取得
 
@@ -48,78 +129,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();
 
     const float threshold = 0.5f; // これだけ倒したら入力と判定
-
-    //キャラの移動処理
-  
-    //右入力があるか
-    bool isMoveLeft = 
-        input.GetKeyPress(VK_A) 
-        || input.GetButtonPress(XINPUT_LEFT) 
-        || (stick.x < -threshold);
-        
-    //左入力があるか
-    bool isMoveRight =
-        input.GetKeyPress(VK_D)
-        || input.GetButtonPress(XINPUT_RIGHT)
-        || (stick.x > threshold);
-
-    //何も入力していない状態
-    if (m_inputDir == 0)
-    {
-        //左入力があると
-        if (isMoveLeft)
-        {
-            m_inputDir = 1;
-        }
-        //右入力があると
-        else if (isMoveRight)
-        {
-            m_inputDir = -1;
-        }
-    }
-    //左入力している場合
-    else if (m_inputDir == 1)
-    {
-        //左入力を離す
-        if (!isMoveLeft)
-        {
-            //右入力がされていたら
-            if (isMoveRight)
-            {
-                m_inputDir = -1;    //右入力状態へ
-            }
-            //入力されていなかったら
-            else
-            {
-                m_inputDir = 0;     //入力なし状態へ
-            }
-        }
-    }
-    //右入力している場合
-    else if (m_inputDir == -1)
-    {
-        //右入力を離す
-        if (!isMoveRight) 
-        {
-            //左入力がされていたら
-            if (isMoveLeft)
-            {
-                m_inputDir = 1;     //左入力状態へ
-            }
-            else
-            {
-                m_inputDir = 0;     //入力なし状態へ
-            }
-        }
-    }
-
-    //ボタンを押していなかったらアイドルのアニメーション
-   if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
-       || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
-       fabs(input.GetLeftAnalogStick().x) > 0.5f))
-   {
-       m_player.PlayAnimation("Idle");
-   }
 
     // 重力を加算
     m_velY += m_gravity * deltaTime;
@@ -150,60 +159,81 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
     }
 
-    float aimRightStick = 0.3;
+    //キャラの移動処理
+ 
+    //ノックバック中出ない場合のみ移動
+    if (!m_isKnockback)
+    {
 
-    bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
 
-        //右スティックを倒すと指示線表示
-        if (aiming)
+        //右入力があるか
+        bool isMoveLeft =
+            input.GetKeyPress(VK_A)
+            || input.GetButtonPress(XINPUT_LEFT)
+            || (stick.x < -threshold);
+
+        //左入力があるか
+        bool isMoveRight =
+            input.GetKeyPress(VK_D)
+            || input.GetButtonPress(XINPUT_RIGHT)
+            || (stick.x > threshold);
+
+        //何も入力していない状態
+        if (m_inputDir == 0)
         {
-
-            //ガイドライン表示
-            m_guideline.SetColor(1, 1, 1, 0.5);
-
-            //プレイヤーの位置取得
-            auto p = m_player.GetPos();
-
-            //角度を右スティック方向に合わせる
-            float angleRad = atan2(rightStick.y, rightStick.x);
-
-            //プレイヤーの中心に指示線の左端が来るように
-            m_guideline.SetPos(p.x + ((m_height * 3.5)/2), p.y, p.z);
-
-            //ラジアンを度へ変換
-            float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
-
-            //回転の中心を左端に移動
-            m_guideline.SetPivot( ( ( -m_height * 3.5) / 2), 0, 0);
-
-            //角度を設定
-            m_guideline.SetAngle(angleDeg);
-
-            //指示線を更新
-            m_guideline.Update(deltaTime);
-
-            if (m_inputDir == 0)
+            //左入力があると
+            if (isMoveLeft)
             {
-                if (rightStick.x > 0)
+                m_inputDir = 1;
+            }
+            //右入力があると
+            else if (isMoveRight)
+            {
+                m_inputDir = -1;
+            }
+        }
+        //左入力している場合
+        else if (m_inputDir == 1)
+        {
+            //左入力を離す
+            if (!isMoveLeft)
+            {
+                //右入力がされていたら
+                if (isMoveRight)
                 {
-                    m_player.PlayAnimation("Right");
+                    m_inputDir = -1;    //右入力状態へ
                 }
-                else if (rightStick.x < 0)
+                //入力されていなかったら
+                else
                 {
-
-                    m_player.PlayAnimation("Left");
+                    m_inputDir = 0;     //入力なし状態へ
+                }
+            }
+        }
+        //右入力している場合
+        else if (m_inputDir == -1)
+        {
+            //右入力を離す
+            if (!isMoveRight)
+            {
+                //左入力がされていたら
+                if (isMoveLeft)
+                {
+                    m_inputDir = 1;     //左入力状態へ
                 }
                 else
                 {
-                    m_player.PlayAnimation("Idle");
+                    m_inputDir = 0;     //入力なし状態へ
                 }
             }
-         
         }
-        else
+
+        //ボタンを押していなかったらアイドルのアニメーション
+        if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
+            || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
+            fabs(input.GetLeftAnalogStick().x) > 0.5f))
         {
-            //透明に
-            m_guideline.SetColor(1, 1, 1, 0);
+            m_player.PlayAnimation("Idle");
         }
 
         //左入力状態なら左移動
@@ -221,14 +251,82 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
 
 
-    // ジャンプ入力（地面にいる場合のみ）
-    if (m_isOnGround && input.GetKeyTrigger(VK_SPACE) ||( m_isOnGround && input.GetButtonTrigger(XINPUT_A)))
+        // ジャンプ入力（地面にいる場合のみ）
+        if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) {
+            m_velY = -m_jumpPower; // 上方向にジャンプ
+            m_isOnGround = false;
+            Log("じゃーんぷ");
+        }
+    }
+    else
     {
-        m_velY = -m_jumpPower; // 上方向にジャンプ
-        m_isOnGround = false;
-        Log("じゃーんぷ");
+        //ノックバック中は強制移動
+        pos.x += m_knockbackVelocity.x * deltaTime;
+        pos.y -= m_knockbackVelocity.y * deltaTime;
+
+        // ノックバック速度を減衰
+        m_knockbackVelocity.x *= 0.95f;
+        m_knockbackVelocity.y *= 0.95f;
     }
 
+
+
+    float aimRightStick = 0.3;
+
+    bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
+
+    //右スティックを倒すと指示線表示
+    if (aiming)
+    {
+
+        //ガイドライン表示
+        m_guideline.SetColor(1, 1, 1, 0.5);
+
+        //プレイヤーの位置取得
+        auto p = m_player.GetPos();
+
+        //角度を右スティック方向に合わせる
+        float angleRad = atan2(rightStick.y, rightStick.x);
+
+        //プレイヤーの中心に指示線の左端が来るように
+        m_guideline.SetPos(p.x + ((m_height * 3.5) / 2), p.y, p.z);
+
+        //ラジアンを度へ変換
+        float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
+
+        //回転の中心を左端に移動
+        m_guideline.SetPivot(((-m_height * 3.5) / 2), 0, 0);
+
+        //角度を設定
+        m_guideline.SetAngle(angleDeg);
+
+        //指示線を更新
+        m_guideline.Update(deltaTime);
+
+        if (m_inputDir == 0)
+        {
+            if (rightStick.x > 0)
+            {
+                m_player.PlayAnimation("Right");
+            }
+            else if (rightStick.x < 0)
+            {
+
+                m_player.PlayAnimation("Left");
+            }
+            else
+            {
+                m_player.PlayAnimation("Idle");
+            }
+        }
+
+    }
+    else
+    {
+        //透明に
+        m_guideline.SetColor(1, 1, 1, 0);
+    }
+    
     if (m_isOnGround) {
         Log("toberu");
     }

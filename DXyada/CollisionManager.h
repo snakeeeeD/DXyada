@@ -86,8 +86,7 @@ private:
 
     SceneManager* m_sceneMgr = nullptr;
 
-    AABB GetAABB(Object* obj);
-    bool CheckOverlap(const AABB& a, const AABB& b);
+ 
     DirectX::XMFLOAT2 GetMTV(const AABB& a, const AABB& b);
 
 public:
@@ -108,4 +107,7 @@ public:
     }
 
     void SetSceneManager(SceneManager* mgr) { m_sceneMgr = mgr; }
+
+    AABB GetAABB(Object* obj);
+    bool CheckOverlap(const AABB& a, const AABB& b);
 };
