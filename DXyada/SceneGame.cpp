@@ -6,6 +6,23 @@ extern Input input;
 
 extern DirectX::XMFLOAT3 g_cameraPos;
 
+#include <Xinput.h>
+#pragma comment(lib, "xinput.lib")
+
+void CheckAllPads()
+{
+    XINPUT_STATE state{};
+    for (DWORD i = 0; i < 4; i++)
+    {
+        if (XInputGetState(i, &state) == ERROR_SUCCESS)
+        {
+            char buf[64];
+            sprintf_s(buf, "Pad Connected: index %d", i);
+            MessageBoxA(NULL, buf, "XInput", MB_OK);
+        }
+    }
+}
+
 SceneGame::SceneGame(int stageNum)
 {
     m_stageNumber = stageNum;
@@ -13,13 +30,16 @@ SceneGame::SceneGame(int stageNum)
 
 void SceneGame::Init()
 {
+    CheckAllPads();
     // 選択されたステージ番号でロード
     m_stageManager.LoadStage(m_stageNumber);
 
 
-    Pouse_BackGround.Init("asset/Pouse.png");
+    Pouse_BackGround.Init();
+    Pouse_BackGround.AddTexture("asset/Pouse.png");
 
-    GameOver_BackGround.Init("asset/GameOver.png");
+    GameOver_BackGround.Init();
+    GameOver_BackGround.AddTexture("asset/GameOver.png");
 }
 
 void SceneGame::Update(SceneManager& mgr)

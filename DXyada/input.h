@@ -70,11 +70,15 @@ private:
 
 	int VibrationTime; //振動継続時間をカウントする変数
 
+	int m_padIndex = -1;
+
 public:
 
 	Input(); //コンストラクタ
 	~Input(); //デストラクタ
 	void Update(); //更新
+
+	bool IsPadConnected() const { return m_padIndex != -1; }
 
 	//キー入力
 	bool GetKeyPress(int key);   //プレス(押している間ずっと)

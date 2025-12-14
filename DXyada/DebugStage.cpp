@@ -14,7 +14,8 @@ void DebugStage::Init()
     m_player.GetObject()->SetPos(0, -200, 0);
 
     // îwåi
-    m_background.Init("asset/aa.png");
+    m_background.Init();
+    m_background.AddTexture("asset/aa.png");
     m_background.SetPos(0, 0, 0);
     m_background.SetSize(19200, 10800, 0);
 

@@ -11,7 +11,8 @@ void Stage2::Init()
     m_player.GetObject()->SetPos(150, -50, 0);
 
     // îwåi
-    m_background.Init("asset/aa.png");
+    m_background.Init();
+    m_background.AddTexture("asset/aa.png");
     m_background.SetPos(0, 0, 0);
     m_background.SetSize(19200, 10800, 0);
 

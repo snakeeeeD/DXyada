@@ -4,15 +4,18 @@
 void Stage1::Init() {
     m_collision = new CollisionManager();
 
-    m_background.Init("asset/aa.png");
+    m_background.Init();
+    m_background.AddTexture("asset/aa.png");
     m_background.SetPos(0, 0, 0);
     m_background.SetSize(19200, 10800, 0);
 
-    m_usiro.Init("asset/block.png");
+    m_usiro.Init();
+    m_usiro.AddTexture("asset/block.png");
     m_usiro.SetPos(100, 0, 0);
     m_usiro.SetSize(100, 100, 0);
 
-    m_mae.Init("asset/block.png");
+    m_mae.Init();
+    m_mae.AddTexture("asset/block.png");
     m_mae.SetPos(0, 0, 0);
     m_mae.SetSize(100, 100, 0);
     

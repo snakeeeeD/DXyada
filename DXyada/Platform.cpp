@@ -6,7 +6,8 @@ void Platform::Init() {
 
 // ˆø”•t‚« Init
 void Platform::Init(const char* texture, float x, float y, float width, float height) {
-    m_object.Init(texture);
+    m_object.Init();
+    m_object.AddTexture(texture);
     m_object.SetPos(x, y, 0);
     m_object.SetSize(width, height, 0);
 }

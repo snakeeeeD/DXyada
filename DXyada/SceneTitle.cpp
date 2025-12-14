@@ -8,7 +8,8 @@ void SceneTitle::Init() {
     // ƒ^ƒCƒgƒ‹‰æ–Ê‰Šú‰»
     g_cameraPos = { 0, 0, 0 };
 
-    m_title.Init("asset/title.png");
+    m_title.Init();
+    m_title.AddTexture("asset/title.png");
     m_title.SetPos(0, 0, 0);
     m_title.SetSize(1920, 1080, 1);
 }

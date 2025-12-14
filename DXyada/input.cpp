@@ -22,25 +22,37 @@ Input::~Input()
 
 void Input::Update()
 {
-	//1フレーム前の入力を記録しておく
-	for (int i = 0; i < 256; i++) { keyState_old[i] = keyState[i]; }
+
+	// 1フレーム前の入力保存
+	for (int i = 0; i < 256; i++) keyState_old[i] = keyState[i];
 	controllerState_old = controllerState;
 
-	//キー入力を更新
-	BOOL hr = GetKeyboardState(keyState);
+	// キーボード
+	GetKeyboardState(keyState);
 
-	//コントローラー入力を更新(XInput)
-	XInputGetState(0, &controllerState);
+	// ---- Pad index 自動検出 ----
+	m_padIndex = -1;
+	ZeroMemory(&controllerState, sizeof(XINPUT_STATE));
 
-	//振動継続時間をカウント
-	if (VibrationTime > 0) {
+	for (int i = 0; i < 4; i++)
+	{
+		XINPUT_STATE state{};
+		if (XInputGetState(i, &state) == ERROR_SUCCESS)
+		{
+			m_padIndex = i;
+			controllerState = state;
+			break;
+		}
+	}
+
+	// ---- 振動時間管理 ----
+	if (VibrationTime > 0)
+	{
 		VibrationTime--;
-		if (VibrationTime == 0) { //振動継続時間が経った時に振動を止める
-			XINPUT_VIBRATION vibration;
-			ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
-			vibration.wLeftMotorSpeed = 0;
-			vibration.wRightMotorSpeed = 0;
-			XInputSetState(0, &vibration);
+		if (VibrationTime == 0 && m_padIndex != -1)
+		{
+			XINPUT_VIBRATION vibration{};
+			XInputSetState(m_padIndex, &vibration);
 		}
 	}
 }
