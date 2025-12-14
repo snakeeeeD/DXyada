@@ -4,6 +4,8 @@
 
 extern Input input;
 
+extern DirectX::XMFLOAT3 g_cameraPos;
+
 SceneGame::SceneGame(int stageNum)
 {
     m_stageNumber = stageNum;
@@ -16,13 +18,8 @@ void SceneGame::Init()
 
 
     Pouse_BackGround.Init("asset/Pouse.png");
-    Pouse_BackGround.SetPos(0, 0, 0);
-    Pouse_BackGround.SetColor(1, 1, 1,0.5);
-    Pouse_BackGround.SetSize(0, 0, 0);
 
     GameOver_BackGround.Init("asset/GameOver.png");
-    GameOver_BackGround.SetPos(0, 0, 0);
-    GameOver_BackGround.SetSize(0, 0, 0);
 }
 
 void SceneGame::Update(SceneManager& mgr)
@@ -68,12 +65,14 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
         // ƒvƒŒƒCƒ„[Ž€–S”»’è
         StageBase* stage = m_stageManager.GetStage();
         if (stage && stage->IsPlayerDead()) {
-            
+            m_state = GameState::GameOver;
             return;
         }
 }
 void SceneGame::UpdatePouse(SceneManager& mgr) {
     Pouse_BackGround.SetSize(1920, 1080, 0);
+    Pouse_BackGround.SetColor(1, 1, 1, 0.3);
+    Pouse_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
 
     if (input.GetKeyTrigger(VK_ESCAPE)) {
         m_state = GameState::Playing;
@@ -92,6 +91,7 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
 }
 void SceneGame::UpdateGameOver(SceneManager& mgr) {
     GameOver_BackGround.SetSize(1920, 1080, 0);
+    GameOver_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
 
     if (input.GetKeyTrigger(VK_RETURN))
     {

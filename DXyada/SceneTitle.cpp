@@ -10,7 +10,7 @@ void SceneTitle::Init() {
 
     m_title.Init("asset/title.png");
     m_title.SetPos(0, 0, 0);
-    m_title.SetSize(1920, 1080, 0);
+    m_title.SetSize(1920, 1080, 1);
 }
 
 void SceneTitle::Update(SceneManager& mgr) {

@@ -87,13 +87,35 @@ void Stage2::Update()
     // カメラ追従
     m_camera.Update(m_player.GetObject()->GetPos());
 
+    for (auto& enemy : m_enemies) {
+        enemy.Update(dt);
+
+        //プレイヤーと敵との衝突判定
+        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+        auto enemyAABB = m_collision->GetAABB(enemy.GetObject());
+
+        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
+        {
+            // ノックバック方向を計算（プレイヤー位置 - 敵位置）
+            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+            DirectX::XMFLOAT3 enemyPos = enemy.GetObject()->GetPos();
+
+            DirectX::XMFLOAT2 knockbackDir = {
+                playerPos.x - enemyPos.x,
+                playerPos.y - enemyPos.y
+            };
+
+            m_player.TakeDamage(1, knockbackDir);
+        }
+    }
+
     // 衝突判定
     m_collision->CheckAll();
 
     // 死亡判定（プレイヤーのHPで判定）
-    //if (m_player.GetHP() <= 0) {
-       m_isPlayerDead = true;
-    //}
+    if (m_player.isDead()) {
+        m_isPlayerDead = true;
+    }
 }
 
 void Stage2::Draw()

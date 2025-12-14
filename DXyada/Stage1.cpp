@@ -114,8 +114,7 @@ void Stage1::Update() {
     // コリジョン更新
     m_collision->CheckAll();
 
-    // 死亡判定（あなたの処理に合わせて書き換え可能）
-    if (m_player.isDead()) {  // ← この条件を追加
+    if (m_player.isDead()) {  
         m_isPlayerDead = true;
     }
 }

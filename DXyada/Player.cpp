@@ -10,16 +10,16 @@ DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
 
 void Player::Init() {
 
-    m_player.Init("asset/char01.png", 3, 4);
+    m_player.Init("asset/char01.png",3,4);
     m_player.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
     m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
     m_player.AddAnimation({ "Down",0,0,2,3,true,1 });
     m_player.AddAnimation({ "Left",1,0,2,3,true,1 });
-    m_player.AddAnimation({ "Right",2,0,2,3,true,1 });
-    m_player.AddAnimation({ "Up",3,0,2,3,true,1 });
-    m_player.AddAnimation({ "Idle",0,0,0,0,true,1 });
+    m_player.AddAnimation({"Right",2,0,2,3,true,1 });
+    m_player.AddAnimation({"Up",0,2,3,true,1 });
+    m_player.AddAnimation({"Idle",0,0,0,0,true,1 });
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -84,6 +84,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
     {
+        
         return;
     }
 
