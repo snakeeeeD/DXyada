@@ -182,9 +182,11 @@
     <ClInclude Include="StageManager.h">
       <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
     </ClInclude>
-    <ClInclude Include="DebugStage.h" />
     <ClInclude Include="Ribbon.h">
       <Filter>ソース ファイル\02-Object管理\04-Ribbon</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugStage.h">
+      <Filter>ソース ファイル\20-Stage管理\999-DebugStage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
