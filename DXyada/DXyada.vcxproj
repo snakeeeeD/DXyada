@@ -139,7 +139,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="Ribbon.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneID.h" />
@@ -155,7 +154,6 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-Ribbon.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DebugStage.cpp" />
