@@ -19,7 +19,8 @@ void Player::Init() {
     m_player.AddAnimation("Left", "asset/char01.png", 3, 4, 1, 0, 2, 3, true, 1);
     m_player.AddAnimation("Right", "asset/char01.png", 3, 4, 2, 0, 2, 3, true, 1);
     m_player.AddAnimation("Up", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
-    m_player.AddAnimation("Idle", "asset/char01.png", 3, 4, 0, 0, 0, 0, true, 1);
+    m_player.AddAnimation("LeftIdle", "asset/char01.png", 3, 4, 1, 0, 0, 0, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/char01.png", 3, 4, 2, 0, 0, 0, true, 1);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -188,12 +189,15 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             //左入力があると
             if (isMoveLeft)
             {
-                m_inputDir = 1;
+                m_inputDir = 1; 
+                m_isLastRightDirection = false;
             }
             //右入力があると
             else if (isMoveRight)
             {
-                m_inputDir = -1;
+                m_inputDir = -1; 
+                m_isLastRightDirection = true;
+
             }
         }
         //左入力している場合
@@ -206,11 +210,13 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 if (isMoveRight)
                 {
                     m_inputDir = -1;    //右入力状態へ
+                    m_isLastRightDirection = true;
                 }
                 //入力されていなかったら
                 else
                 {
                     m_inputDir = 0;     //入力なし状態へ
+                    m_isLastRightDirection = false;
                 }
             }
         }
@@ -224,10 +230,12 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 if (isMoveLeft)
                 {
                     m_inputDir = 1;     //左入力状態へ
+                    m_isLastRightDirection = false;
                 }
                 else
                 {
                     m_inputDir = 0;     //入力なし状態へ
+                    m_isLastRightDirection = true;
                 }
             }
         }
@@ -237,7 +245,14 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
             fabs(input.GetLeftAnalogStick().x) > 0.5f))
         {
-            m_player.PlayAnimation("Idle");
+            if (m_isLastRightDirection)
+            {
+                m_player.PlayAnimation("RightIdle");
+            }
+            else if (!m_isLastRightDirection)
+            {
+                m_player.PlayAnimation("LeftIdle");
+            }
         }
 
         //左入力状態なら左移動
@@ -312,15 +327,24 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             if (rightStick.x > 0)
             {
                 m_player.PlayAnimation("Right");
+                m_isLastRightDirection = true;
             }
             else if (rightStick.x < 0)
             {
 
                 m_player.PlayAnimation("Left");
+                m_isLastRightDirection = false;
             }
             else
             {
-                m_player.PlayAnimation("Idle");
+                if (m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("RightIdle");
+                }
+                else if (!m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("LeftIdle");
+                }
             }
         }
 
@@ -336,9 +360,38 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     m_ribbon.Update(deltaTime);
 
     // キー入力
-    if (input.GetKeyTrigger(VK_X))
+    if (input.GetKeyTrigger(VK_X) || input.GetRightTrigger())
     {
-        m_ribbon.Throw({ 1.0f, 0.5f }); // 仮方向
+        //右スティックか倒されてるか確認
+        if (aiming)
+        {
+            //右スティックの状態を正規化して送る
+            float length = sqrt(rightStick.x * rightStick.x + rightStick.y * rightStick.y);
+            DirectX::XMFLOAT2 direction = { rightStick.x / length , rightStick.y / length };
+            m_ribbon.Throw(direction);
+        }
+        else
+        {
+            // 右スティックが倒されていない場合は最後に向いた方向
+            if (m_isLastRightDirection)
+            {
+                m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
+            }
+            else
+            {
+                m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
+            }
+            m_isRibbonOut = true;
+        }
+
+    }
+    else
+    {
+        if (m_isRibbonOut)
+        {
+            m_ribbon.Return();
+            m_isRibbonOut = false;
+        }
     }
 
 

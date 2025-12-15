@@ -23,6 +23,8 @@ private:
 	float m_width = 100.0f;
 	float m_height = 150.0f;
 
+	bool m_isLastRightDirection = true;	//最終右むいてるか
+
 
 	int m_inputDir = 0;	//プレイヤーの左右入力優先用　0：入力なし　1：左入力　-1：右入力
 
@@ -38,6 +40,9 @@ private:
 	float m_knockbackTimer;
 	float m_knockbackDuration;
 	DirectX::XMFLOAT2 m_knockbackVelocity;
+
+	//リボン用
+	bool m_isRibbonOut = false;	//リボンが出ているかどうか
 
 	//実験用
 	float t;
@@ -57,6 +62,7 @@ public:
 	int GetMaxHP() const { return m_maxhp; }
 	bool isDead() const { return m_hp <= 0; }
 	bool IsInvincible() const { return m_isInvincible; }
+	bool IsLastDirection() const { return m_isLastRightDirection; }	//最終向いてた方向を取得
 
 	// リボン取得用
 	Ribbon& GetRibbon();
