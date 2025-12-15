@@ -27,7 +27,7 @@ void Stage1::Init() {
     Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1800, 50);
 
     Enemy e;
-    e.Init("asset/title.png", 300, -50, 100, 100);
+    e.Init("asset/title.png", 1000, -50, 100, 100);
     m_enemies.push_back(e);
 
     m_platforms = { plat1, plat2, plat3 };

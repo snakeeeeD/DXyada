@@ -216,7 +216,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 else
                 {
                     m_inputDir = 0;     //入力なし状態へ
-                    m_isLastRightDirection = false;
                 }
             }
         }
@@ -235,7 +234,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 else
                 {
                     m_inputDir = 0;     //入力なし状態へ
-                    m_isLastRightDirection = true;
                 }
             }
         }
@@ -363,8 +361,9 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     bool isRTPressed = rightTrigger > 0.5f;
 
     // キー入力
-    if (input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed))
+    if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
     {
+        Log("リボンを投げる！");  // ← ここにもログ追加
         //右スティックか倒されてるか確認
         if (aiming)
         {
@@ -384,15 +383,16 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             {
                 m_ribbon.Throw({ -1.0f, 0.5f }); // 左方向
             }
-            m_isRibbonOut = true;
         }
+        m_isRibbonOut = true;
 
     }
     
-    if(!isRTPressed && m_wasRTPressed)
+    if(!isRTPressed && m_wasRTPressed && m_isRibbonOut)
     {
         if (m_isRibbonOut)
         {
+            Log("リボンを戻す！");  // ← ここにもログ追加
             m_ribbon.Return();
             m_isRibbonOut = false;
         }

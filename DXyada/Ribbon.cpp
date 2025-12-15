@@ -70,7 +70,7 @@ void Ribbon::SetPlayerPos(const XMFLOAT2& pos)
 //====================================================
 void Ribbon::Throw(const XMFLOAT2& dir)
 {
-    if (m_state != State::Idle)
+    if (m_state == State::Throwing)
         return;
 
     // 方向ベクトル正規化
@@ -146,11 +146,11 @@ void Ribbon::Update(float deltaTime)
             seg.obj->SetPos(seg.pos.x, seg.pos.y, 0);
         }
 
-        // 一定時間で戻り始める
-        if (m_time > 0.35f)
-        {
-            m_state = State::Returning;
-        }
+        //// 一定時間で戻り始める
+        //if (m_time > 0.35f)
+        //{
+        //    m_state = State::Returning;
+        //}
     }
     //--------------------------------------------
     // 戻り中
