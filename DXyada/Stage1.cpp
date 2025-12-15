@@ -80,6 +80,17 @@ void Stage1::Init() {
     item.obj = &m_mae;
     item.layer = DrawLayer::FrontObject;
     m_drawList.push_back(item);
+
+
+    // ƒŠƒ{ƒ“•`‰æ“o˜^
+    for (auto* obj : m_player.GetRibbon().GetDrawObjects())
+    {
+        DrawItem item;
+        item.obj = obj;
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+    }
+
 }
 
 void Stage1::Update() {
@@ -109,15 +120,6 @@ void Stage1::Update() {
 
             m_player.TakeDamage(1, knockbackDir);
         }
-    }
-
-    // ƒŠƒ{ƒ“•`‰æ“o˜^
-    for (auto* obj : m_player.GetRibbon().GetDrawObjects())
-    {
-        DrawItem item;
-        item.obj = obj;
-        item.layer = DrawLayer::BackObject;
-        m_drawList.push_back(item);
     }
 
 
