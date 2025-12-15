@@ -111,6 +111,16 @@ void Stage1::Update() {
         }
     }
 
+    // ƒŠƒ{ƒ“•`‰æ“o˜^
+    for (auto* obj : m_player.GetRibbon().GetDrawObjects())
+    {
+        DrawItem item;
+        item.obj = obj;
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+    }
+
+
     // ƒJƒƒ‰XV
     m_camera.Update(m_player.GetObject()->GetPos());
 

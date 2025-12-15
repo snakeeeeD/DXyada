@@ -6,15 +6,16 @@
 #include "Player.h"
 #include "Camera2D.h"
 #include "CollisionManager.h"
+#include "Ribbon.h"
 
 enum class DrawLayer {
-    Background = 0,  
-    BackObject = 1,  
-    StageObject = 2, 
-    Enemy = 3,       
-    Player = 4,       
-    FrontObject = 5,  
-    UI = 6         
+    Background = 0,
+    BackObject = 1,
+    StageObject = 2,
+    Enemy = 3,
+    Player = 4,
+    FrontObject = 5,
+    UI = 6
 };
 
 struct DrawItem {

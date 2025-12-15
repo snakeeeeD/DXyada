@@ -15,11 +15,11 @@ void Player::Init() {
     m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
-    m_player.AddAnimation("Down","asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
-    m_player.AddAnimation("Left", "asset/char01.png", 3, 4, 1,0,2,3,true,1);
-    m_player.AddAnimation("Right", "asset/char01.png", 3, 4, 2,0,2,3,true,1);
+    m_player.AddAnimation("Down", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
+    m_player.AddAnimation("Left", "asset/char01.png", 3, 4, 1, 0, 2, 3, true, 1);
+    m_player.AddAnimation("Right", "asset/char01.png", 3, 4, 2, 0, 2, 3, true, 1);
     m_player.AddAnimation("Up", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
-    m_player.AddAnimation("Idle", "asset/char01.png", 3, 4, 0,0,0,0,true,1);
+    m_player.AddAnimation("Idle", "asset/char01.png", 3, 4, 0, 0, 0, 0, true, 1);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -33,17 +33,19 @@ void Player::Init() {
     m_isInvincible = false;
     m_Invincibletimer = 0.0f;
     m_InvincibleDuration = 2.0f;    //二秒間無敵
-    
+
     //ノックバック初期化
     m_isKnockback = false;
     m_knockbackTimer = 0.0f;
     m_knockbackDuration = 0.6f;  // 0.3秒間ノックバック
     m_knockbackVelocity = { 0.0f, 0.0f };
-    
+
     m_guideline.Init();
     m_guideline.AddTexture("asset/block.png");
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
     m_guideline.SetSize((m_height * 3.5), 20, 0);  //身長の3.5倍の長さ
+
+    m_ribbon.Init();
 }
 
 void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
@@ -70,14 +72,14 @@ void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
     }
 
     // 上方向に最低限のノックバック速度を保証
-    if (m_knockbackVelocity.y > -200.0f) 
-    {  
+    if (m_knockbackVelocity.y > -200.0f)
+    {
         m_knockbackVelocity.y = -400.0f;
     }
 }
 
-void Player::SetPos(float Pos_X,float Pos_Y) {
-    m_player.SetPos(Pos_X , Pos_Y, 0);
+void Player::SetPos(float Pos_X, float Pos_Y) {
+    m_player.SetPos(Pos_X, Pos_Y, 0);
 }
 
 void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy) {
@@ -85,7 +87,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
     {
-        
+
         return;
     }
 
@@ -162,7 +164,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     }
 
     //キャラの移動処理
- 
+
     //ノックバック中出ない場合のみ移動
     if (!m_isKnockback)
     {
@@ -328,7 +330,19 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         //透明に
         m_guideline.SetColor(1, 1, 1, 0);
     }
-    
+
+    // 毎フレーム
+    m_ribbon.SetPlayerPos({ pos.x, pos.y });
+    m_ribbon.Update(deltaTime);
+
+    // キー入力
+    if (input.GetKeyTrigger(VK_X))
+    {
+        m_ribbon.Throw({ 1.0f, 0.5f }); // 仮方向
+    }
+
+
+
     if (m_isOnGround) {
         //Log("toberu");
     }
@@ -356,3 +370,8 @@ void Player::Uninit() {
     m_guideline.UnInit();
 }
 
+// Ribbon 取得
+Ribbon& Player::GetRibbon()
+{
+    return m_ribbon;
+}

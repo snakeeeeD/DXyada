@@ -139,6 +139,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Ribbon.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneID.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Ribbon.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneSelect.cpp" />
