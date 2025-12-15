@@ -42,7 +42,8 @@ private:
 	DirectX::XMFLOAT2 m_knockbackVelocity;
 
 	//リボン用
-	bool m_isRibbonOut = false;	//リボンが出ているかどうか
+	bool m_isRibbonOut = false;		//リボンが出ているかどうか
+	bool m_wasRTPressed = false;	//前フレームにRTが押されてるか
 
 	//実験用
 	float t;

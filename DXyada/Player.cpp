@@ -359,13 +359,26 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     // 毎フレーム
     m_ribbon.SetPlayerPos({ pos.x, pos.y });
     m_ribbon.Update(deltaTime);
+<<<<<<< Updated upstream
   
         // キー入力
         if (input.GetKeyTrigger(VK_X) || input.GetRightTrigger())
+=======
+
+    float rightTrigger = input.GetRightTrigger();
+    bool isRTPressed = rightTrigger > 0.5f;
+
+    // キー入力
+    if (input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed))
+    {
+        //右スティックか倒されてるか確認
+        if (aiming)
+>>>>>>> Stashed changes
         {
             //右スティックか倒されてるか確認
             if (aiming)
             {
+<<<<<<< Updated upstream
                 //右スティックの状態を正規化して送る
                 float length = sqrt(rightStick.x * rightStick.x + rightStick.y * rightStick.y);
                 DirectX::XMFLOAT2 direction = { rightStick.x / length , rightStick.y / length };
@@ -383,10 +396,25 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                     m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
                 }
                 m_isRibbonOut = true;
+=======
+                m_ribbon.Throw({ 1.0f, 0.5f }); // 右方向
+            }
+            else
+            {
+                m_ribbon.Throw({ -1.0f, 0.5f }); // 左方向
+>>>>>>> Stashed changes
             }
 
+<<<<<<< Updated upstream
         }
         else
+=======
+    }
+    
+    if(!isRTPressed && m_wasRTPressed)
+    {
+        if (m_isRibbonOut)
+>>>>>>> Stashed changes
         {
             if (m_isRibbonOut)
             {
@@ -396,7 +424,10 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
     
 
+    //次フレームのために現在の状態を保持
+    m_wasRTPressed = isRTPressed;
 
+<<<<<<< Updated upstream
         if (m_isOnGround) {
             //Log("toberu");
         }
@@ -405,6 +436,13 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
         // Objectのアニメーション更新
         m_player.Update(deltaTime);
+=======
+    // 最終的な位置セット
+    m_player.SetPos(pos.x, pos.y, pos.z);
+
+    // Objectのアニメーション更新
+    m_player.Update(deltaTime);
+>>>>>>> Stashed changes
 
     
 }
