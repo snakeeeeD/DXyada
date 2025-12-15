@@ -72,6 +72,9 @@ public:
     // プレイヤー位置セット
     void SetPlayerPos(const DirectX::XMFLOAT2& pos);
 
+    // 現在のリボン状態を取得
+    State GetState() const { return m_state; }
+
     // 投げる
     void Throw(const DirectX::XMFLOAT2& direction);
 

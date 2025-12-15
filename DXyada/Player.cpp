@@ -165,129 +165,130 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     }
 
     //キャラの移動処理
-
-    //ノックバック中出ない場合のみ移動
-    if (!m_isKnockback)
+    if (m_ribbon.GetState() != Ribbon::State::Throwing)
     {
-
-
-        //右入力があるか
-        bool isMoveLeft =
-            input.GetKeyPress(VK_A)
-            || input.GetButtonPress(XINPUT_LEFT)
-            || (stick.x < -threshold);
-
-        //左入力があるか
-        bool isMoveRight =
-            input.GetKeyPress(VK_D)
-            || input.GetButtonPress(XINPUT_RIGHT)
-            || (stick.x > threshold);
-
-        //何も入力していない状態
-        if (m_inputDir == 0)
+        //ノックバック中出ない場合のみ移動
+        if (!m_isKnockback)
         {
-            //左入力があると
-            if (isMoveLeft)
-            {
-                m_inputDir = 1; 
-                m_isLastRightDirection = false;
-            }
-            //右入力があると
-            else if (isMoveRight)
-            {
-                m_inputDir = -1; 
-                m_isLastRightDirection = true;
 
-            }
-        }
-        //左入力している場合
-        else if (m_inputDir == 1)
-        {
-            //左入力を離す
-            if (!isMoveLeft)
+
+            //右入力があるか
+            bool isMoveLeft =
+                input.GetKeyPress(VK_A)
+                || input.GetButtonPress(XINPUT_LEFT)
+                || (stick.x < -threshold);
+
+            //左入力があるか
+            bool isMoveRight =
+                input.GetKeyPress(VK_D)
+                || input.GetButtonPress(XINPUT_RIGHT)
+                || (stick.x > threshold);
+
+            //何も入力していない状態
+            if (m_inputDir == 0)
             {
-                //右入力がされていたら
-                if (isMoveRight)
-                {
-                    m_inputDir = -1;    //右入力状態へ
-                    m_isLastRightDirection = true;
-                }
-                //入力されていなかったら
-                else
-                {
-                    m_inputDir = 0;     //入力なし状態へ
-                    m_isLastRightDirection = false;
-                }
-            }
-        }
-        //右入力している場合
-        else if (m_inputDir == -1)
-        {
-            //右入力を離す
-            if (!isMoveRight)
-            {
-                //左入力がされていたら
+                //左入力があると
                 if (isMoveLeft)
                 {
-                    m_inputDir = 1;     //左入力状態へ
+                    m_inputDir = 1;
                     m_isLastRightDirection = false;
                 }
-                else
+                //右入力があると
+                else if (isMoveRight)
                 {
-                    m_inputDir = 0;     //入力なし状態へ
+                    m_inputDir = -1;
                     m_isLastRightDirection = true;
+
                 }
             }
-        }
-
-        //ボタンを押していなかったらアイドルのアニメーション
-        if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
-            || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
-            fabs(input.GetLeftAnalogStick().x) > 0.5f))
-        {
-            if (m_isLastRightDirection)
+            //左入力している場合
+            else if (m_inputDir == 1)
             {
-                m_player.PlayAnimation("RightIdle");
+                //左入力を離す
+                if (!isMoveLeft)
+                {
+                    //右入力がされていたら
+                    if (isMoveRight)
+                    {
+                        m_inputDir = -1;    //右入力状態へ
+                        m_isLastRightDirection = true;
+                    }
+                    //入力されていなかったら
+                    else
+                    {
+                        m_inputDir = 0;     //入力なし状態へ
+                        m_isLastRightDirection = false;
+                    }
+                }
             }
-            else if (!m_isLastRightDirection)
+            //右入力している場合
+            else if (m_inputDir == -1)
             {
-                m_player.PlayAnimation("LeftIdle");
+                //右入力を離す
+                if (!isMoveRight)
+                {
+                    //左入力がされていたら
+                    if (isMoveLeft)
+                    {
+                        m_inputDir = 1;     //左入力状態へ
+                        m_isLastRightDirection = false;
+                    }
+                    else
+                    {
+                        m_inputDir = 0;     //入力なし状態へ
+                        m_isLastRightDirection = true;
+                    }
+                }
+            }
+
+            //ボタンを押していなかったらアイドルのアニメーション
+            if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
+                || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
+                fabs(input.GetLeftAnalogStick().x) > 0.5f))
+            {
+                if (m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("RightIdle");
+                }
+                else if (!m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("LeftIdle");
+                }
+            }
+
+            //左入力状態なら左移動
+            if (m_inputDir == 1)
+            {
+                pos.x -= 200.0f * deltaTime;
+                m_player.PlayAnimation("Left");
+            }
+
+            //右入力状態なら右移動
+            if (m_inputDir == -1)
+            {
+                pos.x += 200.0f * deltaTime;
+                m_player.PlayAnimation("Right");
+            }
+
+
+            // ジャンプ入力（地面にいる場合のみ）
+            if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) {
+                m_velY = -m_jumpPower; // 上方向にジャンプ
+                m_isOnGround = false;
+                Log("じゃーんぷ");
             }
         }
-
-        //左入力状態なら左移動
-        if (m_inputDir == 1)
+        else
         {
-            pos.x -= 200.0f * deltaTime;
-            m_player.PlayAnimation("Left");
-        }
+            //ノックバック中は強制移動
+            pos.x += m_knockbackVelocity.x * deltaTime;
+            pos.y -= m_knockbackVelocity.y * deltaTime;
 
-        //右入力状態なら右移動
-        if (m_inputDir == -1)
-        {
-            pos.x += 200.0f * deltaTime;
-            m_player.PlayAnimation("Right");
-        }
-
-
-        // ジャンプ入力（地面にいる場合のみ）
-        if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) {
-            m_velY = -m_jumpPower; // 上方向にジャンプ
-            m_isOnGround = false;
-            Log("じゃーんぷ");
+            // ノックバック速度を減衰
+            m_knockbackVelocity.x *= 0.95f;
+            m_knockbackVelocity.y *= 0.95f;
         }
     }
-    else
-    {
-        //ノックバック中は強制移動
-        pos.x += m_knockbackVelocity.x * deltaTime;
-        pos.y -= m_knockbackVelocity.y * deltaTime;
-
-        // ノックバック速度を減衰
-        m_knockbackVelocity.x *= 0.95f;
-        m_knockbackVelocity.y *= 0.95f;
-    }
-
 
 
     float aimRightStick = 0.3;
@@ -358,55 +359,55 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     // 毎フレーム
     m_ribbon.SetPlayerPos({ pos.x, pos.y });
     m_ribbon.Update(deltaTime);
-
-    // キー入力
-    if (input.GetKeyTrigger(VK_X) || input.GetRightTrigger())
-    {
-        //右スティックか倒されてるか確認
-        if (aiming)
+  
+        // キー入力
+        if (input.GetKeyTrigger(VK_X) || input.GetRightTrigger())
         {
-            //右スティックの状態を正規化して送る
-            float length = sqrt(rightStick.x * rightStick.x + rightStick.y * rightStick.y);
-            DirectX::XMFLOAT2 direction = { rightStick.x / length , rightStick.y / length };
-            m_ribbon.Throw(direction);
-        }
-        else
-        {
-            // 右スティックが倒されていない場合は最後に向いた方向
-            if (m_isLastRightDirection)
+            //右スティックか倒されてるか確認
+            if (aiming)
             {
-                m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
+                //右スティックの状態を正規化して送る
+                float length = sqrt(rightStick.x * rightStick.x + rightStick.y * rightStick.y);
+                DirectX::XMFLOAT2 direction = { rightStick.x / length , rightStick.y / length };
+                m_ribbon.Throw(direction);
             }
             else
             {
-                m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
+                // 右スティックが倒されていない場合は最後に向いた方向
+                if (m_isLastRightDirection)
+                {
+                    m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
+                }
+                else
+                {
+                    m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
+                }
+                m_isRibbonOut = true;
             }
-            m_isRibbonOut = true;
-        }
 
-    }
-    else
-    {
-        if (m_isRibbonOut)
+        }
+        else
         {
-            m_ribbon.Return();
-            m_isRibbonOut = false;
+            if (m_isRibbonOut)
+            {
+                m_ribbon.Return();
+                m_isRibbonOut = false;
+            }
         }
-    }
+    
 
 
+        if (m_isOnGround) {
+            //Log("toberu");
+        }
+        // 最終的な位置セット
+        m_player.SetPos(pos.x, pos.y, pos.z);
 
-    if (m_isOnGround) {
-        //Log("toberu");
-    }
-    // 最終的な位置セット
-    m_player.SetPos(pos.x, pos.y, pos.z);
+        // Objectのアニメーション更新
+        m_player.Update(deltaTime);
 
-    // Objectのアニメーション更新
-    m_player.Update(deltaTime);
-
+    
 }
-
 
 void Player::Draw() {
     m_player.Draw(
