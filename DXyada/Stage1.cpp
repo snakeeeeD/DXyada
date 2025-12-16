@@ -166,4 +166,5 @@ void Stage1::UnInit() {
     m_player.Uninit();
 
     delete m_collision;
+    m_collision = nullptr;
 }

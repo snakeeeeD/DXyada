@@ -147,6 +147,8 @@ void SceneGame::Draw()
 
 void SceneGame::UnInit()
 {
+    Pouse_BackGround.UnInit();
+    GameOver_BackGround.UnInit();
     m_stageManager.Uninit();
 }
 

@@ -116,4 +116,5 @@ void SceneSelect::UnInit() {
     m_select.UnInit();
     m_stage1.UnInit();
     m_stage2.UnInit();
+    m_cursor.UnInit();
 }
