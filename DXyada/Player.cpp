@@ -4,7 +4,7 @@
 #include "Texture.h"
 #include "Object.h"
 #include "framework.h"
-//unko
+
 
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
@@ -294,7 +294,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
 
     //右スティックを倒すと指示線表示
-    if (aiming)
+    if (aiming && (m_ribbon.GetState()==Ribbon::State::Idle))
     {
 
         //ガイドライン表示

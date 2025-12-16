@@ -146,11 +146,11 @@ void Ribbon::Update(float deltaTime)
             seg.obj->SetPos(seg.pos.x, seg.pos.y, 0);
         }
 
-        //// ˆê’èŽžŠÔ‚Å–ß‚èŽn‚ß‚é
-        //if (m_time > 0.35f)
-        //{
-        //    m_state = State::Returning;
-        //}
+        // ˆê’èŽžŠÔ‚Å–ß‚èŽn‚ß‚é
+        if (m_time > 0.35f)
+        {
+            m_state = State::Returning;
+        }
     }
     //--------------------------------------------
     // –ß‚è’†

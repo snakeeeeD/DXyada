@@ -45,7 +45,7 @@ private:
     //==============================
     DirectX::XMFLOAT2 m_velocity{};
     float m_time = 0.0f;
-    float m_gravity = 1000.0f;
+    float m_gravity = 0.0f;
     float m_speed = 1400.0f;
 
     //==============================

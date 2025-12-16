@@ -71,6 +71,21 @@ void Stage2::Init()
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
+
+    item.obj = m_player.GetGuideLineObject();
+    item.layer = DrawLayer::BackObject;
+    m_drawList.push_back(item);
+
+
+
+    // ƒŠƒ{ƒ“•`‰æ“o˜^
+    for (auto* obj : m_player.GetRibbon().GetDrawObjects())
+    {
+        DrawItem item;
+        item.obj = obj;
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+    }
 }
 
 void Stage2::Update()
