@@ -20,10 +20,10 @@ void Player::Init() {
     m_player.AddAnimation("Left", "asset/char01.png", 3, 4, 1, 0, 2, 3, true, 1);
     m_player.AddAnimation("Right", "asset/char01.png", 3, 4, 2, 0, 2, 3, true, 1);
     m_player.AddAnimation("Up", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
-    m_player.AddAnimation("LeftIdle", "asset/char01.png", 3, 4, 1, 0, 0, 0, true, 1);
-    m_player.AddAnimation("RightIdle", "asset/char01.png", 3, 4, 2, 0, 0, 0, true, 1);
-    m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 1);
-    m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4,9, false, 1);
+    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png",  2, 1, 0, 0, 0, 0, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 2, 1, 0, 1, 1, 0, true, 1);
+    m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -250,14 +250,24 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             if (m_inputDir == 1)
             {
                 pos.x -= 200.0f * deltaTime;
-                m_player.PlayAnimation("RJump");
+                m_player.PlayAnimation("LJump");
             }
-
             //右入力状態なら右移動
-            if (m_inputDir == -1)
+            else if (m_inputDir == -1)
             {
                 pos.x += 200.0f * deltaTime;
-                m_player.PlayAnimation("LJump");
+                m_player.PlayAnimation("RJump");
+            }
+            else
+            {
+                if (m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("RJump");
+                }
+                else if (!m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("LJump");
+                }
             }
         }
         else {
