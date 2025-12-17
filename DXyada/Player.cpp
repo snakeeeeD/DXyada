@@ -22,6 +22,7 @@ void Player::Init() {
     m_player.AddAnimation("Up", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
     m_player.AddAnimation("LeftIdle", "asset/char01.png", 3, 4, 1, 0, 0, 0, true, 1);
     m_player.AddAnimation("RightIdle", "asset/char01.png", 3, 4, 2, 0, 0, 0, true, 1);
+    m_player.AddAnimation("Jump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4,10, true, 10);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -274,6 +275,13 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             m_velY = -m_jumpPower; // 上方向にジャンプ
             m_isOnGround = false;
             Log("じゃーんぷ");
+            m_player.PlayAnimation("Jump");
+   
+           
+        }
+        if (!m_isOnGround)
+        {
+            Log("じゃんぷっ");
         }
     }
     else
@@ -286,7 +294,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_knockbackVelocity.x *= 0.95f;
         m_knockbackVelocity.y *= 0.95f;
     }
-
 
 
     float aimRightStick = 0.3;
