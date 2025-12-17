@@ -415,8 +415,8 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_isRibbonOut = true;
 
     }
-    
-    if(!isRTPressed && m_wasRTPressed && m_isRibbonOut)
+    //キーボードでも複数回リボンを伸ばせるように修正
+    if ((m_ribbon.GetState() == Ribbon::State::Returning) || (!isRTPressed && m_wasRTPressed))
     {
         if (m_isRibbonOut)
         {
