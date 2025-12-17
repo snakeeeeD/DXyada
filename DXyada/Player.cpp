@@ -22,7 +22,8 @@ void Player::Init() {
     m_player.AddAnimation("Up", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
     m_player.AddAnimation("LeftIdle", "asset/char01.png", 3, 4, 1, 0, 0, 0, true, 1);
     m_player.AddAnimation("RightIdle", "asset/char01.png", 3, 4, 2, 0, 0, 0, true, 1);
-    m_player.AddAnimation("Jump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4,10, true, 10);
+    m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 1);
+    m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4,9, false, 1);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -239,50 +240,59 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 }
             }
         }
-
-        //ボタンを押していなかったらアイドルのアニメーション
-        if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
-            || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
-            fabs(input.GetLeftAnalogStick().x) > 0.5f))
-        {
-            if (m_isLastRightDirection)
-            {
-                m_player.PlayAnimation("RightIdle");
-            }
-            else if (!m_isLastRightDirection)
-            {
-                m_player.PlayAnimation("LeftIdle");
-            }
-        }
-
-        //左入力状態なら左移動
-        if (m_inputDir == 1)
-        {
-            pos.x -= 200.0f * deltaTime;
-            m_player.PlayAnimation("Left");
-        }
-
-        //右入力状態なら右移動
-        if (m_inputDir == -1)
-        {
-            pos.x += 200.0f * deltaTime;
-            m_player.PlayAnimation("Right");
-        }
-
-
         // ジャンプ入力（地面にいる場合のみ）
         if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) {
             m_velY = -m_jumpPower; // 上方向にジャンプ
             m_isOnGround = false;
-            Log("じゃーんぷ");
-            m_player.PlayAnimation("Jump");
-   
-           
+            //Log("じゃーんぷ");
         }
-        if (!m_isOnGround)
-        {
-            Log("じゃんぷっ");
+        if (!m_isOnGround) {
+            if (m_inputDir == 1)
+            {
+                pos.x -= 200.0f * deltaTime;
+                m_player.PlayAnimation("RJump");
+            }
+
+            //右入力状態なら右移動
+            if (m_inputDir == -1)
+            {
+                pos.x += 200.0f * deltaTime;
+                m_player.PlayAnimation("LJump");
+            }
         }
+        else {
+
+            //ボタンを押していなかったらアイドルのアニメーション
+            if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
+                || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
+                fabs(input.GetLeftAnalogStick().x) > 0.5f))
+            {
+                if (m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("RightIdle");
+                }
+                else if (!m_isLastRightDirection)
+                {
+                    m_player.PlayAnimation("LeftIdle");
+                }
+            }
+
+            //左入力状態なら左移動
+            if (m_inputDir == 1)
+            {
+                pos.x -= 200.0f * deltaTime;
+                m_player.PlayAnimation("Left");
+            }
+
+            //右入力状態なら右移動
+            if (m_inputDir == -1)
+            {
+                pos.x += 200.0f * deltaTime;
+                m_player.PlayAnimation("Right");
+            }
+
+        }
+
     }
     else
     {
