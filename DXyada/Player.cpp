@@ -8,6 +8,14 @@
 
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
+enum AnimState
+{
+Idle,
+Run, 
+Jump,
+Damage,
+Libbon
+};
 
 void Player::Init() {
 
@@ -24,6 +32,8 @@ void Player::Init() {
     m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
     m_player.AddAnimation("LDamage", "asset/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
     m_player.AddAnimation("RDamage", "asset/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
+    m_player.AddAnimation("LOutLibbon", "asset/Player_Ribbon.png", 5, 2, 0, 0, 4, 9, false, 2);
+    m_player.AddAnimation("ROutLibbon", "asset/Player_Ribbon.png", 5, 2, 1, 0, 4, 9, false, 2);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -50,6 +60,10 @@ void Player::Init() {
     m_guideline.AddTexture("asset/block.png");
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
     m_guideline.SetSize(m_baseGuidelineLength, 20, 0);  
+
+    m_Circle.Init();
+    m_Circle.AddTexture("asset/circle.png");
+    m_Circle.SetSize(100, 100, 0);
 
     m_ribbon.Init();
 }
@@ -287,14 +301,18 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
                 fabs(input.GetLeftAnalogStick().x) > 0.5f))
             {
-                if (m_isLastRightDirection)
+                if (m_ribbon.GetState() == Ribbon::State::Idle)
                 {
-                    m_player.PlayAnimation("RightIdle");
+                    if (m_isLastRightDirection)
+                    {
+                        m_player.PlayAnimation("RightIdle");
+                    }
+                    else if (!m_isLastRightDirection)
+                    {
+                        m_player.PlayAnimation("LeftIdle");
+                    }
                 }
-                else if (!m_isLastRightDirection)
-                {
-                    m_player.PlayAnimation("LeftIdle");
-                }
+                
             }
 
             //左入力状態なら左移動
@@ -338,6 +356,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
         //角度を右スティック方向に合わせる
         float angleRad = atan2(rightStick.y, rightStick.x);
+        float GuideangleRad = atan2(rightStick.y, rightStick.x);
 
         float dirX = cos(angleRad);
         float dirY = sin(angleRad);
@@ -391,12 +410,17 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
             //ガイドライン表示
             m_guideline.SetColor(1, 0.5, 0.5, 0.8);
+
+            m_Circle.SetPos(m_targetPosition.x, m_targetPosition.y, 0);
+            m_Circle.SetColor(1, 1, 1, 1);
         }
         else
         {
             guidelineLength = m_baseGuidelineLength;
             //ガイドライン表示
             m_guideline.SetColor(1, 1, 1, 0.5);
+
+            m_Circle.SetColor(1, 1, 1, 0);
         }
 
         m_aimDirection = { dirX, dirY };
@@ -407,19 +431,17 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             float centerY = p.y + (guidelineLength / 2.0f) * dirY;
 
             //プレイヤーの中心に指示線の左端が来るように
-            m_guideline.SetPos(centerX, centerY, p.z);
-
-            // 指示線のサイズを更新
-            m_guideline.SetSize(guidelineLength, 20, 0);
+            m_guideline.SetPos(p.x + (m_baseGuidelineLength / 2), p.y, p.z);
 
             //ラジアンを度へ変換
             float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
+            float GuideangleDeg = GuideangleRad * (180.0f / DirectX::XM_PI);
 
             //回転の中心を左端に移動
-            m_guideline.SetPivot(0, 0, 0);
+            m_guideline.SetPivot(((-m_baseGuidelineLength) / 2), 0, 0);
 
             //角度を設定
-            m_guideline.SetAngle(angleDeg);
+            m_guideline.SetAngle(GuideangleDeg);
 
             //指示線を更新
             m_guideline.Update(deltaTime);
@@ -444,6 +466,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     {
         //透明に
         m_guideline.SetColor(1, 1, 1, 0);
+        m_Circle.SetColor(1, 1, 1, 0);
     }
 
     // 毎フレーム
@@ -453,40 +476,55 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     float rightTrigger = input.GetRightTrigger();
     bool isRTPressed = rightTrigger > 0.5f;
 
-    // キー入力
-    if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
+    if (!m_isKnockback)
     {
-        //右スティックか倒されてるか確認
-        if (aiming)
+        // キー入力
+        if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
         {
-            //右スティックの状態を正規化して送る
-
-            m_ribbon.Throw(m_aimDirection);
-        }
-        else
-        {
-            // 右スティックが倒されていない場合は最後に向いた方向
-            if (m_isLastRightDirection)
+            //右スティックか倒されてるか確認
+            if (aiming)
             {
-                m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
+                //右スティックの状態を正規化して送る
+
+                m_ribbon.Throw(m_aimDirection);
+                if (rightStick.x > 0)
+                {
+                    m_player.PlayAnimation("ROutLibbon");
+                }
+                else if (rightStick.x < 0)
+                {
+                    m_player.PlayAnimation("LOutLibbon");
+                }
+              
             }
             else
             {
-                m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
+                // 右スティックが倒されていない場合は最後に向いた方向
+                if (m_isLastRightDirection)
+                {
+                    m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
+                    m_player.PlayAnimation("ROutLibbon");
+                }
+                else
+                {
+                    m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
+                    m_player.PlayAnimation("LOutLibbon");
+                }
+            }
+            m_isRibbonOut = true;
+
+        }
+        //キーボードでも複数回リボンを伸ばせるように修正
+        if ((m_ribbon.GetState() == Ribbon::State::Returning) || (!isRTPressed && m_wasRTPressed))
+        {
+            if (m_isRibbonOut)
+            {
+                m_ribbon.Return();
+                m_isRibbonOut = false;
             }
         }
-        m_isRibbonOut = true;
-
     }
-    //キーボードでも複数回リボンを伸ばせるように修正
-    if ((m_ribbon.GetState() == Ribbon::State::Returning) || (!isRTPressed && m_wasRTPressed))
-    {
-        if (m_isRibbonOut)
-        {
-            m_ribbon.Return();
-            m_isRibbonOut = false;
-        }
-    }
+    
 
     //次フレームのために現在の状態を保持
     m_wasRTPressed = isRTPressed;
@@ -508,11 +546,21 @@ void Player::Draw() {
         g_pPixelShader,
         g_pConstantBuffer
     );
+
+    m_Circle.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
 }
 
 void Player::Uninit() {
     m_player.UnInit();
     m_guideline.UnInit();
+    m_ribbon.UnInit();
+    m_Circle.UnInit();
 }
 
 // Ribbon 取得

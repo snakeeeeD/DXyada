@@ -13,6 +13,7 @@ private:
 	Object m_player;
 	Object m_guideline;
 	Ribbon m_ribbon;
+	Object m_Circle;
 
 	float deltaTime;//一度読み込むたびに何秒分すすむか
 
@@ -55,6 +56,16 @@ private:
 	float m_detectionRangeSquare = m_height * 3.5;  // 四角の範囲（半径）
 	float m_detectionRangeCircle = m_height * 3.5;  // 円の範囲（半径）
 
+	//アニメーション関連
+	enum class AnimationState
+	{
+		Normal = 0,		//通常（アイドル、移動）
+		Action = 1,		//アクション（リボン）
+		Damage = 2		//ダメージ、最優先
+	};
+	AnimationState m_currentAnimState = AnimationState::Normal;
+	std::string m_lastPlayedAnim = "";	//前フレームのアニメーションの名前
+
 	//実験用
 	float t;
 public:
@@ -62,6 +73,7 @@ public:
 
 	Object* GetObject() { return &m_player; }
 	Object* GetGuideLineObject() { return &m_guideline; }
+	Object* GetCircle() { return &m_Circle; }
 	void Init();
 	void SetPos(float Pos_X, float Pos_Y);
 	void Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy);

@@ -81,6 +81,10 @@ void Stage1::Init() {
     item.layer = DrawLayer::BackObject;
     m_drawList.push_back(item);
 
+    item.obj = m_player.GetCircle();
+    item.layer = DrawLayer::BackObject;
+    m_drawList.push_back(item);
+
     item.obj = &m_mae;
     item.layer = DrawLayer::FrontObject;
     m_drawList.push_back(item);

@@ -11,7 +11,6 @@ private:
     Object m_mae;
     Object m_usiro;
 
-
     std::vector<Platform> m_platforms;
     std::vector<Enemy> m_enemies;
 
