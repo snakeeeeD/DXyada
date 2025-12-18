@@ -46,6 +46,11 @@ private:
 	bool m_isRibbonOut = false;		//リボンが出ているかどうか
 	bool m_wasRTPressed = false;	//前フレームにRTが押されてるか
 
+	float m_baseGuidelineLength;	//元の指示線の長さ
+	bool m_hasTarget;				//ターゲットがあるか	
+	DirectX::XMFLOAT3 m_targetPosition;	//ターゲットの座標用
+	DirectX::XMFLOAT2 m_aimDirection;	//エイム方向を保存
+
 	//検出範囲の設定
 	float m_detectionRangeSquare = m_height * 3.5;  // 四角の範囲（半径）
 	float m_detectionRangeCircle = m_height * 3.5;  // 円の範囲（半径）

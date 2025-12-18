@@ -36,7 +36,7 @@ void Player::Init() {
     m_hp = m_maxhp;
     m_isInvincible = false;
     m_Invincibletimer = 0.0f;
-    m_InvincibleDuration = 5.0f;    //二秒間無敵
+    m_InvincibleDuration = 2.0f;    //二秒間無敵
 
     //ノックバック初期化
     m_isKnockback = false;
@@ -44,10 +44,12 @@ void Player::Init() {
     m_knockbackDuration = 0.6f;  // 0.6秒間ノックバック
     m_knockbackVelocity = { 0.0f, 0.0f };
 
+    //指示線用
+    m_baseGuidelineLength = m_height * 3.5;//身長の3.5倍の長さ
     m_guideline.Init();
     m_guideline.AddTexture("asset/block.png");
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
-    m_guideline.SetSize((m_height * 3.5), 20, 0);  //身長の3.5倍の長さ
+    m_guideline.SetSize(m_baseGuidelineLength, 20, 0);  
 
     m_ribbon.Init();
 }
@@ -201,13 +203,13 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             //左入力があると
             if (isMoveLeft)
             {
-                m_inputDir = 1; 
+                m_inputDir = 1;
                 m_isLastRightDirection = false;
             }
             //右入力があると
             else if (isMoveRight)
             {
-                m_inputDir = -1; 
+                m_inputDir = -1;
                 m_isLastRightDirection = true;
 
             }
@@ -253,7 +255,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) {
             m_velY = -m_jumpPower; // 上方向にジャンプ
             m_isOnGround = false;
-            //Log("じゃーんぷ");
         }
         if (!m_isOnGround) {
             if (m_inputDir == 1)
@@ -330,59 +331,114 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
 
     //右スティックを倒すと指示線表示
-    if (aiming && (m_ribbon.GetState()==Ribbon::State::Idle))
+    if (aiming)
     {
-
-        //ガイドライン表示
-        m_guideline.SetColor(1, 1, 1, 0.5);
-
         //プレイヤーの位置取得
         auto p = m_player.GetPos();
 
         //角度を右スティック方向に合わせる
         float angleRad = atan2(rightStick.y, rightStick.x);
 
-        //プレイヤーの中心に指示線の左端が来るように
-        m_guideline.SetPos(p.x + ((m_height * 3.5) / 2), p.y, p.z);
+        float dirX = cos(angleRad);
+        float dirY = sin(angleRad);
 
-        //ラジアンを度へ変換
-        float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
+        float guidelineLength = m_baseGuidelineLength;
+        float minPerpendicularDist = FLT_MAX;   //垂直距離の最小値
+        bool foundEnemy = false;
 
-        //回転の中心を左端に移動
-        m_guideline.SetPivot(((-m_height * 3.5) / 2), 0, 0);
+        //+-20度の弧で範囲チェック
+        float angleThreshold = cos(20.0f * DirectX::XM_PI / 180.0f);
 
-        //角度を設定
-        m_guideline.SetAngle(angleDeg);
-
-        //指示線を更新
-        m_guideline.Update(deltaTime);
-
-        if (m_inputDir == 0)
+        for (const auto& enemy : Enemy)
         {
-            if (rightStick.x > 0)
-            {
-                m_player.PlayAnimation("Right");
-                m_isLastRightDirection = true;
-            }
-            else if (rightStick.x < 0)
-            {
+            auto enemyPos = enemy.GetObject()->GetPos();
 
-                m_player.PlayAnimation("Left");
-                m_isLastRightDirection = false;
-            }
-            else
+            float toenemyX = enemyPos.x - p.x;
+            float toenemyY = enemyPos.y - p.y;
+            float distToEnemy = sqrt(toenemyX * toenemyX + toenemyY * toenemyY);
+
+            if (distToEnemy > m_baseGuidelineLength) continue;
+
+            float dotProduct = (dirX * toenemyX + dirY * toenemyY) / distToEnemy;
+
+            if (dotProduct > angleThreshold)
             {
-                if (m_isLastRightDirection)
+                //指示線からの垂直距離を計算
+                float projectionLength = dotProduct * distToEnemy;  //指示線の投影距離
+                float perpendicularDist = sqrt(distToEnemy * distToEnemy - projectionLength * projectionLength);
+
+                //指示線から一番近い敵を選択
+                if (perpendicularDist < minPerpendicularDist)
                 {
-                    m_player.PlayAnimation("RightIdle");
-                }
-                else if (!m_isLastRightDirection)
-                {
-                    m_player.PlayAnimation("LeftIdle");
+                    minPerpendicularDist = perpendicularDist;
+                    guidelineLength = projectionLength;
+                    foundEnemy = true;
+                    m_targetPosition = enemyPos;
                 }
             }
         }
 
+        m_hasTarget = foundEnemy;
+        if (foundEnemy)
+        {
+
+            // プレイヤーから敵への方向を再計算
+            float toTargetX = m_targetPosition.x - p.x;
+            float toTargetY = m_targetPosition.y - p.y;
+            angleRad = atan2(toTargetY, toTargetX);
+            dirX = cos(angleRad);
+            dirY = sin(angleRad);
+
+            //ガイドライン表示
+            m_guideline.SetColor(1, 0.5, 0.5, 0.8);
+        }
+        else
+        {
+            guidelineLength = m_baseGuidelineLength;
+            //ガイドライン表示
+            m_guideline.SetColor(1, 1, 1, 0.5);
+        }
+
+        m_aimDirection = { dirX, dirY };
+
+        if (m_ribbon.GetState() != Ribbon::State::Throwing)
+        {
+            float centerX = p.x + (guidelineLength / 2.0f) * dirX;
+            float centerY = p.y + (guidelineLength / 2.0f) * dirY;
+
+            //プレイヤーの中心に指示線の左端が来るように
+            m_guideline.SetPos(centerX, centerY, p.z);
+
+            // 指示線のサイズを更新
+            m_guideline.SetSize(guidelineLength, 20, 0);
+
+            //ラジアンを度へ変換
+            float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
+
+            //回転の中心を左端に移動
+            m_guideline.SetPivot(0, 0, 0);
+
+            //角度を設定
+            m_guideline.SetAngle(angleDeg);
+
+            //指示線を更新
+            m_guideline.Update(deltaTime);
+        }
+        else
+        {
+             //透明に
+            m_guideline.SetColor(1, 1, 1, 0);
+        }
+       
+            if (rightStick.x > 0)
+            {
+                m_isLastRightDirection = true;
+            }
+            else if (rightStick.x < 0)
+            {
+                m_isLastRightDirection = false;
+            }
+    
     }
     else
     {
@@ -404,20 +460,19 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         if (aiming)
         {
             //右スティックの状態を正規化して送る
-            float length = sqrt(rightStick.x * rightStick.x + rightStick.y * rightStick.y);
-            DirectX::XMFLOAT2 direction = { rightStick.x / length , rightStick.y / length };
-            m_ribbon.Throw(direction);
+
+            m_ribbon.Throw(m_aimDirection);
         }
         else
         {
             // 右スティックが倒されていない場合は最後に向いた方向
             if (m_isLastRightDirection)
             {
-                m_ribbon.Throw({ 1.0f, 0.5f }); // 右方向
+                m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
             }
             else
             {
-                m_ribbon.Throw({ -1.0f, 0.5f }); // 左方向
+                m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
             }
         }
         m_isRibbonOut = true;
@@ -441,8 +496,8 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
     // Objectのアニメーション更新
     m_player.Update(deltaTime);
-
 }
+
 
 
 void Player::Draw() {
