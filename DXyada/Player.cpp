@@ -16,14 +16,14 @@ void Player::Init() {
     m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
-    m_player.AddAnimation("Down", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
-    m_player.AddAnimation("Left", "asset/char01.png", 3, 4, 1, 0, 2, 3, true, 1);
-    m_player.AddAnimation("Right", "asset/char01.png", 3, 4, 2, 0, 2, 3, true, 1);
-    m_player.AddAnimation("Up", "asset/char01.png", 3, 4, 0, 0, 2, 3, true, 1);
-    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png",  2, 1, 0, 0, 0, 0, true, 1);
-    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 2, 1, 0, 1, 1, 0, true, 1);
-    m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("Left", "asset/Player_Work.png", 4, 1, 0, 0, 1, 5, true, 1);
+    m_player.AddAnimation("Right", "asset/Player_Work.png", 4, 1, 0, 2, 3, 5, true, 1);
+    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png",  3, 2, 0, 0, 2, 5, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 3, 2, 1, 0, 2, 5, true, 1);
     m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
+    m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("LDamage", "asset/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
+    m_player.AddAnimation("RDamage", "asset/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -36,12 +36,12 @@ void Player::Init() {
     m_hp = m_maxhp;
     m_isInvincible = false;
     m_Invincibletimer = 0.0f;
-    m_InvincibleDuration = 2.0f;    //二秒間無敵
+    m_InvincibleDuration = 5.0f;    //二秒間無敵
 
     //ノックバック初期化
     m_isKnockback = false;
     m_knockbackTimer = 0.0f;
-    m_knockbackDuration = 0.6f;  // 0.3秒間ノックバック
+    m_knockbackDuration = 0.6f;  // 0.6秒間ノックバック
     m_knockbackVelocity = { 0.0f, 0.0f };
 
     m_guideline.Init();
@@ -118,6 +118,15 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     //ノックバック更新
     if (m_isKnockback)
     {
+        if (m_knockbackVelocity.x > 0)
+        {
+            m_player.PlayAnimation("LDamage");
+        }
+        else if (m_knockbackVelocity.x <= 0)
+        {
+            m_player.PlayAnimation("RDamage");
+        }
+
         m_knockbackTimer += deltaTime;
         if (m_knockbackTimer >= m_knockbackDuration)
         {
@@ -391,7 +400,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     // キー入力
     if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
     {
-        Log("リボンを投げる！");  // ← ここにもログ追加
         //右スティックか倒されてるか確認
         if (aiming)
         {
@@ -420,7 +428,6 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     {
         if (m_isRibbonOut)
         {
-            Log("リボンを戻す！");  // ← ここにもログ追加
             m_ribbon.Return();
             m_isRibbonOut = false;
         }
@@ -457,4 +464,27 @@ void Player::Uninit() {
 Ribbon& Player::GetRibbon()
 {
     return m_ribbon;
+}
+
+bool Player::IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) const
+{
+    auto playerpos = m_player.GetPos();
+
+    float dx = enemyPos.x - playerpos.x;
+    float dy = enemyPos.y - playerpos.y;
+
+    //四角の範囲チェック
+    if (fabs(dx) > m_detectionRangeSquare || fabs(dy) > m_detectionRangeSquare)
+    {
+        return false;
+    }
+
+    //円の範囲チェック
+    distance = sqrt(dx * dx + dy * dy);
+    if (distance > m_detectionRangeCircle)
+    {
+        return false;
+    }
+
+    return true;
 }

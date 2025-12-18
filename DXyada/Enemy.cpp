@@ -35,7 +35,17 @@ void Enemy::Update(float deltaTime) {
     //    move = false;
     //}
 
-  
+    //強調表示（仮）
+    if (m_isHighlighted)
+    {
+        //いったん赤く
+        m_object.SetColor(1.0f, 0.0f, 0.0f, 0.5f);
+    }
+    else
+    {
+        m_object.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
     m_object.SetPos(pos.x, pos.y, pos.z);
 
     // Objectのアニメーション更新

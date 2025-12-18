@@ -30,6 +30,10 @@ void Stage1::Init() {
     e.Init("asset/title.png", 1000, -50, 100, 100);
     m_enemies.push_back(e);
 
+    Enemy e2;
+    e2.Init("asset/rippa.png", 700, 300, 100, 100);
+    m_enemies.push_back(e2);
+
     m_platforms = { plat1, plat2, plat3 };
     for (auto& plat : m_platforms) {
         m_collision->AddStatic(plat.GetObject());
@@ -101,6 +105,12 @@ void Stage1::Update() {
 
     // 敵更新
     for (auto& enemy : m_enemies) {
+
+        //範囲判定
+        float distance = 0.0f;
+        bool inRange = m_player.IsEnemyInRange(enemy.GetObject()->GetPos(), distance);
+        enemy.SetHighlight(inRange);
+
         enemy.Update(dt);
 
         //プレイヤーと敵との衝突判定

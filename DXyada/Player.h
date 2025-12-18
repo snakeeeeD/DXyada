@@ -40,10 +40,15 @@ private:
 	float m_knockbackTimer;
 	float m_knockbackDuration;
 	DirectX::XMFLOAT2 m_knockbackVelocity;
+	bool m_Rightknockback = true;
 
 	//リボン用
 	bool m_isRibbonOut = false;		//リボンが出ているかどうか
 	bool m_wasRTPressed = false;	//前フレームにRTが押されてるか
+
+	//検出範囲の設定
+	float m_detectionRangeSquare = m_height * 3.5;  // 四角の範囲（半径）
+	float m_detectionRangeCircle = m_height * 3.5;  // 円の範囲（半径）
 
 	//実験用
 	float t;
@@ -64,6 +69,9 @@ public:
 	bool isDead() const { return m_hp <= 0; }
 	bool IsInvincible() const { return m_isInvincible; }
 	bool IsLastDirection() const { return m_isLastRightDirection; }	//最終向いてた方向を取得
+
+	//範囲内の敵を取得
+	bool IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) const;
 
 	// リボン取得用
 	Ribbon& GetRibbon();

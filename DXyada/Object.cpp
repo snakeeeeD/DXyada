@@ -140,6 +140,16 @@ void Object::AddTexture(const char* texturePath)
     }
 }
 
+/*
+* @param    splitX : 横の分割数 
+* @param    splitY : 縦の分割数
+* @param    row : 使用する行
+* @param    startFrame : 開始フレーム
+* @param    endFrame :  終了フレーム
+* @param    fps : フレームレート
+* @param    loop : ループするかどうか
+* @param    priority : 優先度(数字が高いほど優先度高)
+*/
 void Object::AddAnimation(
     const std::string& name,
     const char* texturePath,

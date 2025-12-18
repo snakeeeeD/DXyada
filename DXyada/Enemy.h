@@ -12,6 +12,10 @@ private:
 
     float m_velY = 0.0f;
     float m_gravity = 2000.0f;
+
+    //強調表示用
+    bool m_isHighlighted = false;
+
 public:
     Tag tag = Tag::Enemy;
 
@@ -23,6 +27,10 @@ public:
 
     Object* GetObject() { return &m_object; }
     const Object* GetObject() const { return &m_object; }
+
+    //強調表示用
+    void SetHighlight(bool highlight) { m_isHighlighted = highlight; }
+    bool IsHighLighted() const { m_isHighlighted; }
 
     void Update(float deltaTime);
     void Draw();
