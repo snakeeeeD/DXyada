@@ -253,6 +253,9 @@
     <ClCompile Include="Ribbon.cpp">
       <Filter>ソース ファイル\02-Object管理\04-Ribbon</Filter>
     </ClCompile>
+    <ClCompile Include="OldPlayer.cpp">
+      <Filter>ソース ファイル\02-Object管理\02-Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">

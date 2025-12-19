@@ -60,6 +60,7 @@ private:
 	bool m_hasTarget;				//ターゲットがあるか	
 	DirectX::XMFLOAT3 m_targetPosition;	//ターゲットの座標用
 	DirectX::XMFLOAT2 m_aimDirection;	//エイム方向を保存
+	float m_aimAssistAngle = 20.0f;     // エイムアシストの角度範囲（度）
 
 	//検出範囲の設定
 	float m_detectionRangeSquare = m_height * 3.5;  // 四角の範囲（半径）
