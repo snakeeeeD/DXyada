@@ -7,6 +7,15 @@
 
 extern DirectX::XMFLOAT3 g_StartPlayer;
 
+enum Player_AnimState
+{
+	Idle,
+	Run,
+	Jump,
+	Damage,
+	Throw
+};
+
 
 class Player {
 private:
@@ -66,6 +75,17 @@ private:
 	AnimationState m_currentAnimState = AnimationState::Normal;
 	std::string m_lastPlayedAnim = "";	//前フレームのアニメーションの名前
 
+	Player_AnimState m_animState = Idle;
+	Player_AnimState m_prevAnimState = Idle;
+
+	bool m_prevIsRightDirection;
+	bool m_isThrowingThisFrame;
+
+	bool m_isThrowAnimLock = false;
+	bool m_throwDirectionRight = false;
+
+	bool m_waitReleaseAfterThrow;
+
 	//実験用
 	float t;
 public:
@@ -89,6 +109,8 @@ public:
 
 	//範囲内の敵を取得
 	bool IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) const;
+
+	void ApplyAnimation();
 
 	// リボン取得用
 	Ribbon& GetRibbon();
