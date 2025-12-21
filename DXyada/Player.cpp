@@ -102,7 +102,11 @@ void Player::SetPos(float Pos_X, float Pos_Y) {
     m_player.SetPos(Pos_X, Pos_Y, 0);
 }
 
-void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy)
+void Player::Update(
+    float deltaTime,
+    const std::vector<Platform>& platforms,
+    std::vector<Enemy*>& enemies
+)
 {
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
@@ -138,20 +142,49 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             m_knockbackVelocity = { 0,0 };
         }
     }
-
-    //入力判定
-    DirectX::XMFLOAT2 stick = input.GetLeftAnalogStick();
-    DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();
-
+    auto pos = m_player.GetPos();   //プレイヤーの位置を取得
+ //--------------------------------------
+ // エイム入力（右スティック or マウス）
+ //--------------------------------------
+    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
+    DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();// エイム専用
     const float moveThreshold = 0.5f;
-    const float aimThreshold = 0.3f;
 
-    bool aiming =
-        fabs(rightStick.x) > aimThreshold ||
-        fabs(rightStick.y) > aimThreshold;
+    // 右スティック判定
+    bool stickAiming =
+        fabs(rightStick.x) > moveThreshold ||
+        fabs(rightStick.y) > moveThreshold;
 
-    //物理更新
-    auto pos = m_player.GetPos();
+    // マウス判定
+    POINT mouse = input.GetMousePos();
+
+    DirectX::XMFLOAT2 toMouse;
+    toMouse.x = mouse.x - pos.x;
+    toMouse.y = -(mouse.y - pos.y);
+
+    float mouseLen = sqrt(toMouse.x * toMouse.x + toMouse.y * toMouse.y);
+    bool mouseAiming = mouseLen > 5.0f;
+    bool mousePressed = input.GetMouseButtonPress(VK_LBUTTON);
+    // エイム方向を1本化
+    bool aiming = false;
+
+     if (stickAiming)
+    {
+        m_aimDirection = rightStick;
+        aiming = true;
+    }
+    else if (mouseAiming && mousePressed)
+    {
+        m_aimDirection.x = toMouse.x / mouseLen;
+        m_aimDirection.y = toMouse.y / mouseLen;
+        aiming = true;
+    }
+    else
+     {
+         m_guideline.SetColor(1, 1, 1, 0);
+         m_Circle.SetColor(1, 1, 1, 0);
+     }
+
 
     // 重力を加算
     m_velY += m_gravity * deltaTime;
@@ -190,12 +223,12 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     bool moveLeft =
         input.GetKeyPress(VK_A) ||
         input.GetButtonPress(XINPUT_LEFT) ||
-        (stick.x < -moveThreshold);
+        (leftStick.x < -moveThreshold);
 
     bool moveRight =
         input.GetKeyPress(VK_D) ||
         input.GetButtonPress(XINPUT_RIGHT) ||
-        (stick.x > moveThreshold);
+        (rightStick.x > moveThreshold);
 
     //ノックバック中出ない場合のみ移動
     if (!m_isKnockback)
@@ -223,6 +256,286 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_isOnGround = false;
     }
 
+//========================================
+// 右スティックを倒すと指示線表示 + オートエイム
+//========================================
+    Enemy* bestEnemy = nullptr;
+
+    if (aiming)
+    {
+        //====================================
+        // プレイヤーの位置を取得
+        //====================================
+        auto p = m_player.GetPos();
+
+        //====================================
+        // 右スティック方向を角度に変換
+        //====================================
+        float angleRad = atan2(m_aimDirection.y, m_aimDirection.x);
+        float guideAngleRad = angleRad;
+
+        // 指示線の向きベクトル
+        float dirX = cos(angleRad);
+        float dirY = sin(angleRad);
+
+        // 指示線の初期長さ
+        float guidelineLength = m_baseGuidelineLength;
+
+        // 指示線からの垂直距離（最小）
+        float minPerpendicularDist = FLT_MAX;
+
+        bool foundEnemy = false;
+
+        // ±20度の範囲判定用
+        float angleThreshold = cos(20.0f * DirectX::XM_PI / 180.0f);
+
+        //------------------------------------
+        // 地面とのレイキャストチェック
+        //------------------------------------
+        float groundHitDistance = m_baseGuidelineLength;
+        bool hitGround = false;
+
+        // レイ分割数（精度）
+        const int raySteps = 20;
+        const float stepSize = m_baseGuidelineLength / raySteps;
+
+        for (int i = 1; i <= raySteps; ++i)
+        {
+            float checkDist = stepSize * i;
+            float checkX = p.x + dirX * checkDist;
+            float checkY = p.y + dirY * checkDist;
+
+            // レイの一点を小さなAABBとして扱う
+            CollisionManager::AABB rayPoint;
+            const float pointSize = 5.0f;
+            rayPoint.min = { checkX - pointSize, checkY - pointSize };
+            rayPoint.max = { checkX + pointSize, checkY + pointSize };
+
+            // 地面に当たったらそこまで
+            if (m_collisionMgr && m_collisionMgr->CheckHitStatic(rayPoint))
+            {
+                groundHitDistance = checkDist;
+                hitGround = true;
+                break;
+            }
+        }
+
+        //------------------------------------
+        // 敵探索（オートエイム）
+        //------------------------------------
+        for (auto enemy : enemies)
+        {
+            if (!enemy) continue;
+
+            auto enemyPos = enemy->GetObject()->GetPos();
+
+            // プレイヤー→敵ベクトル
+            float toX = enemyPos.x - p.x;
+            float toY = enemyPos.y - p.y;
+            float dist = sqrt(toX * toX + toY * toY);
+
+            // 指示線の最大長を超えていたら無視
+            if (dist > guidelineLength)
+                continue;
+
+            // 方向一致度（内積）
+            float dot = (dirX * toX + dirY * toY) / dist;
+
+            // ±20度以内か
+            if (dot > angleThreshold)
+            {
+                // 指示線方向への投影距離
+                float projectionLength = dot * dist;
+
+                // 指示線からの垂直距離
+                float perpendicularDist =
+                    sqrt(dist * dist - projectionLength * projectionLength);
+
+                //--------------------------------
+                // 壁で遮られていないかチェック
+                //--------------------------------
+                bool blocked = false;
+                if (m_collisionMgr)
+                {
+                    float ex = toX / dist;
+                    float ey = toY / dist;
+
+                    const int steps = 10;
+                    const float step = dist / steps;
+
+                    for (int j = 1; j < steps - 1; ++j)
+                    {
+                        float cx = p.x + ex * step * j;
+                        float cy = p.y + ey * step * j;
+
+                        CollisionManager::AABB ray;
+                        ray.min = { cx - 5, cy - 5 };
+                        ray.max = { cx + 5, cy + 5 };
+
+                        if (m_collisionMgr->CheckHitStatic(ray))
+                        {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                //--------------------------------
+                // 最も指示線に近い敵を採用
+                //--------------------------------
+                if (!blocked && perpendicularDist < minPerpendicularDist)
+                {
+                    minPerpendicularDist = perpendicularDist;
+                    guidelineLength = projectionLength;
+                    foundEnemy = true;
+                    m_targetPosition = enemyPos;
+                    bestEnemy = enemy;
+                }
+            } 
+        }
+
+        //------------------------------------
+        // 敵がいなければ地面まで伸ばす
+        //------------------------------------
+        if (!foundEnemy && hitGround)
+            guidelineLength = groundHitDistance;
+
+        //------------------------------------
+        // 見た目・ターゲット処理
+        //------------------------------------
+        m_hasTarget = foundEnemy;
+
+        if (foundEnemy)
+        {
+            // プレイヤー→敵方向に補正
+            float tx = m_targetPosition.x - p.x;
+            float ty = m_targetPosition.y - p.y;
+
+            angleRad = atan2(ty, tx);
+            dirX = cos(angleRad);
+            dirY = sin(angleRad);
+
+            // ターゲットあり色
+            m_guideline.SetColor(1, 0.5f, 0.5f, 0.8f);
+
+            // ターゲット円表示
+            m_Circle.SetPos(m_targetPosition.x, m_targetPosition.y, 0);
+            m_Circle.SetColor(1, 1, 1, 1);
+        }
+        else
+        {
+            // 通常色
+            m_guideline.SetColor(1, 1, 1, 0.5f);
+            m_Circle.SetColor(1, 1, 1, 0);
+        }
+
+        //------------------------------------
+        // ガイドライン描画
+        //------------------------------------
+        if (m_ribbon.GetState() != Ribbon::State::Throwing)
+        {
+            // 発射基準点（胸あたり）
+            float originX = p.x;
+            float originY = p.y;
+
+            // ガイドライン中心位置
+            m_guideline.SetPos(
+                originX + dirX * (guidelineLength * 0.5f),
+                originY + dirY * (guidelineLength * 0.5f),
+                p.z
+            );
+
+            // サイズ
+            m_guideline.SetSize(guidelineLength, 20, 0);
+
+            // 回転
+            m_guideline.SetAngle(angleRad * 180.0f / DirectX::XM_PI);
+            m_guideline.Update(deltaTime);
+        }
+        else
+        {
+            // リボン中は非表示
+            m_guideline.SetColor(1, 1, 1, 0);
+        }
+
+        //------------------------------------
+        // リボン用に情報保存
+        //------------------------------------
+        m_ribbonAimDir = { dirX, dirY };
+        m_ribbonAimLength = guidelineLength;
+        m_ribbonTargetEnemy = foundEnemy ? bestEnemy : nullptr;
+
+        // 向き更新
+        m_isLastRightDirection = (dirX > 0);
+    }
+    else
+    {
+        // エイムしていないときは非表示
+        m_guideline.SetColor(1, 1, 1, 0);
+        m_Circle.SetColor(1, 1, 1, 0);
+        m_ribbonTargetEnemy = nullptr;
+    }
+
+    //========================================
+    // リボン更新
+    //========================================
+    m_ribbon.SetPlayerPos({ pos.x, pos.y });
+    m_ribbon.Update(deltaTime, enemies);
+    //========================================
+    // リボン先端ヒット判定
+    //========================================
+    Enemy* hitEnemy = m_ribbon.GetHitEnemy();
+    if (hitEnemy)
+    {
+        hitEnemy->Disable();
+        m_ribbon.Return();
+    }
+
+    //========================================
+    // リボン発射処理
+    //========================================
+    float rightTrigger = input.GetRightTrigger();
+    bool isRTPressed = rightTrigger > 0.5f;
+
+    if (!m_isKnockback)
+    {
+        // 発射入力
+        if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
+        {
+            if (aiming)
+            {
+                // エイム方向へ発射
+                m_ribbon.Throw(m_ribbonAimDir, m_ribbonAimLength);
+            }
+            else
+            {
+                // 最後に向いていた方向へ発射
+                m_ribbon.Throw(
+                    m_isLastRightDirection
+                    ? DirectX::XMFLOAT2{ 1,0 }
+                    : DirectX::XMFLOAT2{ -1,0 },
+                    m_baseGuidelineLength
+                );
+            }
+
+            m_isRibbonOut = true;
+        }
+
+        // 戻し処理
+        if (m_ribbon.GetState() == Ribbon::State::Returning || (!isRTPressed && m_wasRTPressed))
+        {
+            if (m_isRibbonOut)
+            {
+                m_ribbon.Return();
+                m_isRibbonOut = false;
+            }
+        }
+    }
+
+    // 次フレーム用
+    m_wasRTPressed = isRTPressed;
+
+    /*
    // 右スティックを倒すと指示線表示
     if (aiming)
     {
@@ -479,7 +792,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
 
     m_wasRTPressed = isRTPressed;
-
+    */
     // 向き決定
     if (m_isThrowAnimLock)
     {
@@ -491,7 +804,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     }
     else if (aiming)
     {
-        m_isLastRightDirection = (rightStick.x > 0);
+        m_isLastRightDirection = (m_aimDirection.x > 0);
     }
 
     if (m_isKnockback)            m_animState = Damage;

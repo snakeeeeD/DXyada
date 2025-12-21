@@ -137,3 +137,17 @@ void Input::SetVibration(int frame, float powor)
 	VibrationTime = frame;
 }
 
+POINT Input::GetMousePos() const
+{
+	POINT p;
+	GetCursorPos(&p);
+
+	// ウィンドウ座標に変換
+	ScreenToClient(GetActiveWindow(), &p);
+	return p;
+}
+
+bool Input::GetMouseButtonPress(int button)
+{
+	return (GetAsyncKeyState(button) & 0x8000) != 0;
+}

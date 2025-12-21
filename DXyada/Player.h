@@ -58,6 +58,11 @@ private:
 	bool m_isRibbonOut = false;		//リボンが出ているかどうか
 	bool m_wasRTPressed = false;	//前フレームにRTが押されてるか
 
+	// リボン用オートエイム
+	DirectX::XMFLOAT2 m_ribbonAimDir{ 1.0f, 0.0f };
+	float m_ribbonAimLength = 0.0f;
+	Enemy* m_ribbonTargetEnemy = nullptr;
+
 	float m_baseGuidelineLength;	//元の指示線の長さ
 	bool m_hasTarget;				//ターゲットがあるか	
 	DirectX::XMFLOAT3 m_targetPosition;	//ターゲットの座標用
@@ -102,7 +107,11 @@ public:
 	Object* GetCircle() { return &m_Circle; }
 	void Init();
 	void SetPos(float Pos_X, float Pos_Y);
-	void Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy);
+	void Update(
+		float deltaTime,
+		const std::vector<Platform>& platforms,
+		std::vector<Enemy*>& enemies
+	); 
 	void Draw();
 	void Uninit();
 

@@ -26,6 +26,11 @@ void DebugStage::Init()
 
     m_platforms = { p1 };
 
+    Enemy* e = new Enemy();
+    e->Init("asset/title.png", 300, -300, 100, 100);
+    m_enemies.push_back(e);
+
+
     for (auto& plat : m_platforms) {
         m_collision->AddStatic(plat.GetObject());
         m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
@@ -89,12 +94,7 @@ void DebugStage::Update()
     // プレイヤー更新
     m_player.Update(dt, m_platforms, m_enemies);
 
-    // 敵更新
-    for (auto& enemy : m_enemies) {
-        enemy->Update(dt);
-    }
-
-  
+    // 敵更新 
     for (auto& enemy : m_enemies) {
         enemy->Update(dt);
 
@@ -155,7 +155,12 @@ void DebugStage::Draw()
 void DebugStage::UnInit()
 {
     for (auto& plat : m_platforms) plat.UnInit();
-    for (auto& enemy : m_enemies) enemy->UnInit();
+    for (auto& enemy : m_enemies)
+    {
+        enemy->UnInit();
+        delete enemy;
+    }
+    m_enemies.clear();
 
     m_background.UnInit();
     m_player.Uninit();

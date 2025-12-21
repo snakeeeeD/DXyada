@@ -1,3 +1,4 @@
+/*
 //#pragma once
 //#include <vector>
 //#include <unordered_map>
@@ -32,9 +33,9 @@
 //    class SceneManager;
 //public:
 //    // 登録
-//    void AddDynamic(Object* obj);   
-//    void AddStatic(Object* obj);    
-//    void AddMoved(Object* obj);   
+//    void AddDynamic(Object* obj);
+//    void AddStatic(Object* obj);
+//    void AddMoved(Object* obj);
 //
 //    // 毎フレームチェック
 //    void CheckAll();
@@ -51,7 +52,7 @@
 //
 //    void SetSceneManager(SceneManager* mgr) { m_sceneMgr = mgr; }
 //};
-
+*/
 
 #pragma once
 #include <vector>
@@ -104,6 +105,8 @@ public:
     void AddMoved(Object* obj);
 
     void CheckAll();
+
+    void Remove(Object* obj);
 
     void SetTag(Object* obj, ColliderTag tag) 
     {

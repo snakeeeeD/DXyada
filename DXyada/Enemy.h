@@ -5,6 +5,12 @@
 class Enemy 
 {
 protected:
+    enum class EnamyState
+    {
+        Idle,
+        Active,
+        YouDied
+    };
     Object m_object;
     CollisionManager* m_pCollision = nullptr;
     int m_direction = 1;
@@ -20,7 +26,8 @@ protected:
 
     //‹­’²•\Ž¦—p
     bool m_isHighlighted = false;
-
+    bool m_enableCollision = true;
+    EnamyState m_enemystate = EnamyState::Idle;
 public:
     Tag tag = Tag::Enemy;
 
@@ -43,4 +50,8 @@ public:
     virtual void Update(float deltaTime);
     virtual void Draw();
     void UnInit();
+
+    void Disable();
+    bool IsCollisionEnabled() const { return m_enableCollision; }
+    bool IsDead() const { return m_enemystate == EnamyState::YouDied; }
 };

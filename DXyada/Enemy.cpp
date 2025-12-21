@@ -22,8 +22,23 @@ void Enemy::Init(const char* texture, float x, float y, float width, float heigh
 
 }
 
+void Enemy::Disable()
+{
+    if (!m_enableCollision)
+        return;
+
+    m_enableCollision = false;
+    m_enemystate = EnamyState::YouDied;
+
+    // ”¼“§–¾‚É‚·‚é
+    m_object.SetColor(1, 1, 1, 0.3f);
+}
+
+
 void Enemy::Update(float deltaTime) 
 {
+    if (m_enemystate == EnamyState::YouDied)
+        return;
     auto pos = m_object.GetPos();
 
     //if (move==false) {

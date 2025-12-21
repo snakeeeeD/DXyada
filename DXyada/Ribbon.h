@@ -2,7 +2,9 @@
 #include <vector>
 #include <DirectXMath.h>
 
+
 class Object;
+class Enemy;
 
 //==============================
 // ・リボンを複数のObjectで構成
@@ -58,6 +60,20 @@ private:
     //==============================
     int   m_maxSegments = 20;
     float m_segmentLength = 30.0f;
+    float m_maxLength = 0.0f;   // 伸びきる最大距離
+
+    // 現在のリボン長さ
+    float m_currentLength = 0.0f;
+
+    // 投げる方向（正規化済み）
+    DirectX::XMFLOAT2 m_direction{};
+
+    //==============================
+    // Enemy関連
+    //==============================
+    bool m_hasHit = false;
+    Enemy* m_hitEnemy = nullptr;
+    DirectX::XMFLOAT2 m_hitPos{};
 
 public:
     Ribbon();
@@ -67,7 +83,7 @@ public:
     void Init();
 
     // 更新（位置の計算）
-    void Update(float deltaTime);
+    void Update(float deltaTime, const std::vector<Enemy*>& enemies);
 
     // プレイヤー位置セット
     void SetPlayerPos(const DirectX::XMFLOAT2& pos);
@@ -76,7 +92,16 @@ public:
     State GetState() const { return m_state; }
 
     // 投げる
-    void Throw(const DirectX::XMFLOAT2& direction);
+    void Throw(
+        const DirectX::XMFLOAT2& direction,
+        float maxLength
+    );
+
+
+    //Enemy関連
+    bool HasHit() const { return m_hasHit; }
+    DirectX::XMFLOAT2 GetHitPos() const { return m_hitPos; }
+    Enemy* GetHitEnemy() const { return m_hitEnemy; }
 
     // 戻す
     void Return();

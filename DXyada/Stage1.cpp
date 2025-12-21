@@ -202,6 +202,23 @@ void Stage1::Update()
         enemy->Update(dt);
     }
 
+    m_enemies.erase(
+        std::remove_if(
+            m_enemies.begin(),
+            m_enemies.end(),
+            [&](Enemy* enemy)
+            {
+                if (enemy->IsDead())
+                {
+                    m_collision->Remove(enemy->GetObject());
+                    return true;
+                }
+                return false;
+            }
+        ),
+        m_enemies.end()
+    );
+
 
     // ƒJƒƒ‰XV
     m_camera.Update(m_player.GetObject()->GetPos());

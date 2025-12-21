@@ -2,7 +2,7 @@
 #pragma once
 #include <d3d11.h>  // DirectX11を使うためのヘッダーファイル
 #include <DirectXMath.h> // DirextXの数学関連のヘッダーファイル
-
+#include <Windows.h>
 #include <Xinput.h> //XInputを使うためのヘッダーファイル
 #pragma comment (lib, "xinput.lib") //XInputを使うために必要
 
@@ -71,7 +71,7 @@ private:
 	int VibrationTime; //振動継続時間をカウントする変数
 
 	int m_padIndex = -1;
-
+	
 public:
 
 	Input(); //コンストラクタ
@@ -102,5 +102,9 @@ public:
 	//flame：振動を継続する時間(単位：フレーム)
 	//powoe：振動の強さ(0～1)
 	void SetVibration(int frame = 1, float powor = 1);
+
+	//マウス
+	POINT GetMousePos() const;
+	bool GetMouseButtonPress(int button);
 };
 

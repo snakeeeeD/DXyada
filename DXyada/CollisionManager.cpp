@@ -192,3 +192,21 @@ bool CollisionManager::CheckHitStatic(const AABB& box)
     }
     return false; //‰½‚É‚à“–‚½‚ç‚È‚¯‚ê‚Î false
 }
+
+void CollisionManager::Remove(Object* obj)
+{
+    auto removeFrom = [&](std::vector<Object*>& list)
+        {
+            list.erase(
+                std::remove(list.begin(), list.end(), obj),
+                list.end()
+            );
+        };
+
+    removeFrom(m_static);
+    removeFrom(m_dynamic);
+    removeFrom(m_moved);
+
+    // Tagî•ñíœ
+    m_tags.erase(obj);
+}
