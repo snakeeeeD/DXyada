@@ -7,6 +7,15 @@
 
 extern DirectX::XMFLOAT3 g_StartPlayer;
 
+enum Player_AnimState
+{
+	Idle,
+	Run,
+	Jump,
+	Damage,
+	Throw
+};
+
 
 class Player 
 {
@@ -52,6 +61,7 @@ private:
 	bool m_hasTarget;				//ターゲットがあるか	
 	DirectX::XMFLOAT3 m_targetPosition;	//ターゲットの座標用
 	DirectX::XMFLOAT2 m_aimDirection;	//エイム方向を保存
+	float m_aimAssistAngle = 20.0f;     // エイムアシストの角度範囲（度）
 
 	//検出範囲の設定
 	float m_detectionRangeSquare = m_height * 3.5;  // 四角の範囲（半径）
@@ -66,6 +76,17 @@ private:
 	};
 	AnimationState m_currentAnimState = AnimationState::Normal;
 	std::string m_lastPlayedAnim = "";	//前フレームのアニメーションの名前
+
+	Player_AnimState m_animState = Idle;
+	Player_AnimState m_prevAnimState = Idle;
+
+	bool m_prevIsRightDirection;
+	bool m_isThrowingThisFrame;
+
+	bool m_isThrowAnimLock = false;
+	bool m_throwDirectionRight = false;
+
+	bool m_waitReleaseAfterThrow;
 
 	//実験用
 	float t;
@@ -90,6 +111,8 @@ public:
 
 	//範囲内の敵を取得
 	bool IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) const;
+
+	void ApplyAnimation();
 
 	// リボン取得用
 	Ribbon& GetRibbon();

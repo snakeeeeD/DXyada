@@ -262,16 +262,11 @@
     <ClCompile Include="Ribbon.cpp">
       <Filter>ソース ファイル\02-Object管理\04-Ribbon</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="Rippa.cpp">
       <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
     </ClCompile>
     <ClCompile Include="NeedleFloor.cpp">
       <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-=======
-    <ClCompile Include="OldPlayer.cpp">
-      <Filter>ソース ファイル\02-Object管理\02-Player</Filter>
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -108,9 +108,6 @@
     <Filter Include="ソース ファイル\02-Object管理\04-Ribbon">
       <UniqueIdentifier>{c6930cd0-87ad-45e3-bf3b-4e6454410f5a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\05-Gimmick">
-      <UniqueIdentifier>{6230601e-d34d-4672-8fa5-1e1f1afb5818}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -121,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Platform.h">
       <Filter>ソース ファイル\02-Object管理\01-Platform</Filter>
@@ -188,15 +188,6 @@
     <ClInclude Include="DebugStage.h">
       <Filter>ソース ファイル\20-Stage管理\999-DebugStage</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Rippa.h">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="NeedleFloor.h">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp">
@@ -262,16 +253,8 @@
     <ClCompile Include="Ribbon.cpp">
       <Filter>ソース ファイル\02-Object管理\04-Ribbon</Filter>
     </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="Rippa.cpp">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="NeedleFloor.cpp">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-=======
     <ClCompile Include="OldPlayer.cpp">
       <Filter>ソース ファイル\02-Object管理\02-Player</Filter>
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

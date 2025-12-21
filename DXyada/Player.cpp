@@ -8,14 +8,6 @@
 
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
-enum AnimState
-{
-Idle,
-Run, 
-Jump,
-Damage,
-Libbon
-};
 
 void Player::Init() {
 
@@ -26,14 +18,21 @@ void Player::Init() {
     // アニメーション設定
     m_player.AddAnimation("Left", "asset/Player_Work.png", 4, 1, 0, 0, 1, 5, true, 1);
     m_player.AddAnimation("Right", "asset/Player_Work.png", 4, 1, 0, 2, 3, 5, true, 1);
-    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png",  3, 2, 0, 0, 2, 5, true, 1);
-    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 3, 2, 1, 0, 2, 5, true, 1);
+    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png",  4, 2, 0, 0, 3, 5, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 4, 2, 1, 0, 3, 5, true, 1);
     m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
     m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
     m_player.AddAnimation("LDamage", "asset/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
     m_player.AddAnimation("RDamage", "asset/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
-    m_player.AddAnimation("LOutLibbon", "asset/Player_Ribbon.png", 5, 2, 0, 0, 4, 9, false, 2);
-    m_player.AddAnimation("ROutLibbon", "asset/Player_Ribbon.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("LOutLibbon", "asset/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
+    m_player.AddAnimation("ROutLibbon", "asset/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
+
+    m_animState = Idle;
+    m_prevAnimState = static_cast<Player_AnimState>(-1);
+
+    m_prevIsRightDirection = m_isLastRightDirection;
+    m_isThrowingThisFrame = false;
+    m_waitReleaseAfterThrow = false;
 
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
@@ -102,14 +101,16 @@ void Player::SetPos(float Pos_X, float Pos_Y) {
     m_player.SetPos(Pos_X, Pos_Y, 0);
 }
 
+<<<<<<< HEAD
 void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy) {
 
+=======
+void Player::Update(float deltaTime,const std::vector<Platform>& platforms,const std::vector<Enemy>& Enemy)
+{
+>>>>>>> 79a43e11864f0d4067702876074b68af592713e9
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
-    {
-
         return;
-    }
 
     //無敵時間の更新
     if (m_isInvincible)
@@ -122,9 +123,8 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
 
         //無敵時間中を点滅
-        float blincspeed = 10.0f;
-        float alpha = (sin(m_Invincibletimer * blincspeed) + 1.0f) * 0.5f;
-        m_player.SetColor(1, 1, 1, alpha * 0.5f + 0.5f);
+        float blink = (sinf(m_Invincibletimer * 10.0f) + 1.0f) * 0.5f;
+        m_player.SetColor(1, 1, 1, blink * 0.5f + 0.5f);
     }
     else
     {
@@ -134,73 +134,97 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
     //ノックバック更新
     if (m_isKnockback)
     {
-        if (m_knockbackVelocity.x > 0)
-        {
-            m_player.PlayAnimation("LDamage");
-        }
-        else if (m_knockbackVelocity.x <= 0)
-        {
-            m_player.PlayAnimation("RDamage");
-        }
-
         m_knockbackTimer += deltaTime;
         if (m_knockbackTimer >= m_knockbackDuration)
         {
             m_isKnockback = false;
             m_knockbackTimer = 0.0f;
-            m_knockbackVelocity = { 0.0f, 0.0f };
+            m_knockbackVelocity = { 0,0 };
         }
     }
 
-    auto pos = m_player.GetPos();   //プレイヤーの位置を取得
-
-    /*
-  *  stick.x: 左(-1)〜右(1)
-  *  stick.y: 下(-1)〜上(1)
-  */
-    DirectX::XMFLOAT2 stick = input.GetLeftAnalogStick(); // -1～1
+    //入力判定
+    DirectX::XMFLOAT2 stick = input.GetLeftAnalogStick();
     DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();
 
-    const float threshold = 0.5f; // これだけ倒したら入力と判定
+    const float moveThreshold = 0.5f;
+    const float aimThreshold = 0.3f;
+
+    bool aiming =
+        fabs(rightStick.x) > aimThreshold ||
+        fabs(rightStick.y) > aimThreshold;
+
+    //物理更新
+    auto pos = m_player.GetPos();
 
     // 重力を加算
     m_velY += m_gravity * deltaTime;
     pos.y -= m_velY * deltaTime;
 
-    // Platform上の着地判定
     m_isOnGround = false;
+<<<<<<< HEAD
     for (auto& plat : platforms) 
     {
         auto platPos = plat.GetObject()->GetPos();
         auto platSize = plat.GetObject()->GetSize();
+=======
+>>>>>>> 79a43e11864f0d4067702876074b68af592713e9
 
-        float platTop = platPos.y + platSize.y / 2.0f;
-        float platLeft = platPos.x - platSize.x / 2.0f;
-        float platRight = platPos.x + platSize.x / 2.0f;
+    // Platform上の着地判定
+    for (auto& plat : platforms)
+    {
+        auto pPos = plat.GetObject()->GetPos();
+        auto pSize = plat.GetObject()->GetSize();
 
-        float playerBottom = pos.y - m_height / 2.0f;
-        float playerLeft = pos.x - m_width / 2.0f;
-        float playerRight = pos.x + m_width / 2.0f;
+        float platTop = pPos.y + pSize.y * 0.5f;
+        float platLeft = pPos.x - pSize.x * 0.5f;
+        float platRight = pPos.x + pSize.x * 0.5f;
+
+        float playerBottom = pos.y - m_height * 0.5f;
+        float playerLeft = pos.x - m_width * 0.5f;
+        float playerRight = pos.x + m_width * 0.5f;
 
         // 横方向が重なるか
+<<<<<<< HEAD
         if (playerRight > platLeft && playerLeft < platRight) 
         {
             // 下端が上面に接触しているか
             if (playerBottom <= platTop && playerBottom >= platTop - 10.0f) 
             {
                 pos.y = platTop + m_height / 2.0f; // 補正
+=======
+        if (playerRight > platLeft && playerLeft < platRight)
+        {
+            // 下端が上面に接触しているか
+            if (playerBottom <= platTop && playerBottom >= platTop - 10.0f)
+            {
+                pos.y = platTop + m_height * 0.5f;
+>>>>>>> 79a43e11864f0d4067702876074b68af592713e9
                 m_velY = 0.0f;
                 m_isOnGround = true;
             }
         }
     }
 
-    //キャラの移動処理
+    //操作関係
+    bool moveLeft =
+        input.GetKeyPress(VK_A) ||
+        input.GetButtonPress(XINPUT_LEFT) ||
+        (stick.x < -moveThreshold);
+
+    bool moveRight =
+        input.GetKeyPress(VK_D) ||
+        input.GetButtonPress(XINPUT_RIGHT) ||
+        (stick.x > moveThreshold);
 
     //ノックバック中出ない場合のみ移動
     if (!m_isKnockback)
     {
+        if (moveLeft && !moveRight)       m_inputDir = 1;
+        else if (moveRight && !moveLeft)  m_inputDir = -1;
+        else                              m_inputDir = 0;
 
+<<<<<<< HEAD
 
         //右入力があるか
         bool isMoveLeft =
@@ -337,24 +361,28 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
         }
 
+=======
+        if (m_inputDir == 1)  pos.x -= 200.0f * deltaTime;
+        if (m_inputDir == -1) pos.x += 200.0f * deltaTime;
+>>>>>>> 79a43e11864f0d4067702876074b68af592713e9
     }
     else
     {
-        //ノックバック中は強制移動
         pos.x += m_knockbackVelocity.x * deltaTime;
         pos.y -= m_knockbackVelocity.y * deltaTime;
-
-        // ノックバック速度を減衰
         m_knockbackVelocity.x *= 0.95f;
         m_knockbackVelocity.y *= 0.95f;
     }
 
+    // ジャンプ
+    if (m_isOnGround &&
+        (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A)))
+    {
+        m_velY = -m_jumpPower;
+        m_isOnGround = false;
+    }
 
-    float aimRightStick = 0.3;
-
-    bool aiming = fabs(rightStick.x) > aimRightStick || fabs(rightStick.y) > aimRightStick;
-
-    //右スティックを倒すと指示線表示
+   // 右スティックを倒すと指示線表示
     if (aiming)
     {
         //プレイヤーの位置取得
@@ -466,6 +494,11 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             {
                 m_isLastRightDirection = false;
             }
+
+            if (fabs(rightStick.x) > 0.3f)
+            {
+                m_isLastRightDirection = (rightStick.x > 0);
+            }
     
     }
     else
@@ -475,79 +508,102 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         m_Circle.SetColor(1, 1, 1, 0);
     }
 
-    // 毎フレーム
-    m_ribbon.SetPlayerPos({ pos.x, pos.y });
-    m_ribbon.Update(deltaTime);
 
-    float rightTrigger = input.GetRightTrigger();
-    bool isRTPressed = rightTrigger > 0.5f;
-
-    if (!m_isKnockback)
-    {
-        // キー入力
-        if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
+        // 毎フレーム
+        m_ribbon.SetPlayerPos({ pos.x, pos.y });
+        m_ribbon.Update(deltaTime);
+    
+        float rightTrigger = input.GetRightTrigger();
+        bool isRTPressed = rightTrigger > 0.5f;
+    
+        if (!m_isKnockback)
         {
-            //右スティックか倒されてるか確認
-            if (aiming)
+            // キー入力
+            if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
             {
-                //右スティックの状態を正規化して送る
-
-                m_ribbon.Throw(m_aimDirection);
-                if (rightStick.x > 0)
+                //右スティックか倒されてるか確認
+                if (aiming)
                 {
-                    m_player.PlayAnimation("ROutLibbon");
-                }
-                else if (rightStick.x < 0)
-                {
-                    m_player.PlayAnimation("LOutLibbon");
-                }
-              
-            }
-            else
-            {
-                // 右スティックが倒されていない場合は最後に向いた方向
-                if (m_isLastRightDirection)
-                {
-                    m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
-                    m_player.PlayAnimation("ROutLibbon");
+                    //右スティックの状態を正規化して送る
+    
+                    m_ribbon.Throw(m_aimDirection);
+                    if (rightStick.x > 0)
+                    {
+                        //m_player.PlayAnimation("ROutLibbon");
+                    }
+                    else if (rightStick.x < 0)
+                    {
+                        //m_player.PlayAnimation("LOutLibbon");
+                    }
+                  
                 }
                 else
                 {
-                    m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
-                    m_player.PlayAnimation("LOutLibbon");
+                    // 右スティックが倒されていない場合は最後に向いた方向
+                    if (m_isLastRightDirection)
+                    {
+                        m_ribbon.Throw({ 1.0f, 0.0f }); // 右方向
+                        //m_player.PlayAnimation("ROutLibbon");
+                    }
+                    else
+                    {
+                        m_ribbon.Throw({ -1.0f, 0.0f }); // 左方向
+                        //m_player.PlayAnimation("LOutLibbon");
+                    }
+                }
+                m_isRibbonOut = true;
+    
+            }
+            //キーボードでも複数回リボンを伸ばせるように修正
+            if ((m_ribbon.GetState() == Ribbon::State::Returning) || (!isRTPressed && m_wasRTPressed))
+            {
+                if (m_isRibbonOut)
+                {
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
                 }
             }
-            m_isRibbonOut = true;
-
         }
-        //キーボードでも複数回リボンを伸ばせるように修正
-        if ((m_ribbon.GetState() == Ribbon::State::Returning) || (!isRTPressed && m_wasRTPressed))
-        {
-            if (m_isRibbonOut)
-            {
-                m_ribbon.Return();
-                m_isRibbonOut = false;
-            }
-        }
-    }
-    
 
-    //次フレームのために現在の状態を保持
     m_wasRTPressed = isRTPressed;
 
-    // 最終的な位置セット
-    m_player.SetPos(pos.x, pos.y, pos.z);
+    // 向き決定
+    if (m_isThrowAnimLock)
+    {
+        m_isLastRightDirection = m_throwDirectionRight;
+    }
+    else if (m_inputDir != 0)
+    {
+        m_isLastRightDirection = (m_inputDir == -1);
+    }
+    else if (aiming)
+    {
+        m_isLastRightDirection = (rightStick.x > 0);
+    }
 
-    // Objectのアニメーション更新
+    if (m_isKnockback)            m_animState = Damage;
+    else if (m_isThrowAnimLock)   m_animState = Throw;
+    else if (!m_isOnGround)       m_animState = Jump;
+    else if (m_inputDir != 0)     m_animState = Run;
+    else                          m_animState = Idle;
+
+    //実行
+    ApplyAnimation();
+    m_player.SetPos(pos.x, pos.y, pos.z);
     m_player.Update(deltaTime);
 }
 
 
+<<<<<<< HEAD
 
 void Player::Draw() 
 {
     m_player.Draw
     (
+=======
+void Player::Draw() {
+    m_player.Draw(
+>>>>>>> 79a43e11864f0d4067702876074b68af592713e9
         g_pDeviceContext,
         g_pInputLayout,
         g_pVertexShader,
@@ -600,4 +656,47 @@ bool Player::IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) 
     }
 
     return true;
+}
+
+void Player::ApplyAnimation()
+{
+    if (m_animState == m_prevAnimState &&
+        m_isLastRightDirection == m_prevIsRightDirection)
+        return;
+
+    switch (m_animState)
+    {
+    case Idle:
+        m_player.PlayAnimation(
+            m_isLastRightDirection ? "RightIdle" : "LeftIdle"
+        );
+        break;
+
+    case Run:
+        m_player.PlayAnimation(
+            m_isLastRightDirection ? "Right" : "Left"
+        );
+        break;
+
+    case Jump:
+        m_player.PlayAnimation(
+            m_isLastRightDirection ? "RJump" : "LJump"
+        );
+        break;
+
+    case Damage:
+        m_player.PlayAnimation(
+            m_isLastRightDirection ? "RDamage" : "LDamage"
+        );
+        break;
+
+    case Throw:
+        m_player.PlayAnimation(
+            m_isLastRightDirection ? "ROutLibbon" : "LOutLibbon"
+        );
+        break;
+    }
+
+    m_prevAnimState = m_animState;
+    m_prevIsRightDirection = m_isLastRightDirection;
 }
