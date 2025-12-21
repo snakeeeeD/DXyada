@@ -101,13 +101,8 @@ void Player::SetPos(float Pos_X, float Pos_Y) {
     m_player.SetPos(Pos_X, Pos_Y, 0);
 }
 
-<<<<<<< HEAD
-void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy) {
-
-=======
-void Player::Update(float deltaTime,const std::vector<Platform>& platforms,const std::vector<Enemy>& Enemy)
+void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy)
 {
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
         return;
@@ -162,13 +157,6 @@ void Player::Update(float deltaTime,const std::vector<Platform>& platforms,const
     pos.y -= m_velY * deltaTime;
 
     m_isOnGround = false;
-<<<<<<< HEAD
-    for (auto& plat : platforms) 
-    {
-        auto platPos = plat.GetObject()->GetPos();
-        auto platSize = plat.GetObject()->GetSize();
-=======
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
 
     // Platform上の着地判定
     for (auto& plat : platforms)
@@ -185,21 +173,12 @@ void Player::Update(float deltaTime,const std::vector<Platform>& platforms,const
         float playerRight = pos.x + m_width * 0.5f;
 
         // 横方向が重なるか
-<<<<<<< HEAD
-        if (playerRight > platLeft && playerLeft < platRight) 
-        {
-            // 下端が上面に接触しているか
-            if (playerBottom <= platTop && playerBottom >= platTop - 10.0f) 
-            {
-                pos.y = platTop + m_height / 2.0f; // 補正
-=======
         if (playerRight > platLeft && playerLeft < platRight)
         {
             // 下端が上面に接触しているか
             if (playerBottom <= platTop && playerBottom >= platTop - 10.0f)
             {
                 pos.y = platTop + m_height * 0.5f;
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
                 m_velY = 0.0f;
                 m_isOnGround = true;
             }
@@ -224,147 +203,8 @@ void Player::Update(float deltaTime,const std::vector<Platform>& platforms,const
         else if (moveRight && !moveLeft)  m_inputDir = -1;
         else                              m_inputDir = 0;
 
-<<<<<<< HEAD
-
-        //右入力があるか
-        bool isMoveLeft =
-            input.GetKeyPress(VK_A)
-            || input.GetButtonPress(XINPUT_LEFT)
-            || (stick.x < -threshold);
-
-        //左入力があるか
-        bool isMoveRight =
-            input.GetKeyPress(VK_D)
-            || input.GetButtonPress(XINPUT_RIGHT)
-            || (stick.x > threshold);
-
-        //何も入力していない状態
-        if (m_inputDir == 0)
-        {
-            //左入力があると
-            if (isMoveLeft)
-            {
-                m_inputDir = 1;
-                m_isLastRightDirection = false;
-            }
-            //右入力があると
-            else if (isMoveRight)
-            {
-                m_inputDir = -1;
-                m_isLastRightDirection = true;
-
-            }
-        }
-        //左入力している場合
-        else if (m_inputDir == 1)
-        {
-            //左入力を離す
-            if (!isMoveLeft)
-            {
-                //右入力がされていたら
-                if (isMoveRight)
-                {
-                    m_inputDir = -1;    //右入力状態へ
-                    m_isLastRightDirection = true;
-                }
-                //入力されていなかったら
-                else
-                {
-                    m_inputDir = 0;     //入力なし状態へ
-                }
-            }
-        }
-        //右入力している場合
-        else if (m_inputDir == -1)
-        {
-            //右入力を離す
-            if (!isMoveRight)
-            {
-                //左入力がされていたら
-                if (isMoveLeft)
-                {
-                    m_inputDir = 1;     //左入力状態へ
-                    m_isLastRightDirection = false;
-                }
-                else
-                {
-                    m_inputDir = 0;     //入力なし状態へ
-                }
-            }
-        }
-        // ジャンプ入力（地面にいる場合のみ）
-        if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) 
-        {
-            m_velY = -m_jumpPower; // 上方向にジャンプ
-            m_isOnGround = false;
-        }
-        if (!m_isOnGround) 
-        {
-            if (m_inputDir == 1)
-            {
-                pos.x -= 200.0f * deltaTime;
-                m_player.PlayAnimation("LJump");
-            }
-            //右入力状態なら右移動
-            else if (m_inputDir == -1)
-            {
-                pos.x += 200.0f * deltaTime;
-                m_player.PlayAnimation("RJump");
-            }
-            else
-            {
-                if (m_isLastRightDirection)
-                {
-                    m_player.PlayAnimation("RJump");
-                }
-                else if (!m_isLastRightDirection)
-                {
-                    m_player.PlayAnimation("LJump");
-                }
-            }
-        }
-        else 
-        {
-
-            //ボタンを押していなかったらアイドルのアニメーション
-            if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
-                || input.GetButtonPress(XINPUT_LEFT) || input.GetButtonPress(XINPUT_RIGHT) ||
-                fabs(input.GetLeftAnalogStick().x) > 0.5f))
-            {
-                if (m_ribbon.GetState() == Ribbon::State::Idle)
-                {
-                    if (m_isLastRightDirection)
-                    {
-                        m_player.PlayAnimation("RightIdle");
-                    }
-                    else if (!m_isLastRightDirection)
-                    {
-                        m_player.PlayAnimation("LeftIdle");
-                    }
-                }
-                
-            }
-
-            //左入力状態なら左移動
-            if (m_inputDir == 1)
-            {
-                pos.x -= 200.0f * deltaTime;
-                m_player.PlayAnimation("Left");
-            }
-
-            //右入力状態なら右移動
-            if (m_inputDir == -1)
-            {
-                pos.x += 200.0f * deltaTime;
-                m_player.PlayAnimation("Right");
-            }
-
-        }
-
-=======
         if (m_inputDir == 1)  pos.x -= 200.0f * deltaTime;
         if (m_inputDir == -1) pos.x += 200.0f * deltaTime;
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
     }
     else
     {
@@ -594,16 +434,8 @@ void Player::Update(float deltaTime,const std::vector<Platform>& platforms,const
 }
 
 
-<<<<<<< HEAD
-
-void Player::Draw() 
-{
-    m_player.Draw
-    (
-=======
 void Player::Draw() {
     m_player.Draw(
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
         g_pDeviceContext,
         g_pInputLayout,
         g_pVertexShader,
