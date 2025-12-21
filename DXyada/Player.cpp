@@ -102,7 +102,7 @@ void Player::SetPos(float Pos_X, float Pos_Y) {
     m_player.SetPos(Pos_X, Pos_Y, 0);
 }
 
-void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy) {
+void Player::Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy) {
 
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
@@ -169,7 +169,8 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
     // Platform上の着地判定
     m_isOnGround = false;
-    for (auto& plat : platforms) {
+    for (auto& plat : platforms) 
+    {
         auto platPos = plat.GetObject()->GetPos();
         auto platSize = plat.GetObject()->GetSize();
 
@@ -182,9 +183,11 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         float playerRight = pos.x + m_width / 2.0f;
 
         // 横方向が重なるか
-        if (playerRight > platLeft && playerLeft < platRight) {
+        if (playerRight > platLeft && playerLeft < platRight) 
+        {
             // 下端が上面に接触しているか
-            if (playerBottom <= platTop && playerBottom >= platTop - 10.0f) {
+            if (playerBottom <= platTop && playerBottom >= platTop - 10.0f) 
+            {
                 pos.y = platTop + m_height / 2.0f; // 補正
                 m_velY = 0.0f;
                 m_isOnGround = true;
@@ -266,11 +269,13 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             }
         }
         // ジャンプ入力（地面にいる場合のみ）
-        if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) {
+        if (m_isOnGround && (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))) 
+        {
             m_velY = -m_jumpPower; // 上方向にジャンプ
             m_isOnGround = false;
         }
-        if (!m_isOnGround) {
+        if (!m_isOnGround) 
+        {
             if (m_inputDir == 1)
             {
                 pos.x -= 200.0f * deltaTime;
@@ -294,7 +299,8 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 }
             }
         }
-        else {
+        else 
+        {
 
             //ボタンを押していなかったらアイドルのアニメーション
             if (!(input.GetKeyPress(VK_W) || input.GetKeyPress(VK_S) || input.GetKeyPress(VK_A) || input.GetKeyPress(VK_D)
@@ -370,7 +376,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
         for (const auto& enemy : Enemy)
         {
-            auto enemyPos = enemy.GetObject()->GetPos();
+            auto enemyPos = enemy->GetObject()->GetPos();
 
             float toenemyX = enemyPos.x - p.x;
             float toenemyY = enemyPos.y - p.y;
@@ -538,8 +544,10 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
 
 
 
-void Player::Draw() {
-    m_player.Draw(
+void Player::Draw() 
+{
+    m_player.Draw
+    (
         g_pDeviceContext,
         g_pInputLayout,
         g_pVertexShader,
@@ -547,7 +555,8 @@ void Player::Draw() {
         g_pConstantBuffer
     );
 
-    m_Circle.Draw(
+    m_Circle.Draw
+    (
         g_pDeviceContext,
         g_pInputLayout,
         g_pVertexShader,
@@ -556,7 +565,8 @@ void Player::Draw() {
     );
 }
 
-void Player::Uninit() {
+void Player::Uninit() 
+{
     m_player.UnInit();
     m_guideline.UnInit();
     m_ribbon.UnInit();

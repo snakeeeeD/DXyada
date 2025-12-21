@@ -93,6 +93,20 @@ void Object::Draw(
         XMMatrixOrthographicLH(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 3.0f);
 
     // ===== UV 行列（ここが最重要）=====
+    //int frame = m_currentFrame;
+    //if (frame < anim.startFrame) frame = anim.startFrame;
+    //if (frame > anim.endFrame)   frame = anim.endFrame;
+
+    //float sx = 1.0f / anim.splitX;
+    //float sy = 1.0f / anim.splitY;
+
+    //float u = frame * sx;
+    //float v = anim.row * sy;
+
+    //XMMATRIX matTex =
+    //    XMMatrixScaling(sx, sy, 1.0f) *
+    //    XMMatrixTranslation(u, v, 0.0f);
+
     int frame = m_currentFrame;
     if (frame < anim.startFrame) frame = anim.startFrame;
     if (frame > anim.endFrame)   frame = anim.endFrame;
@@ -103,9 +117,23 @@ void Object::Draw(
     float u = frame * sx;
     float v = anim.row * sy;
 
-    XMMATRIX matTex =
-        XMMatrixScaling(sx, sy, 1.0f) *
-        XMMatrixTranslation(u, v, 0.0f);
+    // ★ ここが重要
+    XMMATRIX matTex;
+
+    if (!m_flipX)
+    {
+        // 通常
+        matTex =
+            XMMatrixScaling(sx, sy, 1.0f) *
+            XMMatrixTranslation(u, v, 0.0f);
+    }
+    else
+    {
+        // 左右反転
+        matTex =
+            XMMatrixScaling(-sx, sy, 1.0f) *   // ← Xをマイナス
+            XMMatrixTranslation(u + sx, v, 0.0f);
+    }
 
     // ===== 定数バッファ =====
     ConstBuffer cb{};

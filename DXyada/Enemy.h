@@ -1,9 +1,14 @@
 #pragma once
 #include "Object.h"
+#include "CollisionManager.h"
 
-class Enemy {
-private:
+class Enemy 
+{
+protected:
     Object m_object;
+    CollisionManager* m_pCollision = nullptr;
+    int m_direction = 1;
+    float m_speed = 200.0f;
 
     float deltaTime;
 
@@ -20,10 +25,13 @@ public:
     Tag tag = Tag::Enemy;
 
     Enemy() = default;
-    ~Enemy() = default;
+    virtual ~Enemy() = default;
 
     void Init();
     void Init(const char* texture, float x, float y, float width, float height);
+
+    //CollisionManagerをセットする関数
+    void SetCollisionManager(CollisionManager* col) { m_pCollision = col; }
 
     Object* GetObject() { return &m_object; }
     const Object* GetObject() const { return &m_object; }
@@ -32,11 +40,7 @@ public:
     void SetHighlight(bool highlight) { m_isHighlighted = highlight; }
     bool IsHighLighted() const { m_isHighlighted; }
 
-    void Update(float deltaTime);
-    void Draw();
+    virtual void Update(float deltaTime);
+    virtual void Draw();
     void UnInit();
 };
-
-class EnemyBasic : public Enemy { /* 基本タイプ */ };
-class EnemyFast : public Enemy { /* 速いタイプ */ };
-class EnemyTank : public Enemy { /* HP高いタイプ */ };

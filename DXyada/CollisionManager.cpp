@@ -6,15 +6,18 @@
 
 using namespace DirectX;
 
-void CollisionManager::AddDynamic(Object* obj) {
+void CollisionManager::AddDynamic(Object* obj) 
+{
     m_dynamic.push_back(obj);
 }
 
-void CollisionManager::AddStatic(Object* obj) {
+void CollisionManager::AddStatic(Object* obj) 
+{
     m_static.push_back(obj);
 }
 
-void CollisionManager::AddMoved(Object* obj) {
+void CollisionManager::AddMoved(Object* obj) 
+{
     m_moved.push_back(obj);
 }
 
@@ -55,10 +58,12 @@ XMFLOAT2 CollisionManager::GetMTV(const AABB& a, const AABB& b)
     float mtvX = fabs(dx1) < fabs(dx2) ? dx1 : dx2;
     float mtvY = fabs(dy1) < fabs(dy2) ? dy1 : dy2;
 
-    if (fabs(mtvX) < fabs(mtvY)) {
+    if (fabs(mtvX) < fabs(mtvY)) 
+    {
         return XMFLOAT2(mtvX, 0);
     }
-    else {
+    else 
+    {
         return XMFLOAT2(0, mtvY);
     }
 }
@@ -71,7 +76,8 @@ void CollisionManager::CheckAll()
 {
 
 
-    for (auto* dynObj : m_dynamic) {
+    for (auto* dynObj : m_dynamic) 
+    {
 
         AABB a = GetAABB(dynObj);   //dynObj：動的なオブジェクト（dynamic）
 
@@ -85,7 +91,8 @@ void CollisionManager::CheckAll()
             if (!CheckOverlap(a, b)) continue;
 
             //Aがプレイヤー、BがEnemyの場合
-            if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy) {
+            if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy) 
+            {
                 if (m_sceneMgr) {
                 }
                 continue;
@@ -101,11 +108,13 @@ void CollisionManager::CheckAll()
         }
     }
 
-    for (auto* dynObj : m_dynamic) {
+    for (auto* dynObj : m_dynamic) 
+    {
 
         AABB a = GetAABB(dynObj);
         
-        for (auto* moveObj : m_moved) {
+        for (auto* moveObj : m_moved) 
+        {
 
             AABB b = GetAABB(moveObj);
         
@@ -127,8 +136,10 @@ void CollisionManager::CheckAll()
 
     // 移動可能同士
     size_t count = m_moved.size();
-    for (size_t i = 0; i < count; ++i) {
-        for (size_t j = i + 1; j < count; ++j) {
+    for (size_t i = 0; i < count; ++i) 
+    {
+        for (size_t j = i + 1; j < count; ++j) 
+        {
             AABB a = GetAABB(m_moved[i]);
             AABB b = GetAABB(m_moved[j]);
             if (!CheckOverlap(a, b)) continue;
@@ -144,11 +155,13 @@ void CollisionManager::CheckAll()
         }
     }
 
-    for (auto* move : m_moved) {
+    for (auto* move : m_moved) 
+    {
 
         AABB a = GetAABB(move);
 
-        for (auto* stObj : m_static) {
+        for (auto* stObj : m_static) 
+        {
 
             AABB b = GetAABB(stObj);
 
@@ -165,3 +178,17 @@ void CollisionManager::CheckAll()
     }
 }
 
+bool CollisionManager::CheckHitStatic(const AABB& box)
+{
+    //登録されている全ての静的オブジェクトと判定
+    for (auto* stObj : m_static)
+    {
+        AABB b = GetAABB(stObj);
+
+        if (CheckOverlap(box, b))
+        {
+            return true;//どれか1つでも当たれば true
+        }
+    }
+    return false; //何にも当たらなければ false
+}

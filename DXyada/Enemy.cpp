@@ -5,11 +5,14 @@
 
 extern Input input;
 // デフォルト Init
-void Enemy::Init() {
+void Enemy::Init() 
+{
+
 }
 
 // 引数付き Init
-void Enemy::Init(const char* texture, float x, float y, float width, float height) {
+void Enemy::Init(const char* texture, float x, float y, float width, float height)
+{
     m_object.Init();
     m_object.AddTexture(texture);
     m_object.SetPos(x, y, 0);
@@ -19,7 +22,8 @@ void Enemy::Init(const char* texture, float x, float y, float width, float heigh
 
 }
 
-void Enemy::Update(float deltaTime) {
+void Enemy::Update(float deltaTime) 
+{
     auto pos = m_object.GetPos();
 
     //if (move==false) {
@@ -52,8 +56,10 @@ void Enemy::Update(float deltaTime) {
     m_object.Update(1 / 240.0f);
 }
 
-void Enemy::Draw() {
-    m_object.Draw(
+void Enemy::Draw() 
+{
+    m_object.Draw
+    (
         g_pDeviceContext,
         g_pInputLayout,
         g_pVertexShader,
@@ -62,6 +68,7 @@ void Enemy::Draw() {
     );
 }
 
-void Enemy::UnInit() {
+void Enemy::UnInit() 
+{
     m_object.UnInit();
 }

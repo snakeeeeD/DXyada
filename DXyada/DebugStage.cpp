@@ -31,8 +31,8 @@ void DebugStage::Init()
     }
 
     for (auto& enemy : m_enemies) {
-        m_collision->AddStatic(enemy.GetObject());
-        m_collision->SetTag(enemy.GetObject(), ColliderTag::Enemy);
+        m_collision->AddStatic(enemy->GetObject());
+        m_collision->SetTag(enemy->GetObject(), ColliderTag::Enemy);
     }
 
     // プレイヤーのコリジョン登録
@@ -57,7 +57,7 @@ void DebugStage::Init()
 
     // 敵
     for (size_t i = 0; i < m_enemies.size(); ++i) {
-        item.obj = m_enemies[i].GetObject();
+        item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
     }
@@ -90,22 +90,22 @@ void DebugStage::Update()
 
     // 敵更新
     for (auto& enemy : m_enemies) {
-        enemy.Update(dt);
+        enemy->Update(dt);
     }
 
   
     for (auto& enemy : m_enemies) {
-        enemy.Update(dt);
+        enemy->Update(dt);
 
         //プレイヤーと敵との衝突判定
         auto playerAABB = m_collision->GetAABB(m_player.GetObject());
-        auto enemyAABB = m_collision->GetAABB(enemy.GetObject());
+        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
 
         if (m_collision->CheckOverlap(playerAABB, enemyAABB))
         {
             // ノックバック方向を計算（プレイヤー位置 - 敵位置）
             DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-            DirectX::XMFLOAT3 enemyPos = enemy.GetObject()->GetPos();
+            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
 
             DirectX::XMFLOAT2 knockbackDir = {
                 playerPos.x - enemyPos.x,
@@ -154,7 +154,7 @@ void DebugStage::Draw()
 void DebugStage::UnInit()
 {
     for (auto& plat : m_platforms) plat.UnInit();
-    for (auto& enemy : m_enemies) enemy.UnInit();
+    for (auto& enemy : m_enemies) enemy->UnInit();
 
     m_background.UnInit();
     m_player.Uninit();

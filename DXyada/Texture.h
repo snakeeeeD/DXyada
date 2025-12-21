@@ -12,7 +12,7 @@ public:
     void SetSpriteSheet(int cols, int rows); // スプライトシート分割設定
 
     // frame 番号から UV を取得
-    void GetFrameUV(int frame, float& u0, float& v0, float& u1, float& v1) const;
+    void GetFrameUV(int frame, float& u0, float& v0, float& u1, float& v1, bool flipX) const;
 
     ID3D11ShaderResourceView* GetSRV() const { return m_srv; }
 

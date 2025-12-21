@@ -58,6 +58,8 @@ public:
     void SetAngle(float a);
     void SetPivot(float x, float y, float z);
     void SetColor(float r, float g, float b, float a);
+    void SetFlipX(bool flip) { m_flipX = flip; }
+
 
     DirectX::XMFLOAT3 GetPos() const { return m_pos; }
     DirectX::XMFLOAT3 GetSize() const { return m_size; }
@@ -76,4 +78,6 @@ private:
 
     int   m_currentFrame = 0;
     float m_animTime = 0.0f;
+
+    bool m_flipX = false;
 };

@@ -8,7 +8,8 @@
 extern DirectX::XMFLOAT3 g_StartPlayer;
 
 
-class Player {
+class Player 
+{
 private:
 	Object m_player;
 	Object m_guideline;
@@ -76,7 +77,7 @@ public:
 	Object* GetCircle() { return &m_Circle; }
 	void Init();
 	void SetPos(float Pos_X, float Pos_Y);
-	void Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy>& Enemy);
+	void Update(float deltaTime, const std::vector<Platform>& platforms, const std::vector<Enemy*>& Enemy);
 	void Draw();
 	void Uninit();
 

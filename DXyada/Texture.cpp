@@ -18,7 +18,8 @@ bool Texture::Load(ID3D11Device* device, const char* filename)
     int width, height, bpp;
 
     pixels = stbi_load(filename, &width, &height, &bpp, 4);
-    if (!pixels) {
+    if (!pixels) 
+    {
         MessageBoxA(NULL, filename, "Texture Load Error", MB_OK);
         return false;
     }
@@ -59,7 +60,7 @@ void Texture::SetSpriteSheet(int cols, int rows)
 }
 
 // 指定フレームの UV を取得
-void Texture::GetFrameUV(int frame, float& u0, float& v0, float& u1, float& v1) const
+void Texture::GetFrameUV(int frame, float& u0, float& v0, float& u1, float& v1, bool flipX) const
 {
     int col = frame % m_cols;
     int row = frame / m_cols;
@@ -68,4 +69,12 @@ void Texture::GetFrameUV(int frame, float& u0, float& v0, float& u1, float& v1) 
     v0 = (float)row / m_rows;
     u1 = (float)(col + 1) / m_cols;
     v1 = (float)(row + 1) / m_rows;
+
+    //左右反転
+    if (flipX)
+    {
+        float temp = u0;
+        u0 = u1;
+        u1 = temp;
+    }
 }

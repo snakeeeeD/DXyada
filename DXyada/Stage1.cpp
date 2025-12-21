@@ -1,7 +1,11 @@
 #include "Stage1.h"
 #include "SceneGame.h"
+#include "Enemy.h"
+#include "Rippa.h"
+#include "NeedleFloor.h"
 #include <algorithm>
-void Stage1::Init() {
+void Stage1::Init() 
+{
     m_collision = new CollisionManager();
 
     m_background.Init();
@@ -22,27 +26,78 @@ void Stage1::Init() {
     m_player.Init();
     m_player.GetObject()->SetPos(150, -50, 0);
 
-    Platform plat1; plat1.Init("asset/block.png", 0, -200, 100, 50);
-    Platform plat2; plat2.Init("asset/block.png", 150, -150, 100, 50);
-    Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1800, 50);
+    Platform plat1; plat1.Init("asset/block.png", 0, -200, 100, 50);     //手前床
+    Platform plat2; plat2.Init("asset/block.png", 150, -500, 100, 50);   //主人公が乗っている床
+    Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1500, 50); //ナガ床
 
-    Enemy e;
+    Platform plat4; plat4.Init("asset/block.png", 400, -100, 100, 50); //左壁
+    Platform plat5; plat5.Init("asset/block.png", 1000, -100, 100, 50);  //右壁
+
+    Platform plat6; plat6.Init("asset/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
+
+    Platform plat7; plat7.Init("asset/block.png", 1000, -500, 1500, 50);  //下ナガ床
+
+    /*Enemy e;
     e.Init("asset/title.png", 1000, -50, 100, 100);
-    m_enemies.push_back(e);
+    m_enemies.push_back(e);*/
 
-    Enemy e2;
-    e2.Init("asset/rippa.png", 700, 300, 100, 100);
-    m_enemies.push_back(e2);
+  /*Enemy Rippa;
+    Rippa.Init("asset/rippa.png", 700, 300, 100, 100);
+    m_enemies.push_back(Rippa);*/
 
-    m_platforms = { plat1, plat2, plat3 };
-    for (auto& plat : m_platforms) {
+    //エネミー1 (壁反転)
+    {
+        Rippa* rippa = new Rippa(Rippa::Type::Normal);
+        rippa->Init("asset/rippa.png", 800, -100, 100, 100);
+        rippa->SetCollisionManager(m_collision);
+        m_enemies.push_back(rippa);
+    }
+
+    //エネミー2 (崖反転)
+    {
+        Rippa* rippa_2 = new Rippa(Rippa::Type::Normal);
+        rippa_2->Init("asset/rippa.png", 1000, 150, 100, 100);
+        rippa_2->SetCollisionManager(m_collision);
+
+        m_enemies.push_back(rippa_2);
+    }
+
+    //エネミー3 (徘徊)
+    {
+        Rippa* rippa_3 = new Rippa(Rippa::Type::Wandering);
+        rippa_3->Init("asset/rippa.png", 1000, -450, 100, 100);
+        rippa_3->SetCollisionManager(m_collision);
+
+        rippa_3->SetTurnInterval(2.5f); //個々の値変更で自由に変えられる
+
+        m_enemies.push_back(rippa_3);
+    }
+
+
+    //ハリ床
+    {
+        NeedleFloor* nf = new NeedleFloor();
+
+        // 床の高さに合わせて y=-150 に配置
+        nf->Init("asset/needle_floor.png", 0, -300, 150, 50);
+
+        // 忘れずに CollisionManager をセット（将来のリボン判定用）
+        nf->SetCollisionManager(m_collision);
+
+        m_enemies.push_back(nf);
+    }
+
+    m_platforms = { plat1, plat2, plat3, plat4, plat5, plat6, plat7 };
+    for (auto& plat : m_platforms) 
+    {
         m_collision->AddStatic(plat.GetObject());
         m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
     }
 
-    for (auto& enemy : m_enemies) {
-        m_collision->AddStatic(enemy.GetObject());
-        m_collision->SetTag(enemy.GetObject(), ColliderTag::Enemy);
+    for (auto& enemy : m_enemies) 
+    {
+        m_collision->AddStatic(enemy->GetObject());
+        m_collision->SetTag(enemy->GetObject(), ColliderTag::Enemy);
     }
 
 
@@ -61,14 +116,16 @@ void Stage1::Init() {
     item.layer = DrawLayer::BackObject;
     m_drawList.push_back(item);
 
-    for (size_t i = 0; i < m_platforms.size(); ++i) {
+    for (size_t i = 0; i < m_platforms.size(); ++i) 
+    {
         item.obj = m_platforms[i].GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
 
-    for (size_t i = 0; i < m_enemies.size(); ++i) {
-        item.obj = m_enemies[i].GetObject();
+    for (size_t i = 0; i < m_enemies.size(); ++i) 
+    {
+        item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
     }
@@ -101,39 +158,47 @@ void Stage1::Init() {
 
 }
 
-void Stage1::Update() {
+void Stage1::Update() 
+{
     float dt = 1.0f / 60.0f;
 
     // プレイヤー更新（Stage 内で完結）
     m_player.Update(dt, m_platforms, m_enemies);
 
     // 敵更新
-    for (auto& enemy : m_enemies) {
+    for (auto& enemy : m_enemies) 
+    {
 
         //範囲判定
         float distance = 0.0f;
-        bool inRange = m_player.IsEnemyInRange(enemy.GetObject()->GetPos(), distance);
-        enemy.SetHighlight(inRange);
+        bool inRange = m_player.IsEnemyInRange(enemy->GetObject()->GetPos(), distance);
+        enemy->SetHighlight(inRange);
 
-        enemy.Update(dt);
+        enemy->Update(dt);
 
         //プレイヤーと敵との衝突判定
         auto playerAABB = m_collision->GetAABB(m_player.GetObject());
-        auto enemyAABB = m_collision->GetAABB(enemy.GetObject());
+        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
 
         if (m_collision->CheckOverlap(playerAABB, enemyAABB))
         {
             // ノックバック方向を計算（プレイヤー位置 - 敵位置）
             DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-            DirectX::XMFLOAT3 enemyPos = enemy.GetObject()->GetPos();
+            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
 
-            DirectX::XMFLOAT2 knockbackDir = {
+            DirectX::XMFLOAT2 knockbackDir = 
+            {
                 playerPos.x - enemyPos.x,
                 playerPos.y - enemyPos.y
             };
 
             m_player.TakeDamage(1, knockbackDir);
         }
+    }
+
+    for (auto* enemy : m_enemies)
+    {
+        enemy->Update(dt);
     }
 
 
@@ -143,26 +208,31 @@ void Stage1::Update() {
     // コリジョン更新
     m_collision->CheckAll();
 
-    if (m_player.isDead()) {  
+    if (m_player.isDead()) 
+    {  
         m_isPlayerDead = true;
     }
 }
 
-void Stage1::Draw() {
+void Stage1::Draw() 
+{
     std::sort(
         m_drawList.begin(),
         m_drawList.end(),
-        [](const DrawItem& a, const DrawItem& b) {
+        [](const DrawItem& a, const DrawItem& b) 
+        {
             return static_cast<int>(a.layer) < static_cast<int>(b.layer);
         }
     );
 
     // 並べ替えた順に描画
-    for (size_t i = 0; i < m_drawList.size(); ++i) {
+    for (size_t i = 0; i < m_drawList.size(); ++i) 
+    {
         Object* obj = m_drawList[i].obj;
         if (!obj) continue; // 念のため
 
-        obj->Draw(
+        obj->Draw
+        (
             g_pDeviceContext,
             g_pInputLayout,
             g_pVertexShader,
@@ -174,7 +244,7 @@ void Stage1::Draw() {
 
 void Stage1::UnInit() {
     for (auto& plat : m_platforms) plat.UnInit();
-    for (auto& enemy : m_enemies) enemy.UnInit();
+    for (auto& enemy : m_enemies) enemy->UnInit();
 
     m_background.UnInit();
     m_player.Uninit();

@@ -12,7 +12,7 @@ private:
     Object m_usiro;
 
     std::vector<Platform> m_platforms;
-    std::vector<Enemy> m_enemies;
+    std::vector<Enemy*> m_enemies;
 
     std::vector<DrawItem> m_drawList;
 

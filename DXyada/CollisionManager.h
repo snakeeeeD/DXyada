@@ -61,27 +61,35 @@
 
 // forward 宣言（重要）
 class SceneManager;
+class Object;
 
-enum class ColliderTag {
+enum class ColliderTag 
+{
     Player,
     Enemy,
     Platform,
     Unknown
 };
 
-class CollisionManager {
-private:
-
-    struct AABB {
+class CollisionManager 
+{
+public:
+    struct AABB
+    {
         DirectX::XMFLOAT2 min;
         DirectX::XMFLOAT2 max;
     };
+
+
+private:
 
     std::vector<Object*> m_dynamic;
     std::vector<Object*> m_static;
     std::vector<Object*> m_moved;
 
     std::unordered_map<Object*, ColliderTag> m_tags;
+
+    std::vector<AABB> m_staticObjects;
 
 
     SceneManager* m_sceneMgr = nullptr;
@@ -90,17 +98,20 @@ private:
     DirectX::XMFLOAT2 GetMTV(const AABB& a, const AABB& b);
 
 public:
+
     void AddDynamic(Object* obj);
     void AddStatic(Object* obj);
     void AddMoved(Object* obj);
 
     void CheckAll();
 
-    void SetTag(Object* obj, ColliderTag tag) {
+    void SetTag(Object* obj, ColliderTag tag) 
+    {
         m_tags[obj] = tag;
     }
 
-    ColliderTag GetTag(Object* obj) {
+    ColliderTag GetTag(Object* obj) 
+    {
         auto it = m_tags.find(obj);
         if (it != m_tags.end()) return it->second;
         return ColliderTag::Unknown;
@@ -110,4 +121,12 @@ public:
 
     AABB GetAABB(Object* obj);
     bool CheckOverlap(const AABB& a, const AABB& b);
+
+    //指定したAABB(矩形)がStaticオブジェクトと当たっているか調べる
+    bool CheckHitStatic(const AABB& box);
+
+    void AddStaticAABB(const AABB& aabb) 
+    {
+        m_staticObjects.push_back(aabb);
+    }
 };

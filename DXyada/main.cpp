@@ -106,11 +106,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 				break;
 			}
 		}
-		else {
+		else 
+		{
 			QueryPerformanceCounter(&liWork);
 			nowCount = liWork.QuadPart;
-			if (nowCount >= oldCount + frequency / 60) {
-
+			if (nowCount >= oldCount + frequency / 60) 
+			{
 				game.Update();
 				game.Draw();
 				fpsCounter++;
@@ -118,7 +119,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 			}
 			nowTick = GetTickCount64();
 
-			if (nowTick >= oldTick + 1000) {
+			if (nowTick >= oldTick + 1000) 
+			{
 				char str[32];
 				wsprintfA(str, "FPS=%d", fpsCounter);
 				SetWindowTextA(hWnd, str);
@@ -162,10 +164,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{ //入力されたキーがESCAPEなら
 			//PostMessage(hWnd, WM_CLOSE, wParam, lParam);//「WM_CLOSE」を送る
 		}
-		else if (LOWORD(wParam) == VK_F11) {
+		else if (LOWORD(wParam) == VK_F11) 
+		{
 			isFullscreen = !isFullscreen;
 
-			if (isFullscreen) {
+			if (isFullscreen) 
+			{
 
 				// 1. すべての「枠となるスタイル」を削除
 				LONG style = GetWindowLong(hWnd, GWL_STYLE);
@@ -178,7 +182,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				int screenH = GetSystemMetrics(SM_CYSCREEN);
 
 				// 3. ウィンドウを手前に固定しつつ全画面化
-				SetWindowPos(
+				SetWindowPos
+				(
 					hWnd,
 					HWND_TOPMOST,
 					0, 0,
@@ -191,7 +196,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				GetClientRect(hWnd, &rc);
 				ResizeWindow(rc.right - rc.left, rc.bottom - rc.top);
 			}
-			else {
+			else 
+			{
 				// ウィンドウモードへ戻す
 				SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 
@@ -210,7 +216,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_ACTIVATE:
-		if (wParam == WA_INACTIVE) {
+		if (wParam == WA_INACTIVE) 
+		{
 			if (isFullscreen && !isMassageBoxShowed){
 				ShowWindow(hWnd, SW_MINIMIZE);
 			}
@@ -220,12 +227,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_SIZE:
-		if (wParam != SIZE_MINIMIZED) {
+		if (wParam != SIZE_MINIMIZED) 
+		{
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);
 			ResizeWindow(width, height);
 		}
 		break;
+
 	default:
 		// 受け取ったメッセージに対してデフォルトの処理を実行
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
