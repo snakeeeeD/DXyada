@@ -8,6 +8,7 @@ void Stage2::Init()
 
     // プレイヤー初期位置
     m_player.Init();
+    m_player.SetCollisionManager(m_collision);
     m_player.GetObject()->SetPos(150, -50, 0);
 
     // 背景

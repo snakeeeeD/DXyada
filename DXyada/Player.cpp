@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Object.h"
 #include "framework.h"
+#include "CollisionManager.h"
 
 
 extern Input input;
@@ -242,6 +243,35 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         //+-20度の弧で範囲チェック
         float angleThreshold = cos(20.0f * DirectX::XM_PI / 180.0f);
 
+        //地面との衝突チェック
+        float groundHitDistance = m_baseGuidelineLength;
+        bool hitGround = false;
+
+        //レイキャストのステップ数(精度)
+        const int raySteps = 20;
+        const float stepSize = m_baseGuidelineLength / raySteps;
+
+        for (int i = 1; i <= raySteps; ++i)
+        {
+            float checkDist = stepSize * i;
+            float checkX = p.x + dirX * checkDist;
+            float checkY = p.y + dirY * checkDist;
+
+            //チェック地点のAABBを作成(小さな点として)
+            CollisionManager::AABB rayPoint;
+            const float pointSize = 5.0f; // 判定用の小さなサイズ
+            rayPoint.min = { checkX - pointSize, checkY - pointSize };
+            rayPoint.max = { checkX + pointSize, checkY + pointSize };
+
+            // CollisionManagerを使って地面との衝突をチェック
+            if (m_collisionMgr && m_collisionMgr->CheckHitStatic(rayPoint))
+            {
+                groundHitDistance = checkDist;
+                hitGround = true;
+                break;
+            }
+        }
+
         for (const auto& enemy : Enemy)
         {
             auto enemyPos = enemy->GetObject()->GetPos();
@@ -250,7 +280,7 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             float toenemyY = enemyPos.y - p.y;
             float distToEnemy = sqrt(toenemyX * toenemyX + toenemyY * toenemyY);
 
-            if (distToEnemy > m_baseGuidelineLength) continue;
+            if (distToEnemy > guidelineLength) continue; // 地面までの距離を考慮
 
             float dotProduct = (dirX * toenemyX + dirY * toenemyY) / distToEnemy;
 
@@ -260,8 +290,37 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                 float projectionLength = dotProduct * distToEnemy;  //指示線の投影距離
                 float perpendicularDist = sqrt(distToEnemy * distToEnemy - projectionLength * projectionLength);
 
-                //指示線から一番近い敵を選択
-                if (perpendicularDist < minPerpendicularDist)
+                // プレイヤーから敵までの経路上に壁がないかチェック
+                bool pathBlocked = false;
+                if (m_collisionMgr)
+                {
+                    float enemyDirX = toenemyX / distToEnemy;
+                    float enemyDirY = toenemyY / distToEnemy;
+
+                    const int pathCheckSteps = 10;
+                    const float pathStepSize = distToEnemy / pathCheckSteps;
+
+                    for (int j = 1; j < pathCheckSteps - 1; ++j)
+                    {
+                        float checkDist = pathStepSize * j;
+                        float checkX = p.x + enemyDirX * checkDist;
+                        float checkY = p.y + enemyDirY * checkDist;
+
+                        CollisionManager::AABB rayPoint;
+                        const float pointSize = 5.0f;
+                        rayPoint.min = { checkX - pointSize, checkY - pointSize };
+                        rayPoint.max = { checkX + pointSize, checkY + pointSize };
+
+                        if (m_collisionMgr->CheckHitStatic(rayPoint))
+                        {
+                            pathBlocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                //指示線から一番近い敵を選択（壁に遮られていない場合のみ）
+                if (!pathBlocked && perpendicularDist < minPerpendicularDist && projectionLength <= guidelineLength)
                 {
                     minPerpendicularDist = perpendicularDist;
                     guidelineLength = projectionLength;
@@ -269,6 +328,12 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
                     m_targetPosition = enemyPos;
                 }
             }
+        }
+
+        // 敵が見つからなかった場合は地面までの距離を使用
+        if (!foundEnemy && hitGround)
+        {
+            guidelineLength = groundHitDistance;
         }
 
         m_hasTarget = foundEnemy;
@@ -290,12 +355,17 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
         }
         else
         {
-            guidelineLength = m_baseGuidelineLength;
-            //ガイドライン表示
+             //ガイドライン表示
             m_guideline.SetColor(1, 1, 1, 0.5);
 
             m_Circle.SetColor(1, 1, 1, 0);
         }
+
+
+        
+        
+
+       
 
         m_aimDirection = { dirX, dirY };
 
@@ -305,14 +375,17 @@ void Player::Update(float deltaTime, const std::vector<Platform>& platforms, con
             float centerY = p.y + (guidelineLength / 2.0f) * dirY;
 
             //プレイヤーの中心に指示線の左端が来るように
-            m_guideline.SetPos(p.x + (m_baseGuidelineLength / 2), p.y, p.z);
+            m_guideline.SetPos(p.x + (guidelineLength / 2), p.y, p.z);
+
+            // 指示線の長さを調整
+            m_guideline.SetSize(guidelineLength, 20, 0);
 
             //ラジアンを度へ変換
             float angleDeg = angleRad * (180.0f / DirectX::XM_PI);
             float GuideangleDeg = GuideangleRad * (180.0f / DirectX::XM_PI);
 
             //回転の中心を左端に移動
-            m_guideline.SetPivot(((-m_baseGuidelineLength) / 2), 0, 0);
+            m_guideline.SetPivot(((-guidelineLength) / 2), 0, 0);
 
             //角度を設定
             m_guideline.SetAngle(GuideangleDeg);

@@ -11,6 +11,7 @@ void DebugStage::Init()
 
     // プレイヤー初期位置
     m_player.Init();
+    m_player.SetCollisionManager(m_collision);
     m_player.GetObject()->SetPos(0, -200, 0);
 
     // 背景

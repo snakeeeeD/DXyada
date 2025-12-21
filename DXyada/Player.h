@@ -16,6 +16,7 @@ enum Player_AnimState
 	Throw
 };
 
+class CollisionManager;
 
 class Player 
 {
@@ -88,6 +89,9 @@ private:
 
 	bool m_waitReleaseAfterThrow;
 
+	// CollisionManager用
+	CollisionManager* m_collisionMgr = nullptr;
+
 	//実験用
 	float t;
 public:
@@ -116,6 +120,9 @@ public:
 
 	// リボン取得用
 	Ribbon& GetRibbon();
+
+	// CollisionManager設定用
+	void SetCollisionManager(CollisionManager* mgr) { m_collisionMgr = mgr; }
 
 };
 

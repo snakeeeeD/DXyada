@@ -24,6 +24,7 @@ void Stage1::Init()
     m_mae.SetSize(100, 100, 0);
     
     m_player.Init();
+    m_player.SetCollisionManager(m_collision);
     m_player.GetObject()->SetPos(150, -50, 0);
 
     Platform plat1; plat1.Init("asset/block.png", 0, -200, 100, 50);     //è‘O°

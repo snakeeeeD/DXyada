@@ -1,285 +1,293 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="ソース ファイル\00-Main">
-      <UniqueIdentifier>{5e08c9d9-082f-44bc-9976-9778ab6bee73}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\01-Manager管理">
-      <UniqueIdentifier>{3c198b38-1c67-4f91-9218-191d0ce22a8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\01-Manager管理\01-CollisionManager">
-      <UniqueIdentifier>{56a17d7f-7c49-420e-a02f-bd648fa39661}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\01-Manager管理\02-SceneManager">
-      <UniqueIdentifier>{32b832d2-03d8-4bfe-8c9b-28ce3fa3ae8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\01-Manager管理\03-StageManager">
-      <UniqueIdentifier>{bc6214e0-4cf7-4468-8363-703595765b61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理">
-      <UniqueIdentifier>{3e38fce4-d2d6-4ecd-8e1e-5d4c1803ea4d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\00-Object">
-      <UniqueIdentifier>{c9242561-fad7-4d9d-bdcd-a702b345e66d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\03-Enemy">
-      <UniqueIdentifier>{a9e06188-711d-42d2-b810-03af9069b6d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\01-Platform">
-      <UniqueIdentifier>{ed9ba82a-ef7e-4057-b2e2-32fbd079413c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\02-Player">
-      <UniqueIdentifier>{5056bd67-8f77-4ea5-9835-308df0712e8a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\03-システム関係%28サウンドとかも%29">
-      <UniqueIdentifier>{f226e08c-25fa-42da-b704-f6d00cd76fbb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\03-システム関係%28サウンドとかも%29\00-framework">
-      <UniqueIdentifier>{e84c43f0-92ec-463d-b334-8d4cf13a737e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\03-システム関係%28サウンドとかも%29\01-Game">
-      <UniqueIdentifier>{169c2a84-fb02-4ea3-ad95-e63f6ba8b662}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\03-システム関係%28サウンドとかも%29\02-Input">
-      <UniqueIdentifier>{8dca3982-0d5f-43a6-8809-6b669b632b4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\03-システム関係%28サウンドとかも%29\03-Sound">
-      <UniqueIdentifier>{20599f70-fc75-46d8-8dfe-8071197f138b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\03-システム関係%28サウンドとかも%29\000-Resourse">
-      <UniqueIdentifier>{a4721149-2df3-4306-9ad0-d8c75177e198}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\04-描画関係">
-      <UniqueIdentifier>{a650a7b3-fa80-49a4-a6cd-cb9a28f3070b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\04-描画関係\01-Camera">
-      <UniqueIdentifier>{d819b61b-0a91-4ead-86ac-9e9672dac992}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\04-描画関係\02-Renderer">
-      <UniqueIdentifier>{672f9482-b6f7-4487-9983-f164f410fd19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\04-描画関係\03-Texture">
-      <UniqueIdentifier>{21b2793c-52d4-4f16-9d27-ea0d8cb3ced7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\04-描画関係\04-std_image">
-      <UniqueIdentifier>{87e0b501-567f-4f07-8159-2ee4a108728f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理">
-      <UniqueIdentifier>{683c111f-d28d-4bd4-8baf-c671bd8ea2ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\00-SceneBase">
-      <UniqueIdentifier>{f67adbab-fe09-458d-b155-c26f9a5ce0d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\000-SceneID">
-      <UniqueIdentifier>{21f5ae42-d9d6-4d13-89d6-93aafb70b2dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\01-SceneTitle">
-      <UniqueIdentifier>{a5bfd51a-da1a-4c3a-999c-dcf27dddb3a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\20-Stage管理">
-      <UniqueIdentifier>{6131d0ba-d451-4f8d-bd59-60cefc0a455c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\20-Stage管理\00-StageBase">
-      <UniqueIdentifier>{777c62c0-b13c-4513-8395-76ae95e74c08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\20-Stage管理\01-Stage1">
-      <UniqueIdentifier>{8fb6f33c-c491-4f98-acce-357b5e859dd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\02-SceneSelect">
-      <UniqueIdentifier>{9b3d95ea-973e-4adc-8e0d-8f177839cc34}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\10-Scene管理\03-SceneGame">
-      <UniqueIdentifier>{c511b55b-af00-4abc-829a-208ca6366d2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\20-Stage管理\02-Stage2">
-      <UniqueIdentifier>{09d407db-ce62-4897-916c-8e35667dcd8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\20-Stage管理\999-DebugStage">
-      <UniqueIdentifier>{39b67fe7-c4a4-4730-9a85-48483f57b436}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\04-Ribbon">
-      <UniqueIdentifier>{c6930cd0-87ad-45e3-bf3b-4e6454410f5a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\02-Object管理\05-Gimmick">
-      <UniqueIdentifier>{6230601e-d34d-4672-8fa5-1e1f1afb5818}</UniqueIdentifier>
-    </Filter>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>リソースファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>リソースファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソースファイル\00-Main</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>ソースファイル\01-Manager管理\01-CollisionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>ソースファイル\01-Manager管理\02-SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>ソースファイル\02-Object管理\00-Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform.cpp">
+      <Filter>ソースファイル\02-Object管理\01-Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>ソースファイル\03-システム、入出力関係\01-Game</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>ソースファイル\03-システム、入出力関係\02-Input</Filter>
+    </ClCompile>
+    <ClCompile Include="sound.cpp">
+      <Filter>ソースファイル\03-システム、入出力関係\03-Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera2D.cpp">
+      <Filter>ソースファイル\04-描画関係\01-Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>ソースファイル\04-描画関係\02-Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>ソースファイル\04-描画関係\03-Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>ソースファイル\04-描画関係\04-std_image</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>ソースファイル\10-Scene管理\01-SceneTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSelect.cpp">
+      <Filter>ソースファイル\10-Scene管理\02-SceneSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>ソースファイル\10-Scene管理\03-SceneGame</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugStage.cpp">
+      <Filter>ソースファイル\20-Stage管理\999-DebugStage</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage1.cpp">
+      <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage2.cpp">
+      <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソースファイル\02-Object管理\03-Enemy\00-Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Rippa.cpp">
+      <Filter>ソースファイル\02-Object管理\03-Enemy\01-Rippa</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソースファイル\02-Object管理\02-Player\00-Player</Filter>
+    </ClCompile>
+    <ClCompile Include="OldPlayer.cpp">
+      <Filter>ソースファイル\02-Object管理\02-Player\999-OldPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="NeedleFloor.cpp">
+      <Filter>ソースファイル\02-Object管理\03-Enemy\02-NeedleFloor</Filter>
+    </ClCompile>
+    <ClCompile Include="Ribbon.cpp">
+      <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
-      <Filter>ソース ファイル\01-Manager管理\01-CollisionManager</Filter>
+      <Filter>ソースファイル\01-Manager管理\01-CollisionManager</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>ソース ファイル\01-Manager管理\02-SceneManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.h">
-      <Filter>ソース ファイル\02-Object管理\01-Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ソース ファイル\02-Object管理\02-Player</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneBase.h">
-      <Filter>ソース ファイル\10-Scene管理\00-SceneBase</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneID.h">
-      <Filter>ソース ファイル\10-Scene管理\000-SceneID</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneTitle.h">
-      <Filter>ソース ファイル\10-Scene管理\01-SceneTitle</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGame.h">
-      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
-    </ClInclude>
-    <ClInclude Include="StageBase.h">
-      <Filter>ソース ファイル\20-Stage管理\00-StageBase</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage1.h">
-      <Filter>ソース ファイル\20-Stage管理\01-Stage1</Filter>
-    </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\00-framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\01-Game</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\02-Input</Filter>
-    </ClInclude>
-    <ClInclude Include="sound.h">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\03-Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\000-Resourse</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera2D.h">
-      <Filter>ソース ファイル\04-描画関係\01-Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>ソース ファイル\04-描画関係\02-Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>ソース ファイル\04-描画関係\03-Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>ソース ファイル\04-描画関係\04-std_image</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneSelect.h">
-      <Filter>ソース ファイル\10-Scene管理\02-SceneSelect</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage2.h">
-      <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
+      <Filter>ソースファイル\01-Manager管理\02-SceneManager</Filter>
     </ClInclude>
     <ClInclude Include="StageManager.h">
-      <Filter>ソース ファイル\01-Manager管理\03-StageManager</Filter>
+      <Filter>ソースファイル\01-Manager管理\03-StageManager</Filter>
     </ClInclude>
-    <ClInclude Include="Ribbon.h">
-      <Filter>ソース ファイル\02-Object管理\04-Ribbon</Filter>
+    <ClInclude Include="Object.h">
+      <Filter>ソースファイル\02-Object管理\00-Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>ソースファイル\02-Object管理\01-Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>ソースファイル\03-システム、入出力関係\000-Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>ソースファイル\03-システム、入出力関係\00-framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>ソースファイル\03-システム、入出力関係\01-Game</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>ソースファイル\03-システム、入出力関係\02-Input</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>ソースファイル\03-システム、入出力関係\03-Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera2D.h">
+      <Filter>ソースファイル\04-描画関係\01-Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>ソースファイル\04-描画関係\02-Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>ソースファイル\04-描画関係\03-Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>ソースファイル\04-描画関係\04-std_image</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneID.h">
+      <Filter>ソースファイル\10-Scene管理\000-SceneID</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <Filter>ソースファイル\10-Scene管理\00-SceneBace</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>ソースファイル\10-Scene管理\01-SceneTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSelect.h">
+      <Filter>ソースファイル\10-Scene管理\02-SceneSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGame.h">
+      <Filter>ソースファイル\10-Scene管理\03-SceneGame</Filter>
     </ClInclude>
     <ClInclude Include="DebugStage.h">
-      <Filter>ソース ファイル\20-Stage管理\999-DebugStage</Filter>
+      <Filter>ソースファイル\20-Stage管理\999-DebugStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage1.h">
+      <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage2.h">
+      <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="StageBase.h">
+      <Filter>ソースファイル\20-Stage管理\00-StageBase</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
+      <Filter>ソースファイル\02-Object管理\03-Enemy\00-Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Rippa.h">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
+      <Filter>ソースファイル\02-Object管理\03-Enemy\01-Rippa</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ソースファイル\02-Object管理\02-Player\00-Player</Filter>
     </ClInclude>
     <ClInclude Include="NeedleFloor.h">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
+      <Filter>ソースファイル\02-Object管理\03-Enemy\02-NeedleFloor</Filter>
+    </ClInclude>
+    <ClInclude Include="Ribbon.h">
+      <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CollisionManager.cpp">
-      <Filter>ソース ファイル\01-Manager管理\01-CollisionManager</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>ソース ファイル\01-Manager管理\02-SceneManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>ソース ファイル\02-Object管理\00-Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>ソース ファイル\02-Object管理\01-Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル\02-Object管理\02-Player</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneTitle.cpp">
-      <Filter>ソース ファイル\10-Scene管理\01-SceneTitle</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage1.cpp">
-      <Filter>ソース ファイル\20-Stage管理\01-Stage1</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\01-Game</Filter>
-    </ClCompile>
-    <ClCompile Include="input.cpp">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\02-Input</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル\00-Main</Filter>
-    </ClCompile>
-    <ClCompile Include="sound.cpp">
-      <Filter>ソース ファイル\03-システム関係%28サウンドとかも%29\03-Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera2D.cpp">
-      <Filter>ソース ファイル\04-描画関係\01-Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>ソース ファイル\04-描画関係\02-Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>ソース ファイル\04-描画関係\03-Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="stb_image.cpp">
-      <Filter>ソース ファイル\04-描画関係\04-std_image</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneSelect.cpp">
-      <Filter>ソース ファイル\10-Scene管理\02-SceneSelect</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage2.cpp">
-      <Filter>ソース ファイル\20-Stage管理\02-Stage2</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGame.cpp">
-      <Filter>ソース ファイル\10-Scene管理\03-SceneGame</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugStage.cpp">
-      <Filter>ソース ファイル\20-Stage管理\999-DebugStage</Filter>
-    </ClCompile>
-    <ClCompile Include="Ribbon.cpp">
-      <Filter>ソース ファイル\02-Object管理\04-Ribbon</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="Rippa.cpp">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="NeedleFloor.cpp">
-      <Filter>ソース ファイル\02-Object管理\03-Enemy</Filter>
-=======
-    <ClCompile Include="OldPlayer.cpp">
-      <Filter>ソース ファイル\02-Object管理\02-Player</Filter>
->>>>>>> 79a43e11864f0d4067702876074b68af592713e9
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="VertexShader.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </FxCompile>
+    <Filter Include="リソースファイル">
+      <UniqueIdentifier>{4d402f36-1878-448d-98b6-acd4bd26b968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル">
+      <UniqueIdentifier>{5d039003-ca5a-457c-aa44-ebbaf114e18d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\00-Main">
+      <UniqueIdentifier>{86871081-8d41-4ba1-89b1-3dd3d905e1f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\01-Manager管理">
+      <UniqueIdentifier>{0d2b568b-e78f-4b6d-a28b-6ce2d195d344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理">
+      <UniqueIdentifier>{1cffd945-57af-46dd-9453-69a7d9f105f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\03-システム、入出力関係">
+      <UniqueIdentifier>{b2ab92c9-0b7d-4972-8602-8cc9a028d24d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係">
+      <UniqueIdentifier>{d6453c59-912a-4b9b-8d94-73121387f099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理">
+      <UniqueIdentifier>{91c43bc3-f74b-4a3c-8afe-8822d5861979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\01-Manager管理\01-CollisionManager">
+      <UniqueIdentifier>{531d3af8-a1b7-4f7c-858c-a10041f23781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\01-Manager管理\02-SceneManager">
+      <UniqueIdentifier>{71223de9-ae1b-4683-b2d5-9d4297caad9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\01-Manager管理\03-StageManager">
+      <UniqueIdentifier>{f07eacdd-40a4-4d02-bb65-45558ba2ed62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\00-Object">
+      <UniqueIdentifier>{13ee1bb4-09bf-4d4c-a8eb-0a684fc8b409}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\01-Platform">
+      <UniqueIdentifier>{94137d67-5e3b-447c-9a74-249fd1fada6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\02-Player">
+      <UniqueIdentifier>{5e5cafcb-f572-4c20-810b-53f7cbe3852c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\03-Enemy">
+      <UniqueIdentifier>{01160d71-5521-42e7-b819-9c2211b039c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\03-システム、入出力関係\000-Resource">
+      <UniqueIdentifier>{7ae86ecb-edbf-43d6-a82c-0a7e906df38f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\03-システム、入出力関係\00-framework">
+      <UniqueIdentifier>{6a472d53-6d82-4c55-8e0f-540387856b96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\03-システム、入出力関係\01-Game">
+      <UniqueIdentifier>{b49a3cbb-c51c-451e-b4ae-b6ac15760bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\03-システム、入出力関係\02-Input">
+      <UniqueIdentifier>{0aa4a963-91d6-4e6d-8222-3271976191e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\03-システム、入出力関係\03-Sound">
+      <UniqueIdentifier>{8b1dc629-319f-4d22-b539-67fe37c5754b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係\01-Camera">
+      <UniqueIdentifier>{18be011a-f06e-461a-9fa1-fcf0f842a6a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係\02-Renderer">
+      <UniqueIdentifier>{d87d68a2-0f0a-4408-87ed-d848530cf67e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係\03-Texture">
+      <UniqueIdentifier>{b1d304d6-a52c-4033-9238-ae10d11c1be2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係\04-std_image">
+      <UniqueIdentifier>{2d727072-f4f2-46ac-a9c0-eed69044b76c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理">
+      <UniqueIdentifier>{6b3b7d9c-90f8-4d7f-9b8d-aed8f3e305da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理\000-SceneID">
+      <UniqueIdentifier>{4aca59d2-4c5b-4943-b9f3-0675a65f086f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理\00-SceneBace">
+      <UniqueIdentifier>{df484960-af1c-41cc-a85c-b1bfca251529}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理\01-SceneTitle">
+      <UniqueIdentifier>{6d93f1dd-cdf6-46cf-9172-88768c38e13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理\02-SceneSelect">
+      <UniqueIdentifier>{ed60e649-0923-4ab1-a083-84e058777e49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理\03-SceneGame">
+      <UniqueIdentifier>{af4af8c8-ac1f-4064-a757-c2410fd65608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理\00-StageBase">
+      <UniqueIdentifier>{e5e1d626-ad88-4cec-a96e-73467899e9e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理\01-Stage1">
+      <UniqueIdentifier>{bcc181c0-93ed-4ac8-8ab3-355a6a7807e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理\02-Stage2">
+      <UniqueIdentifier>{1593944c-74bf-48e6-bc31-7fd32a4dded5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理\999-DebugStage">
+      <UniqueIdentifier>{4be61244-302f-4a2d-8899-7664871a4730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\03-Enemy\00-Enemy">
+      <UniqueIdentifier>{073b5fc7-734f-4f5e-9b80-dd7409b671f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\03-Enemy\01-Rippa">
+      <UniqueIdentifier>{95d51200-0b93-4a2f-b3d2-9690c421e7eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\02-Player\00-Player">
+      <UniqueIdentifier>{6cc1e70e-4534-421b-97b7-76b0841327e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\02-Player\999-OldPlayer">
+      <UniqueIdentifier>{02226424-4e56-45d5-98ec-2768f6140eb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\03-Enemy\02-NeedleFloor">
+      <UniqueIdentifier>{90b0d8fc-4d9c-42f3-bca3-a5dd33d017cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\04-Ribbon">
+      <UniqueIdentifier>{fd131e57-3358-4d2d-9f9f-4f049795b7e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
