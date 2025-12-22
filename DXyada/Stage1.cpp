@@ -97,7 +97,7 @@ void Stage1::Init()
 
     for (auto& enemy : m_enemies) 
     {
-        m_collision->AddStatic(enemy->GetObject());
+        m_collision->AddMoved(enemy->GetObject());
         m_collision->SetTag(enemy->GetObject(), ColliderTag::Enemy);
     }
 
