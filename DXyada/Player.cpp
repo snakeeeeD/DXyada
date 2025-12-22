@@ -228,7 +228,7 @@ void Player::Update(
     bool moveRight =
         input.GetKeyPress(VK_D) ||
         input.GetButtonPress(XINPUT_RIGHT) ||
-        (rightStick.x > moveThreshold);
+        (leftStick.x > moveThreshold);
 
     //ノックバック中出ない場合のみ移動
     if (!m_isKnockback)
