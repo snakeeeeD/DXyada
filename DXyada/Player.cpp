@@ -19,7 +19,7 @@ void Player::Init() {
     // アニメーション設定
     m_player.AddAnimation("Left", "asset/Player_Work.png", 4, 1, 0, 0, 1, 5, true, 1);
     m_player.AddAnimation("Right", "asset/Player_Work.png", 4, 1, 0, 2, 3, 5, true, 1);
-    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png",  4, 2, 0, 0, 3, 5, true, 1);
+    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png", 4, 2, 0, 0, 3, 5, true, 1);
     m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 4, 2, 1, 0, 3, 5, true, 1);
     m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
     m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
@@ -59,13 +59,14 @@ void Player::Init() {
     m_guideline.Init();
     m_guideline.AddTexture("asset/block.png");
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
-    m_guideline.SetSize(m_baseGuidelineLength, 20, 0);  
+    m_guideline.SetSize(m_baseGuidelineLength, 20, 0);
 
     m_Circle.Init();
     m_Circle.AddTexture("asset/circle.png");
     m_Circle.SetSize(100, 100, 0);
 
     m_ribbon.Init();
+    m_ribbon.SetCollisionManager(m_collisionMgr);
 }
 
 void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
@@ -143,9 +144,9 @@ void Player::Update(
         }
     }
     auto pos = m_player.GetPos();   //プレイヤーの位置を取得
- //--------------------------------------
- // エイム入力（右スティック or マウス）
- //--------------------------------------
+    //--------------------------------------
+    // エイム入力（右スティック or マウス）
+    //--------------------------------------
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
     DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();// エイム専用
     const float moveThreshold = 0.5f;
@@ -168,7 +169,7 @@ void Player::Update(
     // エイム方向を1本化
     bool aiming = false;
 
-     if (stickAiming)
+    if (stickAiming)
     {
         m_aimDirection = rightStick;
         aiming = true;
@@ -180,10 +181,10 @@ void Player::Update(
         aiming = true;
     }
     else
-     {
-         m_guideline.SetColor(1, 1, 1, 0);
-         m_Circle.SetColor(1, 1, 1, 0);
-     }
+    {
+        m_guideline.SetColor(1, 1, 1, 0);
+        m_Circle.SetColor(1, 1, 1, 0);
+    }
 
 
     // 重力を加算
@@ -256,9 +257,9 @@ void Player::Update(
         m_isOnGround = false;
     }
 
-//========================================
-// 右スティックを倒すと指示線表示 + オートエイム
-//========================================
+    //========================================
+    // 右スティックを倒すと指示線表示 + オートエイム
+    //========================================
     Enemy* bestEnemy = nullptr;
 
     if (aiming)
@@ -391,7 +392,7 @@ void Player::Update(
                     m_targetPosition = enemyPos;
                     bestEnemy = enemy;
                 }
-            } 
+            }
         }
 
         //------------------------------------
@@ -675,10 +676,10 @@ void Player::Update(
         }
 
 
-        
-        
 
-       
+
+
+
 
         m_aimDirection = { dirX, dirY };
 
@@ -711,7 +712,7 @@ void Player::Update(
              //透明に
             m_guideline.SetColor(1, 1, 1, 0);
         }
-       
+
             if (rightStick.x > 0)
             {
                 m_isLastRightDirection = true;
@@ -725,7 +726,7 @@ void Player::Update(
             {
                 m_isLastRightDirection = (rightStick.x > 0);
             }
-    
+
     }
     else
     {
@@ -738,10 +739,10 @@ void Player::Update(
         // 毎フレーム
         m_ribbon.SetPlayerPos({ pos.x, pos.y });
         m_ribbon.Update(deltaTime);
-    
+
         float rightTrigger = input.GetRightTrigger();
         bool isRTPressed = rightTrigger > 0.5f;
-    
+
         if (!m_isKnockback)
         {
             // キー入力
@@ -751,7 +752,7 @@ void Player::Update(
                 if (aiming)
                 {
                     //右スティックの状態を正規化して送る
-    
+
                     m_ribbon.Throw(m_aimDirection);
                     if (rightStick.x > 0)
                     {
@@ -761,7 +762,7 @@ void Player::Update(
                     {
                         //m_player.PlayAnimation("LOutLibbon");
                     }
-                  
+
                 }
                 else
                 {
@@ -778,7 +779,7 @@ void Player::Update(
                     }
                 }
                 m_isRibbonOut = true;
-    
+
             }
             //キーボードでも複数回リボンを伸ばせるように修正
             if ((m_ribbon.GetState() == Ribbon::State::Returning) || (!isRTPressed && m_wasRTPressed))
@@ -839,7 +840,7 @@ void Player::Draw() {
     );
 }
 
-void Player::Uninit() 
+void Player::Uninit()
 {
     m_player.UnInit();
     m_guideline.UnInit();

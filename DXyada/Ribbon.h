@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <DirectXMath.h>
-
+#include "CollisionManager.h"
 
 class Object;
 class Enemy;
@@ -74,6 +74,7 @@ private:
     bool m_hasHit = false;
     Enemy* m_hitEnemy = nullptr;
     DirectX::XMFLOAT2 m_hitPos{};
+    CollisionManager* m_collisionMgr = nullptr;
 
 public:
     Ribbon();
@@ -102,6 +103,10 @@ public:
     bool HasHit() const { return m_hasHit; }
     DirectX::XMFLOAT2 GetHitPos() const { return m_hitPos; }
     Enemy* GetHitEnemy() const { return m_hitEnemy; }
+    void SetCollisionManager(CollisionManager* mgr)
+    {
+        m_collisionMgr = mgr;
+    }
 
     // –ß‚·
     void Return();

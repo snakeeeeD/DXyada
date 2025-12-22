@@ -138,6 +138,24 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
         float tipX = m_playerPos.x + m_direction.x * m_currentLength;
         float tipY = m_playerPos.y + m_direction.y * m_currentLength;
 
+        //•Çƒqƒbƒg”»’è
+        if (m_collisionMgr)
+        {
+            CollisionManager::AABB tip;
+            const float tipSize = 5.0f;
+
+            tip.min = { tipX - tipSize, tipY - tipSize };
+            tip.max = { tipX + tipSize, tipY + tipSize };
+
+            if (m_collisionMgr->CheckHitStatic(tip))
+            {
+                // •Ç‚É“–‚½‚Á‚½‚ç‘¦–ß‚·
+                m_state = State::Returning;
+                return;
+            }
+        }
+
+
         // “Gƒqƒbƒg”»’è
         for (Enemy* enemy : enemies)
         {
