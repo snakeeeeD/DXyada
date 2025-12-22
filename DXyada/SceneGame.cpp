@@ -76,8 +76,8 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
 
     m_cursor.SetPos(0, 0, 0);
     m_cursor.SetSize(0, 0, 0);
-        //エスケープでタイトルに
-        if (input.GetKeyTrigger(VK_ESCAPE)) {
+        //エスケープでポーズに、コントローラーはスタートで
+        if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_START)) {
             m_state = GameState::Pouse;
         }
 
@@ -102,14 +102,13 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
    
     m_cursor.SetSize(m_size, m_size, 0);
 
-    input.Update();
-    if (input.GetKeyPress(VK_UP) || input.GetButtonTrigger(XINPUT_UP)) {
+    if (input.GetKeyTrigger(VK_UP) || input.GetButtonTrigger(XINPUT_UP)) {
         if (m_cursorNum > 0)
         {
             m_cursorNum-=1;
         }
     }
-    if (input.GetKeyPress(VK_DOWN) || input.GetButtonPress(XINPUT_DOWN)) {
+    if (input.GetKeyTrigger(VK_DOWN) || input.GetButtonTrigger(XINPUT_DOWN)) {
         if (m_cursorNum < 2)
         {
             m_cursorNum+=1;
@@ -121,14 +120,14 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
     {
     case 0:
         m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y + 225, 0);
-            if (input.GetKeyPress(VK_RETURN) || input.GetButtonPress(XINPUT_A)) {
+            if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
                 m_state = GameState::Playing;
             }
         break;
 
     case 1:
         m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y, 0);
-        if (input.GetKeyTrigger(VK_RETURN))
+        if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_GAME);
         }
@@ -136,7 +135,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
 
     case 2:
         m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y - 225, 0);
-        if (input.GetKeyTrigger(VK_RETURN))
+        if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_SELECT);
         }
