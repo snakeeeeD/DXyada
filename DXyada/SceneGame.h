@@ -19,8 +19,18 @@ private:
 
     Object Pouse_BackGround;
     Object GameOver_BackGround;
+    Object m_cursor;
 
-    int m_cursor = 0;
+    int SizeMin = 190;
+    int SizeMax = 210;
+    int m_size = 190;
+
+    int deltaTime = 0;
+
+    bool Big = false;
+    bool Small = false;
+
+    int m_cursorNum = 0;
 
 public:
     SceneGame(int stageNum = 1);

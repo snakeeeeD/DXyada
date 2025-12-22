@@ -1,6 +1,7 @@
 #include "SceneGame.h"
 #include "SceneManager.h"
 #include "Input.h"
+#include <iostream>
 
 extern Input input;
 
@@ -40,6 +41,9 @@ void SceneGame::Init()
 
     GameOver_BackGround.Init();
     GameOver_BackGround.AddTexture("asset/GameOver.png");
+
+    m_cursor.Init();
+    m_cursor.AddTexture("asset/cursor.png");
 }
 
 void SceneGame::Update(SceneManager& mgr)
@@ -70,6 +74,8 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
     GameOver_BackGround.SetSize(0, 0, 0);
     Pouse_BackGround.SetSize(0, 0, 0);
 
+    m_cursor.SetPos(0, 0, 0);
+    m_cursor.SetSize(0, 0, 0);
         //エスケープでタイトルに
         if (input.GetKeyTrigger(VK_ESCAPE)) {
             m_state = GameState::Pouse;
@@ -91,20 +97,76 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
 }
 void SceneGame::UpdatePouse(SceneManager& mgr) {
     Pouse_BackGround.SetSize(1920, 1080, 0);
-    Pouse_BackGround.SetColor(1, 1, 1, 0.3);
+    Pouse_BackGround.SetColor(1, 1, 1, 1);
     Pouse_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
+   
+    m_cursor.SetSize(m_size, m_size, 0);
 
-    if (input.GetKeyTrigger(VK_ESCAPE)) {
-        m_state = GameState::Playing;
+    input.Update();
+    if (input.GetKeyPress(VK_UP) || input.GetButtonTrigger(XINPUT_UP)) {
+        if (m_cursorNum > 0)
+        {
+            m_cursorNum-=1;
+        }
     }
-    if (input.GetKeyTrigger(VK_RETURN))
+    if (input.GetKeyPress(VK_DOWN) || input.GetButtonPress(XINPUT_DOWN)) {
+        if (m_cursorNum < 2)
+        {
+            m_cursorNum+=1;
+        }
+        
+    }
+
+    switch (m_cursorNum)
     {
-        mgr.ChangeScene(SCENE_GAME);
+    case 0:
+        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y + 225, 0);
+            if (input.GetKeyPress(VK_RETURN) || input.GetButtonPress(XINPUT_A)) {
+                m_state = GameState::Playing;
+            }
+        break;
+
+    case 1:
+        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y, 0);
+        if (input.GetKeyTrigger(VK_RETURN))
+        {
+            mgr.ChangeScene(SCENE_GAME);
+        }
+        break;
+
+    case 2:
+        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y - 225, 0);
+        if (input.GetKeyTrigger(VK_RETURN))
+        {
+            mgr.ChangeScene(SCENE_SELECT);
+        }
+        break;
     }
-    if (input.GetKeyTrigger(VK_SPACE))
-    {
-        mgr.ChangeScene(SCENE_SELECT);
+
+    if (m_size == SizeMin) {
+        Big = true;
+        Small = false;
     }
+    if (m_size == SizeMax) {
+        Big = false;
+        Small = true;
+    }
+
+    if (Big == true) {
+        if (deltaTime == 5) {
+            m_size += 1;
+            deltaTime = 0;
+        }
+        deltaTime++;
+    }
+    if (Small == true) {
+        if (deltaTime == 5) {
+            m_size -= 1;
+            deltaTime = 0;
+        }
+        deltaTime++;
+    }
+
 }
 void SceneGame::UpdateResult(SceneManager& mgr) {
 
@@ -143,6 +205,13 @@ void SceneGame::Draw()
         g_pPixelShader,
         g_pConstantBuffer
     );
+    m_cursor.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
 }
 
 void SceneGame::UnInit()
@@ -150,5 +219,6 @@ void SceneGame::UnInit()
     Pouse_BackGround.UnInit();
     GameOver_BackGround.UnInit();
     m_stageManager.Uninit();
+    m_cursor.UnInit();
 }
 
