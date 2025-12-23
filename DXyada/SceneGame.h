@@ -20,6 +20,9 @@ private:
     Object Pouse_BackGround;
     Object GameOver_BackGround;
     Object m_cursor;
+    Object m_Buttonretry;
+    Object m_Buttoncontinue;
+    Object m_ButtonStageselect;
 
     int SizeMin = 190;
     int SizeMax = 210;

@@ -37,13 +37,25 @@ void SceneGame::Init()
 
 
     Pouse_BackGround.Init();
-    Pouse_BackGround.AddTexture("asset/Pouse.png");
+    Pouse_BackGround.AddTexture("asset/Pouse_Back.png");
 
     GameOver_BackGround.Init();
     GameOver_BackGround.AddTexture("asset/GameOver.png");
 
     m_cursor.Init();
     m_cursor.AddTexture("asset/cursor.png");
+
+    
+    m_Buttonretry.Init();
+    m_Buttonretry.AddTexture("asset/Button_Retry.png");
+
+    m_Buttoncontinue.Init();
+    m_Buttoncontinue.AddTexture("asset/Button_Continue.png");
+
+    m_ButtonStageselect.Init();
+    m_ButtonStageselect.AddTexture("asset/Button_StageSelect.png");
+        
+        
 }
 
 void SceneGame::Update(SceneManager& mgr)
@@ -76,6 +88,16 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
 
     m_cursor.SetPos(0, 0, 0);
     m_cursor.SetSize(0, 0, 0);
+
+    m_Buttonretry.SetPos(0, 0, 0);
+    m_Buttonretry.SetSize(0, 0, 0);
+
+    m_Buttoncontinue.SetPos(0, 0, 0);
+    m_Buttoncontinue.SetSize(0, 0, 0);
+
+    m_ButtonStageselect.SetPos(0, 0, 0);
+    m_ButtonStageselect.SetSize(0, 0, 0);
+
         //エスケープでポーズに、コントローラーはスタートで
         if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_START)) {
             m_state = GameState::Pouse;
@@ -99,6 +121,19 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
     Pouse_BackGround.SetSize(1920, 1080, 0);
     Pouse_BackGround.SetColor(1, 1, 1, 1);
     Pouse_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
+
+    
+    m_Buttoncontinue.SetColor(1, 1, 1, 1);
+    m_Buttoncontinue.SetPos(g_cameraPos.x + 320, g_cameraPos.y + 145, 0);
+
+    
+    m_Buttonretry.SetColor(1, 1, 1, 1);
+    m_Buttonretry.SetPos(g_cameraPos.x+320, g_cameraPos.y -90, 0);
+
+  
+
+    m_ButtonStageselect.SetColor(1, 1, 1, 1);
+    m_ButtonStageselect.SetPos(g_cameraPos.x + 320, g_cameraPos.y - 320, 0);
    
     m_cursor.SetSize(m_size, m_size, 0);
 
@@ -120,13 +155,19 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
     {
     case 0:
         m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y + 225, 0);
+        m_Buttoncontinue.SetSize(670, 185, 0);
+        m_Buttonretry.SetSize(572, 160, 0);
+        m_ButtonStageselect.SetSize(572, 160, 0);
             if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
                 m_state = GameState::Playing;
             }
         break;
 
     case 1:
-        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y, 0);
+        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y-5, 0);
+        m_Buttoncontinue.SetSize(572, 160, 0);
+        m_Buttonretry.SetSize(670, 185, 0);
+        m_ButtonStageselect.SetSize(572, 160, 0);
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_GAME);
@@ -134,7 +175,10 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         break;
 
     case 2:
-        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y - 225, 0);
+        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y - 235, 0);
+        m_Buttoncontinue.SetSize(572, 160, 0);
+        m_Buttonretry.SetSize(572, 160, 0);
+        m_ButtonStageselect.SetSize(670, 185, 0);
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_SELECT);
@@ -204,6 +248,31 @@ void SceneGame::Draw()
         g_pPixelShader,
         g_pConstantBuffer
     );
+
+    m_Buttonretry.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
+
+    m_Buttoncontinue.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
+
+    m_ButtonStageselect.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
+
     m_cursor.Draw(
         g_pDeviceContext,
         g_pInputLayout,
@@ -219,5 +288,9 @@ void SceneGame::UnInit()
     GameOver_BackGround.UnInit();
     m_stageManager.Uninit();
     m_cursor.UnInit();
+    m_Buttonretry.UnInit();
+    m_Buttoncontinue.UnInit();
+    m_ButtonStageselect.UnInit();
 }
+
 
