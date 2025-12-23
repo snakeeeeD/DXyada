@@ -13,7 +13,10 @@ enum Player_AnimState
 	Run,
 	Jump,
 	Damage,
-	Throw
+	Throw,
+	RibbonJump,
+	Pulled,
+	Roll
 };
 
 class CollisionManager;

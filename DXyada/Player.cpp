@@ -17,8 +17,8 @@ void Player::Init() {
     m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
-    m_player.AddAnimation("Left", "asset/Player_Work.png", 4, 1, 0, 0, 1, 5, true, 1);
-    m_player.AddAnimation("Right", "asset/Player_Work.png", 4, 1, 0, 2, 3, 5, true, 1);
+    m_player.AddAnimation("Left", "asset/Player_Walk.png", 4, 1, 0, 0, 1, 5, true, 1);
+    m_player.AddAnimation("Right", "asset/Player_Walk.png", 4, 1, 0, 2, 3, 5, true, 1);
     m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png", 5, 2, 0, 0, 3, 5, true, 1);
     m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 5, 2, 1, 0, 3, 5, true, 1);
     m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
@@ -27,7 +27,12 @@ void Player::Init() {
     m_player.AddAnimation("RDamage", "asset/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
     m_player.AddAnimation("LOutLibbon", "asset/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
     m_player.AddAnimation("ROutLibbon", "asset/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
-
+    m_player.AddAnimation("LRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 0, 0, 4, 15, false, 2);
+    m_player.AddAnimation("RRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 1, 0, 4, 15, false, 2);
+    m_player.AddAnimation("LPulled", "asset/Player_Pulled.png", 5, 2, 0, 0, 4, 15, false, 2);
+    m_player.AddAnimation("RPulled", "asset/Player_Pulled.png", 5, 2, 1, 0, 4, 15, false, 2);
+    m_player.AddAnimation("LRoll", "asset/Player_Roll.png", 5, 2, 0, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RRoll", "asset/Player_Roll.png", 5, 2, 1, 0, 4, 15, true, 2);
     m_animState = Idle;
     m_prevAnimState = static_cast<Player_AnimState>(-1);
 
@@ -143,7 +148,42 @@ void Player::Update(
             m_knockbackVelocity = { 0,0 };
         }
     }
-    auto pos = m_player.GetPos();   //プレイヤーの位置を取得
+   
+    float rightTrigger = input.GetRightTrigger();
+    bool isRTPressed = rightTrigger > 0.5f;
+
+    //========================================
+    // リボン先端ヒット判定
+    //========================================
+
+    // RibbonにRTの状態を伝える
+    m_ribbon.SetRTheld(isRTPressed);
+
+    Enemy* hitEnemy = m_ribbon.GetHitEnemy();
+    if (hitEnemy)
+    {
+        if (!isRTPressed)
+        {
+            hitEnemy->Disable();
+            m_ribbon.Return();
+        }
+        else
+        {
+            hitEnemy->SetFrozen(true);
+        }
+    }
+    else
+    {
+        // 敵を掴んでいない時は凍結解除
+        for (auto enemy : enemies)
+        {
+            if (enemy)
+                enemy->SetFrozen(false);
+        }
+    }
+
+    auto pos = m_player.GetPos();
+
     //--------------------------------------
     // エイム入力（右スティック or マウス）
     //--------------------------------------
@@ -168,6 +208,8 @@ void Player::Update(
     bool mousePressed = input.GetMouseButtonPress(VK_LBUTTON);
     // エイム方向を1本化
     bool aiming = false;
+
+    
 
     if (stickAiming)
     {
@@ -238,8 +280,26 @@ void Player::Update(
         else if (moveRight && !moveLeft)  m_inputDir = -1;
         else                              m_inputDir = 0;
 
+        // 通常の移動
         if (m_inputDir == 1)  pos.x -= 200.0f * deltaTime;
         if (m_inputDir == -1) pos.x += 200.0f * deltaTime;
+
+        // 敵を掴んでいる場合の処理
+        if (hitEnemy && isRTPressed)
+        {
+            auto enemyPos = hitEnemy->GetObject()->GetPos();
+            float dx = enemyPos.x - pos.x;
+            float dy = enemyPos.y - pos.y;
+            float currentDist = sqrt(dx * dx + dy * dy);
+
+            // 最大長を超えたら自動でリボンを外す
+            if (currentDist > m_baseGuidelineLength)
+            {
+                m_ribbon.Return();
+                m_isRibbonOut = false;
+                hitEnemy->SetFrozen(false);
+            }
+        }
     }
     else
     {
@@ -474,21 +534,12 @@ void Player::Update(
     //========================================
     m_ribbon.SetPlayerPos({ pos.x, pos.y });
     m_ribbon.Update(deltaTime, enemies);
-    //========================================
-    // リボン先端ヒット判定
-    //========================================
-    Enemy* hitEnemy = m_ribbon.GetHitEnemy();
-    if (hitEnemy)
-    {
-        hitEnemy->Disable();
-        m_ribbon.Return();
-    }
+    
 
     //========================================
     // リボン発射処理
     //========================================
-    float rightTrigger = input.GetRightTrigger();
-    bool isRTPressed = rightTrigger > 0.5f;
+
 
     if (!m_isKnockback)
     {

@@ -132,58 +132,93 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
     }*/
     if (m_state == State::Throwing)
     {
-        m_currentLength += m_speed * deltaTime;
-
-        // 先端座標
-        float tipX = m_playerPos.x + m_direction.x * m_currentLength;
-        float tipY = m_playerPos.y + m_direction.y * m_currentLength;
-
-        //壁ヒット判定
-        if (m_collisionMgr)
+        if (!m_hasHit)
         {
-            CollisionManager::AABB tip;
-            const float tipSize = 5.0f;
+            m_currentLength += m_speed * deltaTime;
 
-            tip.min = { tipX - tipSize, tipY - tipSize };
-            tip.max = { tipX + tipSize, tipY + tipSize };
+            // 先端座標
+            float tipX = m_playerPos.x + m_direction.x * m_currentLength;
+            float tipY = m_playerPos.y + m_direction.y * m_currentLength;
 
-            if (m_collisionMgr->CheckHitStatic(tip))
+            //壁ヒット判定
+            if (m_collisionMgr)
             {
+                CollisionManager::AABB tip;
+                const float tipSize = 5.0f;
+
+                tip.min = { tipX - tipSize, tipY - tipSize };
+                tip.max = { tipX + tipSize, tipY + tipSize };
+
                 // 壁に当たったら即戻す
-                m_state = State::Returning;
-                return;
+                if (m_collisionMgr->CheckHitStatic(tip))
+                {
+                    //RTを押していなければ戻す
+                    if (!m_isRTheld)
+                    {
+                        m_state = State::Returning;
+                    }
+                    return;
+                }
             }
-        }
 
 
-        // 敵ヒット判定
-        for (Enemy* enemy : enemies)
-        {
-            if (!enemy) continue;
 
-            auto pos = enemy->GetObject()->GetPos();
-            auto size = enemy->GetObject()->GetSize();
-
-            float left = pos.x - size.x * 0.5f;
-            float right = pos.x + size.x * 0.5f;
-            float top = pos.y + size.y * 0.5f;
-            float bottom = pos.y - size.y * 0.5f;
-
-            if (tipX >= left && tipX <= right &&
-                tipY >= bottom && tipY <= top)
+            // 敵ヒット判定
+            for (Enemy* enemy : enemies)
             {
-                m_hasHit = true;
-                m_hitEnemy = enemy;
-                m_hitPos = { tipX, tipY };
-                m_state = State::Returning;
-                break;
+                if (!enemy) continue;
+
+                auto pos = enemy->GetObject()->GetPos();
+                auto size = enemy->GetObject()->GetSize();
+
+                float left = pos.x - size.x * 0.5f;
+                float right = pos.x + size.x * 0.5f;
+                float top = pos.y + size.y * 0.5f;
+                float bottom = pos.y - size.y * 0.5f;
+
+                if (tipX >= left && tipX <= right &&
+                    tipY >= bottom && tipY <= top)
+                {
+                    m_hasHit = true;
+                    m_hitEnemy = enemy;
+                    m_hitPos = { tipX, tipY };
+
+                    // RTを押していなければ戻す
+                    if (!m_isRTheld)
+                    {
+                        m_state = State::Returning;
+                    }
+                    break;
+                }
+            }
+
+            if (m_currentLength >= m_maxLength)
+            {
+                m_currentLength = m_maxLength;
+                // RTを押していなければ戻す
+                if (!m_isRTheld)
+                {
+                    m_state = State::Returning;
+                }
             }
         }
-
-        if (m_currentLength >= m_maxLength)
+        else
         {
-            m_currentLength = m_maxLength;
-            m_state = State::Returning;
+            // 敵に当たっている場合、プレイヤーと敵の距離に応じてリボンの長さを更新
+            if (m_hitEnemy)
+            {
+                auto enemyPos = m_hitEnemy->GetObject()->GetPos();
+                float dx = enemyPos.x - m_playerPos.x;
+                float dy = enemyPos.y - m_playerPos.y;
+                m_currentLength = sqrt(dx * dx + dy * dy);
+
+                // 方向も更新
+                if (m_currentLength > 0.0f)
+                {
+                    m_direction.x = dx / m_currentLength;
+                    m_direction.y = dy / m_currentLength;
+                }
+            }
         }
     }
     //----------------------------------
@@ -229,6 +264,8 @@ void Ribbon::Reset()
 {
     m_state = State::Idle;
     m_currentLength = 0.0f;
+    m_hasHit = false;
+    m_hitEnemy = nullptr;
 
     for (auto& seg : m_segments)
     {

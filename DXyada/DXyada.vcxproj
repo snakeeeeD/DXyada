@@ -136,6 +136,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="NeedleFloor.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Pin.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="NeedleFloor.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="OldPlayer.cpp" />
+    <ClCompile Include="Pin.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />

@@ -76,6 +76,8 @@ private:
     DirectX::XMFLOAT2 m_hitPos{};
     CollisionManager* m_collisionMgr = nullptr;
 
+    bool m_isRTheld = false;
+
 public:
     Ribbon();
     ~Ribbon();
@@ -116,6 +118,8 @@ public:
 
     // Stage‘¤‚ÅDrawList‚ÉÏ‚Ş—p
     std::vector<Object*> GetDrawObjects() const;
+
+    void SetRTheld(bool held) { m_isRTheld = held; }
 
     // ‰ğ•ú
     void UnInit();

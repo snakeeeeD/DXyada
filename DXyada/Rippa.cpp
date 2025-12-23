@@ -4,6 +4,12 @@ Rippa::Rippa(Type type) : m_type(type) {}
 
 void Rippa::Update(float deltaTime)
 {
+    // “€Œ‹’†‚Í‰½‚à‚µ‚È‚¢
+    if (m_isFrozen)
+    {
+        m_object.Update(deltaTime);
+        return;
+    }
 
 	auto pos = m_object.GetPos();
 

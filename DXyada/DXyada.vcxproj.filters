@@ -81,6 +81,9 @@
     <ClCompile Include="Ribbon.cpp">
       <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
     </ClCompile>
+    <ClCompile Include="Pin.cpp">
+      <Filter>ソースファイル\02-Object管理\05-Pin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="Ribbon.h">
       <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
+    </ClInclude>
+    <ClInclude Include="Pin.h">
+      <Filter>ソースファイル\02-Object管理\05-Pin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -288,6 +294,9 @@
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\04-Ribbon">
       <UniqueIdentifier>{fd131e57-3358-4d2d-9f9f-4f049795b7e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\05-Pin">
+      <UniqueIdentifier>{0819c183-e794-4a96-a11c-f72eda531d64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
