@@ -19,8 +19,8 @@ void Player::Init() {
     // アニメーション設定
     m_player.AddAnimation("Left", "asset/Player_Work.png", 4, 1, 0, 0, 1, 5, true, 1);
     m_player.AddAnimation("Right", "asset/Player_Work.png", 4, 1, 0, 2, 3, 5, true, 1);
-    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png", 4, 2, 0, 0, 3, 5, true, 1);
-    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 4, 2, 1, 0, 3, 5, true, 1);
+    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png", 5, 2, 0, 0, 3, 5, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 5, 2, 1, 0, 3, 5, true, 1);
     m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
     m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
     m_player.AddAnimation("LDamage", "asset/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
@@ -543,7 +543,7 @@ void Player::Update(
     }
 
     if (m_isKnockback)            m_animState = Damage;
-    else if (m_isThrowAnimLock)   m_animState = Throw;
+    else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
     else if (!m_isOnGround)       m_animState = Jump;
     else if (m_inputDir != 0)     m_animState = Run;
     else                          m_animState = Idle;
