@@ -228,6 +228,51 @@ void Player::Update(
         m_Circle.SetColor(1, 1, 1, 0);
     }
 
+    //右スティック一回転検出（つかんでいる場合）
+    //(仮で敵に引っかかったとき)
+    if (hitEnemy && isRTPressed && stickAiming)
+    {
+        // 現在の角度を計算
+        float currentAngle = atan2(rightStick.y, rightStick.x);
+
+        if (m_isRotating)
+        {
+            //現在の差分を計算
+            float angleDiff = currentAngle - m_prevStickAngle;
+
+            //-πを超えた場合の補正
+            if (angleDiff > DirectX::XM_PI)
+            {
+                angleDiff -= DirectX::XM_2PI;
+            }
+            else if (angleDiff < -DirectX::XM_PI)
+            {
+                angleDiff += DirectX::XM_2PI;
+            }
+
+            m_totalRotation += angleDiff;
+
+            //回転に応じて引き寄せ
+            if (fabs(m_totalRotation) > 0.1f)
+            {
+                m_isPulling = true;
+            }
+        }
+        else
+        {
+            //回転開始
+            m_isRotating = true;
+            m_totalRotation = 0.0f;
+        }
+
+        m_prevStickAngle = currentAngle;
+    }
+    else
+    {
+        //スティックを離すとリセット
+        m_isRotating = false;
+        m_isPulling = false;
+    }
 
     // 重力を加算
     m_velY += m_gravity * deltaTime;
@@ -292,13 +337,58 @@ void Player::Update(
             float dy = enemyPos.y - pos.y;
             float currentDist = sqrt(dx * dx + dy * dy);
 
-            // 最大長を超えたら自動でリボンを外す
-            if (currentDist > m_baseGuidelineLength)
+            //引き寄せ開始
+            if (m_isPulling)
             {
-                m_ribbon.Return();
-                m_isRibbonOut = false;
-                hitEnemy->SetFrozen(false);
+                //2回転完了チェック
+                if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f)
+                {
+                    hitEnemy->Disable();
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    hitEnemy->SetFrozen(false);
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRotating = false;
+                }
+                else if(currentDist > 50.0f)    //最低距離50ピクセル
+                {
+                    // 2回転で完全に引き寄せる（4π = 約12.56）
+                    // 回転量に応じて速度を計算
+                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);  // 2回転で1.0
+                    pullProgress = fmin(pullProgress, 1.0f);  // 最大1.0に制限
+
+                    m_pullSpeed = 800.0f * pullProgress;  // 最大800ピクセル/秒
+
+                    // 敵の方向へ移動
+                    float dirX = dx / currentDist;
+                    float dirY = dy / currentDist;
+
+                    pos.x += dirX * m_pullSpeed * deltaTime;
+                    pos.y += dirY * m_pullSpeed * deltaTime;
+                }
+
+                // 最大長を超えたら自動でリボンを外す
+                if (currentDist > m_baseGuidelineLength)
+                {
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    hitEnemy->SetFrozen(false);
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRotating = false;
+                }
             }
+            else if (!hitEnemy)
+            {
+                // 敵を掴んでいない場合はリセット
+                m_totalRotation = 0.0f;
+                m_isPulling = false;
+                m_isRotating = false;
+            }
+
+
+       
         }
     }
     else

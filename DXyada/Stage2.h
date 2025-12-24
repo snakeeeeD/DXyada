@@ -8,6 +8,10 @@ private:
     Camera m_camera;
     CollisionManager* m_collision;
 
+    Object m_HP_UI1;
+    Object m_HP_UI2;
+    Object m_HP_UI3;
+
     std::vector<Platform> m_platforms;
     std::vector<Enemy*> m_enemies;
 
@@ -22,4 +26,7 @@ public:
     void UnInit() override;
 
     bool IsPlayerDead() override { return m_isPlayerDead; }
+
+    int maxHP = m_player.GetMaxHP();
+    int currentHP = m_player.GetHP();
 };

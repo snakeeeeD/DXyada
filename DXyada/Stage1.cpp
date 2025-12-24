@@ -27,6 +27,9 @@ void Stage1::Init()
     m_player.SetCollisionManager(m_collision);
     m_player.GetObject()->SetPos(150, -50, 0);
 
+
+  
+
     Platform plat1; plat1.Init("asset/block.png", 0, -200, 100, 50);     //手前床
     Platform plat2; plat2.Init("asset/block.png", 150, -500, 100, 50);   //主人公が乗っている床
     Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1500, 50); //ナガ床
@@ -101,6 +104,21 @@ void Stage1::Init()
         m_collision->SetTag(enemy->GetObject(), ColliderTag::Enemy);
     }
 
+    //==========================================
+    //HPのUI初期化
+    //==========================================
+    m_HP_UI1.Init();
+    m_HP_UI1.AddTexture("asset/cursor.png");
+    m_HP_UI1.SetSize(200, 200, 0);
+
+    m_HP_UI2.Init();
+    m_HP_UI2.AddTexture("asset/cursor.png");
+    m_HP_UI2.SetSize(200, 200, 0);
+
+    m_HP_UI3.Init();
+    m_HP_UI3.AddTexture("asset/cursor.png");
+    m_HP_UI3.SetSize(200, 200, 0); 
+
 
     // プレイヤーのコリジョン登録
     m_collision->AddDynamic(m_player.GetObject());
@@ -145,6 +163,18 @@ void Stage1::Init()
 
     item.obj = &m_mae;
     item.layer = DrawLayer::FrontObject;
+    m_drawList.push_back(item);
+
+    item.obj = &m_HP_UI1;
+    item.layer = DrawLayer::UI;
+    m_drawList.push_back(item);
+
+    item.obj = &m_HP_UI2;
+    item.layer = DrawLayer::UI;
+    m_drawList.push_back(item);
+
+    item.obj = &m_HP_UI3;
+    item.layer = DrawLayer::UI;
     m_drawList.push_back(item);
 
 
@@ -222,6 +252,34 @@ void Stage1::Update()
 
     // カメラ更新
     m_camera.Update(m_player.GetObject()->GetPos());
+
+    //==========================================
+    //HPのUIの更新
+    //==========================================
+    m_HP_UI1.SetPos(g_cameraPos.x - 800, g_cameraPos.y + 400, 0);
+    m_HP_UI2.SetPos(g_cameraPos.x - 600, g_cameraPos.y + 400, 0);
+    m_HP_UI3.SetPos(g_cameraPos.x - 400, g_cameraPos.y + 400, 0);
+
+    currentHP = m_player.GetHP();
+
+    switch (currentHP)
+    {
+    case 3:
+        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI3.SetColor(1.0, 1.0, 1.0, 1.0);
+        break;
+    case 2:
+        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        break;
+    case 1:
+        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        break;
+    }
 
     // コリジョン更新
     m_collision->CheckAll();

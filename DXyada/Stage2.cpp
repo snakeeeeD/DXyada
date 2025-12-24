@@ -41,6 +41,18 @@ void Stage2::Init()
         m_collision->SetTag(enemy->GetObject(), ColliderTag::Enemy);
     }
 
+    m_HP_UI1.Init();
+    m_HP_UI1.AddTexture("asset/cursor.png");
+    m_HP_UI1.SetSize(200, 200, 0);
+
+    m_HP_UI2.Init();
+    m_HP_UI2.AddTexture("asset/cursor.png");
+    m_HP_UI2.SetSize(200, 200, 0);
+
+    m_HP_UI3.Init();
+    m_HP_UI3.AddTexture("asset/cursor.png");
+    m_HP_UI3.SetSize(200, 200, 0);
+
     // ƒvƒŒƒCƒ„[‚ÌƒRƒŠƒWƒ‡ƒ““o˜^
     m_collision->AddDynamic(m_player.GetObject());
     m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
@@ -87,6 +99,18 @@ void Stage2::Init()
         item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
     }
+
+    item.obj = &m_HP_UI1;
+    item.layer = DrawLayer::UI;
+    m_drawList.push_back(item);
+
+    item.obj = &m_HP_UI2;
+    item.layer = DrawLayer::UI;
+    m_drawList.push_back(item);
+
+    item.obj = &m_HP_UI3;
+    item.layer = DrawLayer::UI;
+    m_drawList.push_back(item);
 }
 
 void Stage2::Update()
@@ -104,6 +128,30 @@ void Stage2::Update()
 
     // ƒJƒƒ‰’Ç]
     m_camera.Update(m_player.GetObject()->GetPos());
+    m_HP_UI1.SetPos(g_cameraPos.x - 800, g_cameraPos.y + 400, 0);
+    m_HP_UI2.SetPos(g_cameraPos.x - 600, g_cameraPos.y + 400, 0);
+    m_HP_UI3.SetPos(g_cameraPos.x - 400, g_cameraPos.y + 400, 0);
+
+    currentHP = m_player.GetHP();
+
+    switch (currentHP)
+    {
+    case 3:
+        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI3.SetColor(1.0, 1.0, 1.0, 1.0);
+        break;
+    case 2:
+        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        break;
+    case 1:
+        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        break;
+    }
 
     for (auto& enemy : m_enemies) {
         enemy->Update(dt);
