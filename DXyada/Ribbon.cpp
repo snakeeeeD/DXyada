@@ -2,6 +2,7 @@
 #include "Object.h"
 #include <cmath>
 #include "Enemy.h"
+#include "Pin.h"
 
 using namespace DirectX;
 
@@ -191,6 +192,7 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
                     break;
                 }
             }
+
 
             if (m_currentLength >= m_maxLength)
             {

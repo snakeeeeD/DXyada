@@ -4,6 +4,8 @@
 #include "Rippa.h"
 #include "NeedleFloor.h"
 #include <algorithm>
+#include "BlockPin.h"
+
 void Stage1::Init() 
 {
     m_collision = new CollisionManager();
@@ -31,7 +33,7 @@ void Stage1::Init()
   
 
     Platform plat1; plat1.Init("asset/block.png", 0, -200, 100, 50);     //手前床
-    Platform plat2; plat2.Init("asset/block.png", 150, -500, 100, 50);   //主人公が乗っている床
+    Platform plat2; plat2.Init("asset/block.png", 150, -800, 100, 50);   //主人公が乗っている床
     Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1500, 50); //ナガ床
 
     Platform plat4; plat4.Init("asset/block.png", 400, -100, 100, 50); //左壁
@@ -39,15 +41,7 @@ void Stage1::Init()
 
     Platform plat6; plat6.Init("asset/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
 
-    Platform plat7; plat7.Init("asset/block.png", 1000, -500, 1500, 50);  //下ナガ床
-
-    /*Enemy e;
-    e.Init("asset/title.png", 1000, -50, 100, 100);
-    m_enemies.push_back(e);*/
-
-  /*Enemy Rippa;
-    Rippa.Init("asset/rippa.png", 700, 300, 100, 100);
-    m_enemies.push_back(Rippa);*/
+    Platform plat7; plat7.Init("asset/block.png", 1000, -800, 1500, 50);  //下ナガ床
 
     //エネミー1 (壁反転)
     {
@@ -69,7 +63,7 @@ void Stage1::Init()
     //エネミー3 (徘徊)
     {
         Rippa* rippa_3 = new Rippa(Rippa::Type::Wandering);
-        rippa_3->Init("asset/rippa.png", 1000, -450, 100, 100);
+        rippa_3->Init("asset/rippa.png", 1500, -100, 100, 100);
         rippa_3->SetCollisionManager(m_collision);
 
         rippa_3->SetTurnInterval(2.5f); //個々の値変更で自由に変えられる
@@ -85,10 +79,25 @@ void Stage1::Init()
         // 床の高さに合わせて y=-150 に配置
         nf->Init("asset/needle_floor.png", 0, -300, 150, 50);
 
-        // 忘れずに CollisionManager をセット（将来のリボン判定用）
+        // CollisionManager をセット（将来のリボン判定用）
         nf->SetCollisionManager(m_collision);
 
         m_enemies.push_back(nf);
+    }
+
+    //ピン
+    {
+        Pin* pin = new Pin();
+        pin->Init("asset/Pin.png", 600, -300, 35, 35);
+        pin->SetCollisionManager(m_collision);
+        m_pins.push_back(pin);
+    }
+    //ピン付きブロック (地面付近のやつ)
+    {
+        BlockPin* blockpin = new BlockPin();
+        blockpin->Init("asset/Pin.png", 900, -700, 35, 35); //画像でき次第パス名を変更
+        blockpin->SetCollisionManager(m_collision);
+        m_pins.push_back(blockpin);
     }
 
     m_platforms = { plat1, plat2, plat3, plat4, plat5, plat6, plat7 };
@@ -249,6 +258,11 @@ void Stage1::Update()
         m_enemies.end()
     );
 
+    for (auto* pin : m_pins)
+    {
+        pin->Update(dt);
+    }
+
 
     // カメラ更新
     m_camera.Update(m_player.GetObject()->GetPos());
@@ -316,11 +330,17 @@ void Stage1::Draw()
             g_pConstantBuffer
         );
     }
+
+    for(auto* pin : m_pins)
+	{
+		pin->Draw();
+	}
 }
 
 void Stage1::UnInit() {
     for (auto& plat : m_platforms) plat.UnInit();
     for (auto& enemy : m_enemies) enemy->UnInit();
+    for (auto& pin : m_pins) pin->UnInit();
 
     m_background.UnInit();
     m_player.Uninit();

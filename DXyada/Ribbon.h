@@ -5,6 +5,7 @@
 
 class Object;
 class Enemy;
+class Pin;
 
 //==============================
 // ・リボンを複数のObjectで構成
@@ -77,6 +78,9 @@ private:
     CollisionManager* m_collisionMgr = nullptr;
 
     bool m_isRTheld = false;
+
+    //当たったピンを覚える
+    Pin* m_hitPin = nullptr;
 
 public:
     Ribbon();
