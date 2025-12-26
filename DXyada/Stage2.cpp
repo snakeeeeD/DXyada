@@ -118,7 +118,7 @@ void Stage2::Update()
     float dt = 1.0f / 60.0f;
 
     // プレイヤー更新
-    m_player.Update(dt, m_platforms, m_enemies);
+    m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
     // 敵更新
     for (auto& enemy : m_enemies) 

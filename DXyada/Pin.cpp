@@ -61,3 +61,7 @@ void Pin::UnInit()
 {
     m_object.UnInit();  
 }
+
+void Pin::SetPos(float Pos_X, float Pos_Y) {
+    m_object.SetPos(Pos_X, Pos_Y, 0);
+}

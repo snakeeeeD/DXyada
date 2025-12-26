@@ -94,10 +94,17 @@ void Stage1::Init()
     }
     //ピン付きブロック (地面付近のやつ)
     {
+        m_BlockPin1Pos.x = 900.0f;
+        m_BlockPin1Pos.y = -700.0f;
+
         BlockPin* blockpin = new BlockPin();
-        blockpin->Init("asset/Pin.png", 900, -700, 35, 35); //画像でき次第パス名を変更
+        blockpin->Init("asset/Pin.png", m_BlockPin1Pos.x, m_BlockPin1Pos.y, 35, 35); //画像でき次第パス名を変更
         blockpin->SetCollisionManager(m_collision);
         m_pins.push_back(blockpin);
+
+        // BlockPinのコリジョンを登録
+        m_collision->AddStatic(blockpin->GetObject());
+        m_collision->SetTag(blockpin->GetObject(), ColliderTag::Pin);
     }
 
     m_platforms = { plat1, plat2, plat3, plat4, plat5, plat6, plat7 };
@@ -203,7 +210,7 @@ void Stage1::Update()
     float dt = 1.0f / 60.0f;
 
     // プレイヤー更新（Stage 内で完結）
-    m_player.Update(dt, m_platforms, m_enemies);
+    m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
     // 敵更新
     for (auto& enemy : m_enemies) 
@@ -261,7 +268,16 @@ void Stage1::Update()
     for (auto* pin : m_pins)
     {
         pin->Update(dt);
+
+        // BlockPinの場合、移動後のコリジョン更新
+        BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
+        if (blockPin)
+        {
+    
+            m_collision->GetAABB(blockPin->GetObject());
+        }
     }
+
 
 
     // カメラ更新

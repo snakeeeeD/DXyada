@@ -4,6 +4,8 @@
 #include"Platform.h"
 #include"Enemy.h"
 #include"Ribbon.h"
+#include "Pin.h"
+#include "BlockPin.h"
 
 extern DirectX::XMFLOAT3 g_StartPlayer;
 
@@ -120,7 +122,8 @@ public:
 	void Update(
 		float deltaTime,
 		const std::vector<Platform>& platforms,
-		std::vector<Enemy*>& enemies
+		std::vector<Enemy*>& enemies,
+		std::vector<Pin*>& pins
 	); 
 	void Draw();
 	void Uninit();

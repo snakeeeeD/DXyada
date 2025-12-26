@@ -82,13 +82,13 @@
       <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
     </ClCompile>
     <ClCompile Include="Pin.cpp">
-      <Filter>ソースファイル\02-Object管理\05-Gimmick\00-Pin</Filter>
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\01-Pin</Filter>
     </ClCompile>
     <ClCompile Include="Hariyama.cpp">
       <Filter>ソースファイル\02-Object管理\03-Enemy\04-Hariyama</Filter>
     </ClCompile>
     <ClCompile Include="BlockPin.cpp">
-      <Filter>ソースファイル\02-Object管理\05-Gimmick</Filter>
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\02-BlockPin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,13 +177,13 @@
       <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
     </ClInclude>
     <ClInclude Include="Pin.h">
-      <Filter>ソースファイル\02-Object管理\05-Gimmick\00-Pin</Filter>
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\01-Pin</Filter>
     </ClInclude>
     <ClInclude Include="Hariyama.h">
       <Filter>ソースファイル\02-Object管理\03-Enemy\04-Hariyama</Filter>
     </ClInclude>
     <ClInclude Include="BlockPin.h">
-      <Filter>ソースファイル\02-Object管理\05-Gimmick</Filter>
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\02-BlockPin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -313,8 +313,11 @@
     <Filter Include="ソースファイル\02-Object管理\05-Gimmick">
       <UniqueIdentifier>{6d9179d6-a167-4485-8303-0a404bd99ff1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\00-Pin">
+    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\01-Pin">
       <UniqueIdentifier>{0819c183-e794-4a96-a11c-f72eda531d64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\02-BlockPin">
+      <UniqueIdentifier>{3b1f747d-101c-4161-8502-036a31861743}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

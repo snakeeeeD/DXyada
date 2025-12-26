@@ -111,7 +111,8 @@ void Player::SetPos(float Pos_X, float Pos_Y) {
 void Player::Update(
     float deltaTime,
     const std::vector<Platform>& platforms,
-    std::vector<Enemy*>& enemies
+    std::vector<Enemy*>& enemies,
+    std::vector<Pin*>& pins
 )
 {
     //Hpが0以下なら更新しない
@@ -160,6 +161,7 @@ void Player::Update(
     m_ribbon.SetRTheld(isRTPressed);
 
     Enemy* hitEnemy = m_ribbon.GetHitEnemy();
+    Pin* hitPin = m_ribbon.GetHitPin();
     if (hitEnemy)
     {
         if (!isRTPressed)
@@ -179,6 +181,15 @@ void Player::Update(
         {
             if (enemy)
                 enemy->SetFrozen(false);
+        }
+    }
+
+    //ピンの処理
+    if (hitPin)
+    {
+        if (!isRTPressed)
+        {
+            m_ribbon.Return();
         }
     }
 
@@ -230,7 +241,7 @@ void Player::Update(
 
     //右スティック一回転検出（つかんでいる場合）
     //(仮で敵に引っかかったとき)
-    if (hitEnemy && isRTPressed && stickAiming)
+    if ((hitEnemy || hitPin) && isRTPressed && stickAiming)
     {
         // 現在の角度を計算
         float currentAngle = atan2(rightStick.y, rightStick.x);
@@ -390,6 +401,87 @@ void Player::Update(
 
        
         }
+        // Pinを掴んでいる場合の処理
+        else if (hitPin && isRTPressed)
+        {
+            auto pinPos = hitPin->GetObject()->GetPos();
+            float dx = pinPos.x - pos.x;
+            float dy = pinPos.y - pos.y;
+            float currentDist = sqrt(dx * dx + dy * dy);
+
+            // BlockPinかどうかをチェック
+            BlockPin* blockPin = dynamic_cast<BlockPin*>(hitPin);
+
+            if (blockPin && m_isPulling)
+            {
+                // BlockPinの場合: Pinがプレイヤーに引き寄せられる
+                float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                pullProgress = fmin(pullProgress, 1.0f);
+
+                m_pullSpeed = 500.0f * pullProgress;
+
+                // BlockPinのOnWindUpを呼び出す
+                blockPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
+
+                //BlockPinがプレイヤーに到達
+                if (currentDist < 80.0f)
+                {
+                    // 完了処理
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRotating = false;
+                }
+            }
+            else if (!blockPin && m_isPulling)
+            {
+                // 通常のPin : プレイヤーが引き寄せられる
+                if (currentDist > 50.0f)
+                {
+                    m_gravity = 0.0f;
+
+                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                    pullProgress = fmin(pullProgress, 1.0f);
+
+                    m_pullSpeed = 800.0f * pullProgress;
+
+                    // プレイヤーがPinの方向へ移動
+                    float dirX = dx / currentDist;
+                    float dirY = dy / currentDist;
+
+                    pos.x += dirX * m_pullSpeed * deltaTime;
+                    pos.y += dirY * m_pullSpeed * deltaTime;
+                }
+
+                // 2回転完了またはPinに到達
+                if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
+                {
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRotating = false;
+                }
+            }
+            // 最大長を超えたら自動でリボンを外す
+            if (currentDist > m_baseGuidelineLength)
+            {
+                m_ribbon.Return();
+                m_isRibbonOut = false;
+                m_totalRotation = 0.0f;
+                m_isPulling = false;
+                m_isRotating = false;
+            }
+}
+        else if (!hitEnemy && !hitPin)
+        {
+            // 何も掴んでいない場合はリセット
+            m_gravity = 2000.0f;
+            m_totalRotation = 0.0f;
+            m_isPulling = false;
+            m_isRotating = false;
+}
     }
     else
     {
@@ -436,6 +528,7 @@ void Player::Update(
         float minPerpendicularDist = FLT_MAX;
 
         bool foundEnemy = false;
+        bool foundPin = false;
 
         // ±20度の範囲判定用
         float angleThreshold = cos(20.0f * DirectX::XM_PI / 180.0f);
@@ -498,6 +591,10 @@ void Player::Update(
                 // 指示線方向への投影距離
                 float projectionLength = dot * dist;
 
+                // 指示線の前方向 & 範囲内か
+                if (projectionLength < 0.0f || projectionLength > guidelineLength)
+                    continue;
+
                 // 指示線からの垂直距離
                 float perpendicularDist =
                     sqrt(dist * dist - projectionLength * projectionLength);
@@ -546,9 +643,90 @@ void Player::Update(
         }
 
         //------------------------------------
+        // Pin探索（オートエイム）
+        //------------------------------------
+        for (auto pin : pins)
+        {
+            if (!pin) continue;
+
+            auto pinPos = pin->GetObject()->GetPos();
+
+            // プレイヤー→Pinベクトル
+            float toX = pinPos.x - p.x;
+            float toY = pinPos.y - p.y;
+            float dist = sqrt(toX * toX + toY * toY);
+
+            // 指示線の最大長を超えていたら無視
+            if (dist > guidelineLength)
+                continue;
+
+            // 方向一致度（内積）
+            float dot = (dirX * toX + dirY * toY) / dist;
+
+            // ±20度以内か
+            if (dot > angleThreshold)
+            {
+                // 指示線方向への投影距離
+                float projectionLength = dot * dist;
+
+                // 指示線の前方向 & 範囲内か
+                if (projectionLength < 0.0f || projectionLength > guidelineLength)
+                    continue;
+
+                const float pinAimRadius = 50.0f;
+
+                // 指示線からの垂直距離
+                float perpendicularDist =
+                    sqrt(dist * dist - projectionLength * projectionLength);
+
+                //--------------------------------
+                // 壁で遮られていないかチェック
+                //--------------------------------
+                bool blocked = false;
+                if (m_collisionMgr)
+                {
+                    float ex = toX / dist;
+                    float ey = toY / dist;
+
+                    const int steps = 10;
+                    const float step = dist / steps;
+
+                    for (int j = 1; j < steps - 1; ++j)
+                    {
+                        float cx = p.x + ex * step * j;
+                        float cy = p.y + ey * step * j;
+
+                        CollisionManager::AABB ray;
+                        ray.min = { cx - 2, cy - 2 };
+                        ray.max = { cx + 2, cy + 2 };
+
+                        if (m_collisionMgr->CheckHitStatic(ray))
+                        {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                //--------------------------------
+                // 最も指示線に近いPinを採用
+                //--------------------------------
+                if (!blocked &&
+                    perpendicularDist < pinAimRadius &&
+                    perpendicularDist < minPerpendicularDist)
+                {
+                    minPerpendicularDist = perpendicularDist;
+                    guidelineLength = projectionLength;
+                    foundPin = true;  // Pinも発見扱い
+                    m_targetPosition = pinPos;
+                }
+            }
+        }
+
+        //------------------------------------
         // 敵がいなければ地面まで伸ばす
         //------------------------------------
-        if (!foundEnemy && hitGround)
+        if (!foundEnemy && !foundPin && hitGround)
             guidelineLength = groundHitDistance;
 
         //------------------------------------
@@ -556,7 +734,7 @@ void Player::Update(
         //------------------------------------
         m_hasTarget = foundEnemy;
 
-        if (foundEnemy)
+        if (foundEnemy || foundPin)
         {
             // ターゲットあり色
             m_guideline.SetColor(1, 0.5f, 0.5f, 0.8f);
@@ -623,7 +801,7 @@ void Player::Update(
     // リボン更新
     //========================================
     m_ribbon.SetPlayerPos({ pos.x, pos.y });
-    m_ribbon.Update(deltaTime, enemies);
+    m_ribbon.Update(deltaTime, enemies, pins);
     
 
     //========================================

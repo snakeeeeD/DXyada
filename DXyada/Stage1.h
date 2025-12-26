@@ -20,6 +20,8 @@ private:
     std::vector<Enemy*> m_enemies;
     std::vector<Pin*> m_pins;
 
+    DirectX::XMFLOAT2 m_BlockPin1Pos;
+
     std::vector<DrawItem> m_drawList;
 
     bool m_isPlayerDead = false;

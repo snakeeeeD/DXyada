@@ -35,4 +35,6 @@ public:
 	State GetState() const { return m_state; }
 	Object* GetObject() { return &m_object; }
 	void SetCollisionManager(CollisionManager* pCol) { m_pCollision = pCol; }
+	
+	void SetPos(float Pos_X, float Pos_Y);
 };

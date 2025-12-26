@@ -14,6 +14,7 @@ private:
 
     std::vector<Platform> m_platforms;
     std::vector<Enemy*> m_enemies;
+    std::vector<Pin*> m_pins;
 
     std::vector<DrawItem> m_drawList;
 

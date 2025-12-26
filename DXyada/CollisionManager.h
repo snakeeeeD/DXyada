@@ -69,6 +69,7 @@ enum class ColliderTag
     Player,
     Enemy,
     Platform,
+    Pin,
     Unknown
 };
 

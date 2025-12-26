@@ -77,6 +77,8 @@ private:
     DirectX::XMFLOAT2 m_hitPos{};
     CollisionManager* m_collisionMgr = nullptr;
 
+
+
     bool m_isRTheld = false;
 
     //当たったピンを覚える
@@ -90,7 +92,7 @@ public:
     void Init();
 
     // 更新（位置の計算）
-    void Update(float deltaTime, const std::vector<Enemy*>& enemies);
+    void Update(float deltaTime, const std::vector<Enemy*>& enemies, std::vector<Pin*>& pins);
 
     // プレイヤー位置セット
     void SetPlayerPos(const DirectX::XMFLOAT2& pos);
@@ -109,6 +111,7 @@ public:
     bool HasHit() const { return m_hasHit; }
     DirectX::XMFLOAT2 GetHitPos() const { return m_hitPos; }
     Enemy* GetHitEnemy() const { return m_hitEnemy; }
+    Pin* GetHitPin() const { return m_hitPin; }
     void SetCollisionManager(CollisionManager* mgr)
     {
         m_collisionMgr = mgr;

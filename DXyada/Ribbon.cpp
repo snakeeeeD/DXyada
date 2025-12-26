@@ -106,7 +106,7 @@ void Ribbon::Return()
 //====================================================
 // 更新処理
 //====================================================
-void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
+void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::vector<Pin*>& pins)
 {
     if (m_state == State::Idle)
         return;
@@ -162,15 +162,12 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
                 }
             }
 
-
-
-            // 敵ヒット判定
-            for (Enemy* enemy : enemies)
+            for (Pin* pin : pins)
             {
-                if (!enemy) continue;
+                if (!pin) continue;
 
-                auto pos = enemy->GetObject()->GetPos();
-                auto size = enemy->GetObject()->GetSize();
+                auto pos = pin->GetObject()->GetPos();
+                auto size = pin->GetObject()->GetSize();
 
                 float left = pos.x - size.x * 0.5f;
                 float right = pos.x + size.x * 0.5f;
@@ -181,7 +178,7 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
                     tipY >= bottom && tipY <= top)
                 {
                     m_hasHit = true;
-                    m_hitEnemy = enemy;
+                    m_hitPin = pin;
                     m_hitPos = { tipX, tipY };
 
                     // RTを押していなければ戻す
@@ -192,6 +189,7 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies)
                     break;
                 }
             }
+
 
 
             if (m_currentLength >= m_maxLength)
@@ -268,6 +266,7 @@ void Ribbon::Reset()
     m_currentLength = 0.0f;
     m_hasHit = false;
     m_hitEnemy = nullptr;
+    m_hitPin = nullptr;
 
     for (auto& seg : m_segments)
     {

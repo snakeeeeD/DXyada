@@ -7,6 +7,8 @@
 #include "Camera2D.h"
 #include "CollisionManager.h"
 #include "Ribbon.h"
+#include "Pin.h"
+#include "BlockPin.h"
 
 enum class DrawLayer {
     Background = 0,
