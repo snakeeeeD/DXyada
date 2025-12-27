@@ -162,6 +162,34 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                 }
             }
 
+            for (Enemy* enemy : enemies)
+            {
+                if (!enemy) continue;
+
+                auto pos = enemy->GetObject()->GetPos();
+                auto size = enemy->GetObject()->GetSize();
+
+                float left = pos.x - size.x * 0.5f;
+                float right = pos.x + size.x * 0.5f;
+                float top = pos.y + size.y * 0.5f;
+                float bottom = pos.y - size.y * 0.5f;
+
+                // ƒŠƒ{ƒ“æ’[‚ª“G‚Ì”ÍˆÍ“à‚É“ü‚Á‚½‚©
+                if (tipX >= left && tipX <= right &&
+                    tipY >= bottom && tipY <= top)
+                {
+                    m_hasHit = true;
+                    m_hitEnemy = enemy;
+                    m_hitPos = { tipX, tipY };
+
+                    // RT‚ð‰Ÿ‚µ‚Ä‚¢‚È‚¯‚ê‚Î–ß‚·
+                    if (!m_isRTheld)
+                    {
+                        m_state = State::Returning;
+                    }
+                    break;  // Å‰‚É“–‚½‚Á‚½“G‚ÅŠm’è
+                }
+            }
             for (Pin* pin : pins)
             {
                 if (!pin) continue;

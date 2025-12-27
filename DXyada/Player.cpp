@@ -207,7 +207,7 @@ void Player::Update(
                 if (dist > 0.0f)
                 {
                     // 正規化して、Pinの方向に大ジャンプ
-                    float jumpForce = 1000.0f;  // ジャンプ力（調整可能）
+                    float jumpForce = 1000.0f;  // ジャンプ力
 
                     // Pinジャンプ開始
                     m_isPinJumping = true;
