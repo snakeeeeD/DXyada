@@ -42,6 +42,8 @@ private:
 
 	bool m_isLastRightDirection = true;	//最終右むいてるか
 
+	bool m_isPinJumping = false;
+	DirectX::XMFLOAT2 m_pinJumpVelocity = { 0.0f, 0.0f };
 
 	int m_inputDir = 0;	//プレイヤーの左右入力優先用　0：入力なし　1：左入力　-1：右入力
 

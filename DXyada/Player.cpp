@@ -115,6 +115,10 @@ void Player::Update(
     std::vector<Pin*>& pins
 )
 {
+
+    auto pos = m_player.GetPos();
+
+
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
         return;
@@ -153,6 +157,8 @@ void Player::Update(
     float rightTrigger = input.GetRightTrigger();
     bool isRTPressed = rightTrigger > 0.5f;
 
+    bool wasPinGrabbedLastFrame = (m_ribbon.GetHitPin() != nullptr && m_wasRTPressed);
+
     //========================================
     // リボン先端ヒット判定
     //========================================
@@ -189,11 +195,37 @@ void Player::Update(
     {
         if (!isRTPressed)
         {
+            if (wasPinGrabbedLastFrame && !m_isOnGround)
+            {
+                auto pinPos = hitPin->GetObject()->GetPos();
+
+                // プレイヤーからPinへの方向ベクトル
+                float dx = pinPos.x - pos.x;
+                float dy = pinPos.y - pos.y;
+                float dist = sqrt(dx * dx + dy * dy);
+
+                if (dist > 0.0f)
+                {
+                    // 正規化して、Pinの方向に大ジャンプ
+                    float jumpForce = 1000.0f;  // ジャンプ力（調整可能）
+
+                    // Pinジャンプ開始
+                    m_isPinJumping = true;
+                    m_pinJumpVelocity.x = (dx / dist) * jumpForce;
+                    m_pinJumpVelocity.y = (dy / dist) * jumpForce;
+
+                    // Y方向の速度も設定
+                    m_velY = -(dy / dist) * jumpForce;
+
+                    // 重力をリセット
+                    m_gravity = 2000.0f;
+                }
+            }
             m_ribbon.Return();
         }
     }
 
-    auto pos = m_player.GetPos();
+    
 
     //--------------------------------------
     // エイム入力（右スティック or マウス）
@@ -328,9 +360,23 @@ void Player::Update(
         input.GetKeyPress(VK_D) ||
         input.GetButtonPress(XINPUT_RIGHT) ||
         (leftStick.x > moveThreshold);
+    if (m_isPinJumping)
+    {
+        pos.x += m_pinJumpVelocity.x * deltaTime;
+        // Y方向はm_velYで処理されるので不要
 
+        // 速度を減衰
+        m_pinJumpVelocity.x *= 0.98f;
+
+        // 速度が十分小さくなったらジャンプ終了
+        if (fabs(m_pinJumpVelocity.x) < 10.0f)
+        {
+            m_isPinJumping = false;
+            m_pinJumpVelocity = { 0.0f, 0.0f };
+        }
+    }
     //ノックバック中出ない場合のみ移動
-    if (!m_isKnockback)
+    else if (!m_isKnockback)
     {
         if (moveLeft && !moveRight)       m_inputDir = 1;
         else if (moveRight && !moveLeft)  m_inputDir = -1;
@@ -437,22 +483,22 @@ void Player::Update(
             else if (!blockPin && m_isPulling)
             {
                 // 通常のPin : プレイヤーが引き寄せられる
-                if (currentDist > 50.0f)
-                {
-                    m_gravity = 0.0f;
+                //if (currentDist > 50.0f)
+                //{
+                //    m_gravity = 0.0f;
 
-                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-                    pullProgress = fmin(pullProgress, 1.0f);
+                //    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                //    pullProgress = fmin(pullProgress, 1.0f);
 
-                    m_pullSpeed = 800.0f * pullProgress;
+                //    m_pullSpeed = 800.0f * pullProgress;
 
-                    // プレイヤーがPinの方向へ移動
-                    float dirX = dx / currentDist;
-                    float dirY = dy / currentDist;
+                //    // プレイヤーがPinの方向へ移動
+                //    float dirX = dx / currentDist;
+                //    float dirY = dy / currentDist;
 
-                    pos.x += dirX * m_pullSpeed * deltaTime;
-                    pos.y += dirY * m_pullSpeed * deltaTime;
-                }
+                //    pos.x += dirX * m_pullSpeed * deltaTime;
+                //    pos.y += dirY * m_pullSpeed * deltaTime;
+                //}
 
                 // 2回転完了またはPinに到達
                 if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
