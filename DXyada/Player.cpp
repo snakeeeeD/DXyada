@@ -117,7 +117,7 @@ void Player::Update(
 {
 
     auto pos = m_player.GetPos();
-
+    float prevY = pos.y;
 
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
