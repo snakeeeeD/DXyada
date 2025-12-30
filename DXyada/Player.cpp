@@ -170,7 +170,9 @@ void Player::Update(
     }
    
     float rightTrigger = input.GetRightTrigger();
+    float leftTrigger = input.GetLeftTrigger();
     bool isRTPressed = rightTrigger > 0.5f;
+    bool isLTPressed = leftTrigger > 0.5f;
 
     bool wasPinGrabbedLastFrame = (m_ribbon.GetHitPin() != nullptr && m_wasRTPressed);
 
@@ -357,7 +359,7 @@ void Player::Update(
         if (playerRight > platLeft && playerLeft < platRight)
         {
             // 下端が上面に接触しているか
-            if (playerBottom <= platTop && playerBottom >= platTop - 10.0f)
+            if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
             {
                 pos.y = platTop + m_height * 0.5f;
                 m_velY = 0.0f;
@@ -412,18 +414,20 @@ void Player::Update(
             //引き寄せ開始
             if (m_isPulling)
             {
-                //2回転完了チェック
-                if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f)
-                {
-                    hitEnemy->Disable();
-                    m_ribbon.Return();
-                    m_isRibbonOut = false;
-                    hitEnemy->SetFrozen(false);
-                    m_totalRotation = 0.0f;
-                    m_isPulling = false;
-                    m_isRotating = false;
-                }
-                else if(currentDist > 50.0f)    //最低距離50ピクセル
+                
+                    if (isLTPressed)
+                    {
+                        hitEnemy->Disable();
+                        m_ribbon.Return();
+                        m_isRibbonOut = false;
+                        hitEnemy->SetFrozen(false);
+                        m_totalRotation = 0.0f;
+                        m_isPulling = false;
+                        m_isRotating = false;
+                    }
+                   
+                
+                if(currentDist > 50.0f)    //最低距離50ピクセル
                 {
                     // 2回転で完全に引き寄せる（4π = 約12.56）
                     // 回転量に応じて速度を計算
@@ -502,7 +506,23 @@ void Player::Update(
             }
             else if (!blockPin && m_isPulling)
             {
+                // 通常のPin : プレイヤーが引き寄せられる
+                if (currentDist > 50.0f)
+                {
+                    m_gravity = 0.0f;
 
+                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                    pullProgress = fmin(pullProgress, 1.0f);
+
+                    m_pullSpeed = 800.0f * pullProgress;
+
+                    // プレイヤーがPinの方向へ移動
+                    float dirX = dx / currentDist;
+                    float dirY = dy / currentDist;
+
+                    pos.x += dirX * m_pullSpeed * deltaTime;
+                    pos.y += dirY * m_pullSpeed * deltaTime;
+                }
                 // 2回転完了またはPinに到達
                 if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
                 {
@@ -931,14 +951,18 @@ void Player::Update(
     }
     else if (aiming)
     {
-        m_isLastRightDirection = (m_aimDirection.x > 0);
+        if (!m_isPulling)
+        {
+            m_isLastRightDirection = (m_aimDirection.x > 0);
+        }
+        
     }
 
     if (m_isKnockback)            m_animState = Damage;
     else if (m_isPinJumping)      m_animState = RibbonJump;
     else if (m_isRolling && (m_totalRotation > 0.1))         m_animState = Roll;
-    else if (m_isPulling && (m_totalRotation > 10.0))         m_animState = Pulled;
-    else if (!m_isOnGround)       m_animState = Jump;
+    else if (m_isPulling && (m_totalRotation > 0.1))         m_animState = Pulled;
+    else if (!m_isOnGround && !m_isRolling && !m_isPulling)       m_animState = Jump;
     else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
     else if (m_inputDir != 0)     m_animState = Run;
     else                          m_animState = Idle;
