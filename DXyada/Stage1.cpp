@@ -63,7 +63,7 @@ void Stage1::Init()
     //エネミー3 (徘徊)
     {
         Rippa* rippa_3 = new Rippa(Rippa::Type::Wandering);
-        rippa_3->Init("asset/rippa.png", 1500, -100, 100, 100);
+        rippa_3->Init("asset/rippa.png", 1000, -700, 100, 100);
         rippa_3->SetCollisionManager(m_collision);
 
         rippa_3->SetTurnInterval(2.5f); //個々の値変更で自由に変えられる

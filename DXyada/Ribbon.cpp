@@ -247,6 +247,20 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                     m_direction.y = dy / m_currentLength;
                 }
             }
+            else if (m_hitPin)
+            {
+                auto pinPos = m_hitPin->GetObject()->GetPos();
+                float dx = pinPos.x - m_playerPos.x;
+                float dy = pinPos.y - m_playerPos.y;
+                m_currentLength = sqrt(dx * dx + dy * dy);
+
+                // •ûŒü‚àXV
+                if (m_currentLength > 0.0f)
+                {
+                    m_direction.x = dx / m_currentLength;
+                    m_direction.y = dy / m_currentLength;
+                }
+            }
         }
     }
     //----------------------------------

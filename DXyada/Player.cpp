@@ -17,20 +17,35 @@ void Player::Init() {
     m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
-    m_player.AddAnimation("Left", "asset/Player_Walk.png", 4, 1, 0, 0, 1, 5, true, 1);
-    m_player.AddAnimation("Right", "asset/Player_Walk.png", 4, 1, 0, 2, 3, 5, true, 1);
+    //アイドル
     m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png", 5, 2, 0, 0, 3, 5, true, 1);
     m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 5, 2, 1, 0, 3, 5, true, 1);
+
+    //移動
+    m_player.AddAnimation("Left", "asset/Player_Walk.png", 4, 1, 0, 0, 1, 5, true, 1);
+    m_player.AddAnimation("Right", "asset/Player_Walk.png", 4, 1, 0, 2, 3, 5, true, 1);
+    
+    //小ジャンプ
     m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
     m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    
+    //ダメージ
     m_player.AddAnimation("LDamage", "asset/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
     m_player.AddAnimation("RDamage", "asset/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
+   
+    //リボン出し
     m_player.AddAnimation("LOutLibbon", "asset/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
     m_player.AddAnimation("ROutLibbon", "asset/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
-    m_player.AddAnimation("LRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 0, 0, 4, 15, false, 2);
-    m_player.AddAnimation("RRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 1, 0, 4, 15, false, 2);
-    m_player.AddAnimation("LPulled", "asset/Player_Pulled.png", 5, 2, 0, 0, 4, 15, false, 2);
-    m_player.AddAnimation("RPulled", "asset/Player_Pulled.png", 5, 2, 1, 0, 4, 15, false, 2);
+    
+    //リボンジャンプ
+    m_player.AddAnimation("LRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 0, 0, 4, 9, false, 2);
+    m_player.AddAnimation("RRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    
+    //引き寄せられる
+    m_player.AddAnimation("LPulled", "asset/Player_Pulled.png", 5, 2, 0, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RPulled", "asset/Player_Pulled.png", 5, 2, 1, 0, 4, 15, true, 2);
+   
+    //引き寄せる
     m_player.AddAnimation("LRoll", "asset/Player_Roll.png", 5, 2, 0, 0, 4, 15, true, 2);
     m_player.AddAnimation("RRoll", "asset/Player_Roll.png", 5, 2, 1, 0, 4, 15, true, 2);
     m_animState = Idle;
@@ -252,7 +267,8 @@ void Player::Update(
     // エイム方向を1本化
     bool aiming = false;
 
-    
+    bool foundEnemy = false;
+    bool foundPin = false;
 
     if (stickAiming)
     {
@@ -363,13 +379,12 @@ void Player::Update(
     if (m_isPinJumping)
     {
         pos.x += m_pinJumpVelocity.x * deltaTime;
-        // Y方向はm_velYで処理されるので不要
 
         // 速度を減衰
         m_pinJumpVelocity.x *= 0.98f;
 
         // 速度が十分小さくなったらジャンプ終了
-        if (fabs(m_pinJumpVelocity.x) < 10.0f)
+        if (m_isOnGround)
         {
             m_isPinJumping = false;
             m_pinJumpVelocity = { 0.0f, 0.0f };
@@ -458,47 +473,35 @@ void Player::Update(
             // BlockPinかどうかをチェック
             BlockPin* blockPin = dynamic_cast<BlockPin*>(hitPin);
 
-            if (blockPin && m_isPulling)
-            {
-                // BlockPinの場合: Pinがプレイヤーに引き寄せられる
-                float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-                pullProgress = fmin(pullProgress, 1.0f);
-
-                m_pullSpeed = 500.0f * pullProgress;
-
-                // BlockPinのOnWindUpを呼び出す
-                blockPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
-
-                //BlockPinがプレイヤーに到達
-                if (currentDist < 80.0f)
+            if (blockPin)
+            { 
+                m_isRolling = true;
+                if (m_isPulling)
                 {
-                    // 完了処理
-                    m_ribbon.Return();
-                    m_isRibbonOut = false;
-                    m_totalRotation = 0.0f;
-                    m_isPulling = false;
-                    m_isRotating = false;
+                    // BlockPinの場合: Pinがプレイヤーに引き寄せられる
+                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                    pullProgress = fmin(pullProgress, 1.0f);
+
+                    m_pullSpeed = 500.0f * pullProgress;
+
+                    // BlockPinのOnWindUpを呼び出す
+                    blockPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
+
+                    //BlockPinがプレイヤーに到達
+                    if (currentDist < 80.0f)
+                    {
+                        // 完了処理
+                        m_ribbon.Return();
+                        m_isRibbonOut = false;
+                        m_totalRotation = 0.0f;
+                        m_isPulling = false;
+                        m_isRolling = false;
+                        m_isRotating = false;
+                    }
                 }
             }
             else if (!blockPin && m_isPulling)
             {
-                // 通常のPin : プレイヤーが引き寄せられる
-                //if (currentDist > 50.0f)
-                //{
-                //    m_gravity = 0.0f;
-
-                //    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-                //    pullProgress = fmin(pullProgress, 1.0f);
-
-                //    m_pullSpeed = 800.0f * pullProgress;
-
-                //    // プレイヤーがPinの方向へ移動
-                //    float dirX = dx / currentDist;
-                //    float dirY = dy / currentDist;
-
-                //    pos.x += dirX * m_pullSpeed * deltaTime;
-                //    pos.y += dirY * m_pullSpeed * deltaTime;
-                //}
 
                 // 2回転完了またはPinに到達
                 if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
@@ -507,6 +510,7 @@ void Player::Update(
                     m_isRibbonOut = false;
                     m_totalRotation = 0.0f;
                     m_isPulling = false;
+                    m_isRolling = false;
                     m_isRotating = false;
                 }
             }
@@ -517,6 +521,7 @@ void Player::Update(
                 m_isRibbonOut = false;
                 m_totalRotation = 0.0f;
                 m_isPulling = false;
+                m_isRolling = false;
                 m_isRotating = false;
             }
 }
@@ -526,6 +531,7 @@ void Player::Update(
             m_gravity = 2000.0f;
             m_totalRotation = 0.0f;
             m_isPulling = false;
+            m_isRolling = false;
             m_isRotating = false;
 }
     }
@@ -573,8 +579,7 @@ void Player::Update(
         // 指示線からの垂直距離（最小）
         float minPerpendicularDist = FLT_MAX;
 
-        bool foundEnemy = false;
-        bool foundPin = false;
+        
 
         // ±20度の範囲判定用
         float angleThreshold = cos(20.0f * DirectX::XM_PI / 180.0f);
@@ -833,7 +838,11 @@ void Player::Update(
         m_ribbonTargetEnemy = foundEnemy ? bestEnemy : nullptr;
 
         // 向き更新
-        m_isLastRightDirection = (dirX > 0);
+        if (!isRTPressed)
+        {
+            m_isLastRightDirection = (dirX > 0);
+        }
+       
     }
     else
     {
@@ -862,8 +871,26 @@ void Player::Update(
         {
             if (aiming)
             {
-                // エイム方向へ発射
-                m_ribbon.Throw(m_ribbonAimDir, m_ribbonAimLength);
+                // ターゲットがある場合は、ターゲット位置への方向ベクトルを計算
+                if (foundEnemy || foundPin)
+                {
+                    DirectX::XMFLOAT2 toTarget;
+                    toTarget.x = m_targetPosition.x - pos.x;
+                    toTarget.y = m_targetPosition.y - pos.y;
+                    float dist = sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+
+                    if (dist > 0.0f)
+                    {
+                        toTarget.x /= dist;
+                        toTarget.y /= dist;
+                    }
+
+                    m_ribbon.Throw(toTarget, dist);
+                }
+                else
+                {
+                    m_ribbon.Throw(m_ribbonAimDir, m_ribbonAimLength);
+                }
             }
             else
             {
@@ -908,8 +935,11 @@ void Player::Update(
     }
 
     if (m_isKnockback)            m_animState = Damage;
-    else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
+    else if (m_isPinJumping)      m_animState = RibbonJump;
+    else if (m_isRolling && (m_totalRotation > 0.1))         m_animState = Roll;
+    else if (m_isPulling && (m_totalRotation > 10.0))         m_animState = Pulled;
     else if (!m_isOnGround)       m_animState = Jump;
+    else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
     else if (m_inputDir != 0)     m_animState = Run;
     else                          m_animState = Idle;
 
@@ -978,43 +1008,111 @@ bool Player::IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) 
 
 void Player::ApplyAnimation()
 {
-    if (m_animState == m_prevAnimState &&
-        m_isLastRightDirection == m_prevIsRightDirection)
-        return;
-
-    switch (m_animState)
+    // アニメーション状態が変わった場合のみ切り替え
+    if (m_animState != m_prevAnimState)
     {
-    case Idle:
-        m_player.PlayAnimation(
-            m_isLastRightDirection ? "RightIdle" : "LeftIdle"
-        );
-        break;
+        switch (m_animState)
+        {
+        case Idle:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "RightIdle" : "LeftIdle"
+            );
+            break;
 
-    case Run:
-        m_player.PlayAnimation(
-            m_isLastRightDirection ? "Right" : "Left"
-        );
-        break;
+        case Run:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "Right" : "Left"
+            );
+            break;
 
-    case Jump:
-        m_player.PlayAnimation(
-            m_isLastRightDirection ? "RJump" : "LJump"
-        );
-        break;
+        case Jump:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "RJump" : "LJump"
+            );
+            break;
 
-    case Damage:
-        m_player.PlayAnimation(
-            m_isLastRightDirection ? "RDamage" : "LDamage"
-        );
-        break;
+        case Damage:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "RDamage" : "LDamage"
+            );
+            break;
 
-    case Throw:
-        m_player.PlayAnimation(
-            m_isLastRightDirection ? "ROutLibbon" : "LOutLibbon"
-        );
-        break;
+        case Throw:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "ROutLibbon" : "LOutLibbon"
+            );
+            break;
+        case RibbonJump:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "RRibbonJump" : "LRibbonJump"
+            );
+            break;
+        case Roll:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "RRoll" : "LRoll"
+            );
+            break;
+        case Pulled:
+            m_player.PlayAnimation(
+                m_isLastRightDirection ? "RPulled" : "LPulled"
+            );
+            break;
+        }
+
+        m_prevAnimState = m_animState;
     }
 
-    m_prevAnimState = m_animState;
-    m_prevIsRightDirection = m_isLastRightDirection;
+    // 向きだけ変わった場合は、アニメーション名だけ切り替え（フレームは維持）
+    if (m_isLastRightDirection != m_prevIsRightDirection)
+    {
+        switch (m_animState)
+        {
+        case Idle:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "RightIdle" : "LeftIdle"
+            );
+            break;
+
+        case Run:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "Right" : "Left"
+            );
+            break;
+
+        case Jump:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "RJump" : "LJump"
+            );
+            break;
+
+        case Damage:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "RDamage" : "LDamage"
+            );
+            break;
+
+        case Throw:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "ROutLibbon" : "LOutLibbon"
+            );
+            break;
+        case RibbonJump:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "RRibbonJump" : "LRibbonJump"
+            );
+            break;
+        case Roll:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "RRoll" : "LRoll"
+            );
+            break;
+        case Pulled:
+            m_player.SetCurrentAnimationName(
+                m_isLastRightDirection ? "RPulled" : "LPulled"
+            );
+            break;
+        }
+
+        m_prevIsRightDirection = m_isLastRightDirection;
+    }
 }

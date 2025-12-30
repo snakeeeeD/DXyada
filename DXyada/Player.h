@@ -109,6 +109,7 @@ private:
 	float m_totalRotation = 0.0f;
 	bool m_isRotating = false;
 	bool m_isPulling = false;
+	bool m_isRolling = false;
 	float m_pullSpeed = 0.0f;
 
 	//ŽÀŒ±—p

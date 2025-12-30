@@ -52,6 +52,7 @@ public:
     );
 
     void PlayAnimation(const std::string& name);
+    void SetCurrentAnimationName(const std::string& name);
 
     void SetPos(float x, float y, float z);
     void SetSize(float x, float y, float z);

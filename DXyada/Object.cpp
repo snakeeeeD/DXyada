@@ -219,6 +219,18 @@ void Object::PlayAnimation(const std::string& name)
     m_currentAnim = name;
     m_currentFrame = it->second.startFrame;
     m_animTime = 0.0f;
+
+    m_currentAnim = name;
+}
+
+//左右反転時、名前のみ返す
+void Object::SetCurrentAnimationName(const std::string& name)
+{
+    auto it = m_animations.find(name);
+    if (it == m_animations.end()) return;
+
+
+    m_currentAnim = name;
 }
 
 void Object::UnInit()
