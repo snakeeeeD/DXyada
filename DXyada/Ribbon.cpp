@@ -153,7 +153,12 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                 // •Ç‚É“–‚½‚Á‚½‚ç‘¦–ß‚·
                 if (m_collisionMgr->CheckHitStatic(tip))
                 {
-                    //RT‚ğ‰Ÿ‚µ‚Ä‚¢‚È‚¯‚ê‚Î–ß‚·
+                    // °ˆÊ’u‚Ü‚Å‚ÅŒÅ’è
+                    m_currentLength -= m_speed * deltaTime;
+                    if (m_currentLength < 0.0f)
+                        m_currentLength = 0.0f;
+
+                    // RT‰Ÿ‚µ‚Ä‚È‚¯‚ê‚Î–ß‚·
                     if (!m_isRTheld)
                     {
                         m_state = State::Returning;

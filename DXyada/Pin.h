@@ -16,6 +16,8 @@ protected:
 	State m_state = State::Normal;
 	CollisionManager* m_pCollision = nullptr;
 
+	bool m_canRollPin = false;
+
 public:
 	Pin() = default;
 	~Pin() = default;
@@ -34,6 +36,11 @@ public:
 	//ゲッター
 	State GetState() const { return m_state; }
 	Object* GetObject() { return &m_object; }
+
+	//引き寄せ、巻き取り判別用
+	bool GetcanRollPin() const { return m_canRollPin; }
+	void SetcanRollPin(bool canRoll) { m_canRollPin = canRoll; }
+
 	void SetCollisionManager(CollisionManager* pCol) { m_pCollision = pCol; }
 	
 	void SetPos(float Pos_X, float Pos_Y);

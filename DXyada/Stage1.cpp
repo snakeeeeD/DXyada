@@ -91,20 +91,37 @@ void Stage1::Init()
         pin->Init("asset/Pin.png", 600, -300, 35, 35);
         pin->SetCollisionManager(m_collision);
         m_pins.push_back(pin);
+        pin->SetcanRollPin(false);
     }
     //ピン付きブロック (地面付近のやつ)
     {
-        m_BlockPin1Pos.x = 900.0f;
-        m_BlockPin1Pos.y = -700.0f;
+        m_BlockPinPos.x = 900.0f;
+        m_BlockPinPos.y = -700.0f;
 
         BlockPin* blockpin = new BlockPin();
-        blockpin->Init("asset/Pin.png", m_BlockPin1Pos.x, m_BlockPin1Pos.y, 35, 35); //画像でき次第パス名を変更
+        blockpin->Init("asset/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
         blockpin->SetCollisionManager(m_collision);
         m_pins.push_back(blockpin);
+        blockpin->SetcanRollPin(true);
 
         // BlockPinのコリジョンを登録
         m_collision->AddStatic(blockpin->GetObject());
         m_collision->SetTag(blockpin->GetObject(), ColliderTag::Pin);
+    }
+
+    {
+        m_BlockPinPos.x = 0.0f;
+        m_BlockPinPos.y = -700.0f;
+
+        BlockPin* blockpin2 = new BlockPin();
+        blockpin2->Init("asset/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
+        blockpin2->SetCollisionManager(m_collision);
+        m_pins.push_back(blockpin2);
+        blockpin2->SetcanRollPin(false);
+
+        // BlockPinのコリジョンを登録
+        m_collision->AddStatic(blockpin2->GetObject());
+        m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
     }
 
     m_platforms = { plat1, plat2, plat3, plat4, plat5, plat6, plat7 };
