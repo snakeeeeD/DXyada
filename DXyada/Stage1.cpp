@@ -11,17 +11,17 @@ void Stage1::Init()
     m_collision = new CollisionManager();
 
     m_background.Init();
-    m_background.AddTexture("asset/aa.png");
+    m_background.AddTexture("asset/Field/aa.png");
     m_background.SetPos(0, 0, 0);
     m_background.SetSize(19200, 10800, 0);
 
     m_usiro.Init();
-    m_usiro.AddTexture("asset/block.png");
+    m_usiro.AddTexture("asset/Field/block.png");
     m_usiro.SetPos(100, 0, 0);
     m_usiro.SetSize(100, 100, 0);
 
     m_mae.Init();
-    m_mae.AddTexture("asset/block.png");
+    m_mae.AddTexture("asset/Field/block.png");
     m_mae.SetPos(0, 0, 0);
     m_mae.SetSize(100, 100, 0);
     
@@ -32,21 +32,21 @@ void Stage1::Init()
 
   
 
-    Platform plat1; plat1.Init("asset/block.png", 0, -200, 100, 50);     //手前床
-    Platform plat2; plat2.Init("asset/block.png", 150, -800, 100, 50);   //主人公が乗っている床
-    Platform plat3; plat3.Init("asset/block.png", 1000, -150, 1500, 50); //ナガ床
+    Platform plat1; plat1.Init("asset/Field/block.png", 0, -200, 100, 50);     //手前床
+    Platform plat2; plat2.Init("asset/Field/block.png", 150, -800, 100, 50);   //主人公が乗っている床
+    Platform plat3; plat3.Init("asset/Field/block.png", 1000, -150, 1500, 50); //ナガ床
 
-    Platform plat4; plat4.Init("asset/block.png", 400, -100, 100, 50); //左壁
-    Platform plat5; plat5.Init("asset/block.png", 1000, -100, 100, 50);  //右壁
+    Platform plat4; plat4.Init("asset/Field/block.png", 400, -100, 100, 50); //左壁
+    Platform plat5; plat5.Init("asset/Field/block.png", 1000, -100, 100, 50);  //右壁
 
-    Platform plat6; plat6.Init("asset/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
+    Platform plat6; plat6.Init("asset/Field/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
 
-    Platform plat7; plat7.Init("asset/block.png", 1000, -800, 1500, 50);  //下ナガ床
+    Platform plat7; plat7.Init("asset/Field/block.png", 1000, -800, 1500, 50);  //下ナガ床
 
     //エネミー1 (壁反転)
     {
         Rippa* rippa = new Rippa(Rippa::Type::Normal);
-        rippa->Init("asset/rippa.png", 800, -100, 100, 100);
+        rippa->Init("asset/Field/rippa.png", 800, -100, 100, 100);
         rippa->SetCollisionManager(m_collision);
         m_enemies.push_back(rippa);
     }
@@ -54,7 +54,7 @@ void Stage1::Init()
     //エネミー2 (崖反転)
     {
         Rippa* rippa_2 = new Rippa(Rippa::Type::Normal);
-        rippa_2->Init("asset/rippa.png", 1000, 150, 100, 100);
+        rippa_2->Init("asset/Field/rippa.png", 1000, 150, 100, 100);
         rippa_2->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa_2);
@@ -63,7 +63,7 @@ void Stage1::Init()
     //エネミー3 (徘徊)
     {
         Rippa* rippa_3 = new Rippa(Rippa::Type::Wandering);
-        rippa_3->Init("asset/rippa.png", 1000, -700, 100, 100);
+        rippa_3->Init("asset/Field/rippa.png", 1000, -700, 100, 100);
         rippa_3->SetCollisionManager(m_collision);
 
         rippa_3->SetTurnInterval(2.5f); //個々の値変更で自由に変えられる
@@ -77,7 +77,7 @@ void Stage1::Init()
         NeedleFloor* nf = new NeedleFloor();
 
         // 床の高さに合わせて y=-150 に配置
-        nf->Init("asset/needle_floor.png", 0, -300, 150, 50);
+        nf->Init("asset/Field/needle_floor.png", 0, -300, 150, 50);
 
         // CollisionManager をセット（将来のリボン判定用）
         nf->SetCollisionManager(m_collision);
@@ -88,7 +88,7 @@ void Stage1::Init()
     //ピン
     {
         Pin* pin = new Pin();
-        pin->Init("asset/Pin.png", 600, -300, 35, 35);
+        pin->Init("asset/Field/Pin.png", 600, -300, 35, 35);
         pin->SetCollisionManager(m_collision);
         m_pins.push_back(pin);
         pin->SetcanRollPin(false);
@@ -99,7 +99,7 @@ void Stage1::Init()
         m_BlockPinPos.y = -700.0f;
 
         BlockPin* blockpin = new BlockPin();
-        blockpin->Init("asset/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
+        blockpin->Init("asset/Field/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
         blockpin->SetCollisionManager(m_collision);
         m_pins.push_back(blockpin);
         blockpin->SetcanRollPin(true);
@@ -114,7 +114,7 @@ void Stage1::Init()
         m_BlockPinPos.y = -700.0f;
 
         BlockPin* blockpin2 = new BlockPin();
-        blockpin2->Init("asset/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
+        blockpin2->Init("asset/Field/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
         blockpin2->SetCollisionManager(m_collision);
         m_pins.push_back(blockpin2);
         blockpin2->SetcanRollPin(false);
@@ -141,15 +141,15 @@ void Stage1::Init()
     //HPのUI初期化
     //==========================================
     m_HP_UI1.Init();
-    m_HP_UI1.AddTexture("asset/cursor.png");
+    m_HP_UI1.AddTexture("asset/UI/cursor.png");
     m_HP_UI1.SetSize(200, 200, 0);
 
     m_HP_UI2.Init();
-    m_HP_UI2.AddTexture("asset/cursor.png");
+    m_HP_UI2.AddTexture("asset/UI/cursor.png");
     m_HP_UI2.SetSize(200, 200, 0);
 
     m_HP_UI3.Init();
-    m_HP_UI3.AddTexture("asset/cursor.png");
+    m_HP_UI3.AddTexture("asset/UI/cursor.png");
     m_HP_UI3.SetSize(200, 200, 0); 
 
 

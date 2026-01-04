@@ -37,23 +37,23 @@ void SceneGame::Init()
 
 
     Pouse_BackGround.Init();
-    Pouse_BackGround.AddTexture("asset/Pouse_Back.png");
+    Pouse_BackGround.AddTexture("asset/UI/Pouse_Back.png");
 
     GameOver_BackGround.Init();
-    GameOver_BackGround.AddTexture("asset/GameOver.png");
+    GameOver_BackGround.AddTexture("asset/UI/GameOver.png");
 
     m_cursor.Init();
-    m_cursor.AddTexture("asset/cursor.png");
+    m_cursor.AddTexture("asset/UI/cursor.png");
 
     
     m_Buttonretry.Init();
-    m_Buttonretry.AddTexture("asset/Button_Retry.png");
+    m_Buttonretry.AddTexture("asset/UI/Button_Retry.png");
 
     m_Buttoncontinue.Init();
-    m_Buttoncontinue.AddTexture("asset/Button_Continue.png");
+    m_Buttoncontinue.AddTexture("asset/UI/Button_Continue.png");
 
     m_ButtonStageselect.Init();
-    m_ButtonStageselect.AddTexture("asset/Button_StageSelect.png");
+    m_ButtonStageselect.AddTexture("asset/UI/Button_StageSelect.png");
         
         
 }

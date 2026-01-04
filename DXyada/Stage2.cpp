@@ -13,16 +13,16 @@ void Stage2::Init()
 
     // îwåi
     m_background.Init();
-    m_background.AddTexture("asset/aa.png");
+    m_background.AddTexture("asset/Field/aa.png");
     m_background.SetPos(0, 0, 0);
     m_background.SetSize(19200, 10800, 0);
 
 
     // ë´èÍ
-    Platform p1; p1.Init("asset/block.png", 0, -200, 100, 50);
-    Platform p2; p2.Init("asset/block.png", 150, -150, 100, 50);
-    Platform p3; p3.Init("asset/block.png", 1000, -150, 1800, 50);
-    Platform p4; p4.Init("asset/block.png", 1000, 350, 1800, 50);
+    Platform p1; p1.Init("asset/Field/block.png", 0, -200, 100, 50);
+    Platform p2; p2.Init("asset/Field/block.png", 150, -150, 100, 50);
+    Platform p3; p3.Init("asset/Field/block.png", 1000, -150, 1800, 50);
+    Platform p4; p4.Init("asset/Field/block.png", 1000, 350, 1800, 50);
 
     m_platforms = { p1, p2, p3, p4 };
 
@@ -42,15 +42,15 @@ void Stage2::Init()
     }
 
     m_HP_UI1.Init();
-    m_HP_UI1.AddTexture("asset/cursor.png");
+    m_HP_UI1.AddTexture("asset/UI/cursor.png");
     m_HP_UI1.SetSize(200, 200, 0);
 
     m_HP_UI2.Init();
-    m_HP_UI2.AddTexture("asset/cursor.png");
+    m_HP_UI2.AddTexture("asset/UI/cursor.png");
     m_HP_UI2.SetSize(200, 200, 0);
 
     m_HP_UI3.Init();
-    m_HP_UI3.AddTexture("asset/cursor.png");
+    m_HP_UI3.AddTexture("asset/UI/cursor.png");
     m_HP_UI3.SetSize(200, 200, 0);
 
     // ÉvÉåÉCÉÑÅ[ÇÃÉRÉäÉWÉáÉììoò^

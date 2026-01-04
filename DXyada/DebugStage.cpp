@@ -16,18 +16,18 @@ void DebugStage::Init()
 
     // ”wŒi
     m_background.Init();
-    m_background.AddTexture("asset/aa.png");
+    m_background.AddTexture("asset/Field/aa.png");
     m_background.SetPos(0, 0, 0);
     m_background.SetSize(19200, 10800, 0);
 
 
     // ‘«ê
-    Platform p1; p1.Init("asset/block.png", 0, -600, 1800, 600);
+    Platform p1; p1.Init("asset/Field/block.png", 0, -600, 1800, 600);
 
     m_platforms = { p1 };
 
     Enemy* e = new Enemy();
-    e->Init("asset/title.png", 300, -300, 100, 100);
+    e->Init("asset/Field/title.png", 300, -300, 100, 100);
     m_enemies.push_back(e);
 
 
@@ -42,15 +42,15 @@ void DebugStage::Init()
     }
 
     m_HP_UI1.Init();
-    m_HP_UI1.AddTexture("asset/cursor.png");
+    m_HP_UI1.AddTexture("asset/UI/cursor.png");
     m_HP_UI1.SetSize(200, 200, 0);
 
     m_HP_UI2.Init();
-    m_HP_UI2.AddTexture("asset/cursor.png");
+    m_HP_UI2.AddTexture("asset/UI/cursor.png");
     m_HP_UI2.SetSize(200, 200, 0);
 
     m_HP_UI3.Init();
-    m_HP_UI3.AddTexture("asset/cursor.png");
+    m_HP_UI3.AddTexture("asset/UI/cursor.png");
     m_HP_UI3.SetSize(200, 200, 0);
 
     // ƒvƒŒƒCƒ„[‚ÌƒRƒŠƒWƒ‡ƒ““o˜^

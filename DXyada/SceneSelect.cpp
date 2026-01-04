@@ -8,22 +8,22 @@ void SceneSelect::Init() {
     g_cameraPos = { 0, 0, 0 };
 
     m_select.Init();
-    m_select.AddTexture("asset/back.png");
+    m_select.AddTexture("asset/Field/back.png");
     m_select.SetPos(0, 0, 0);
     m_select.SetSize(1920, 1080, 0);
 
     m_stage1.Init();
-    m_stage1.AddTexture("asset/stage1.png");
+    m_stage1.AddTexture("asset/UI/stage1.png");
     m_stage1.SetPos(-100, 0, 0);
     m_stage1.SetSize(100, 100, 0);
 
     m_stage2.Init();
-    m_stage2.AddTexture("asset/stage2.png");
+    m_stage2.AddTexture("asset/UI/stage2.png");
     m_stage2.SetPos(100, 0, 0);
     m_stage2.SetSize(100, 100, 0);
 
     m_cursor.Init();
-    m_cursor.AddTexture("asset/cursor.png");
+    m_cursor.AddTexture("asset/UI/cursor.png");
     m_cursor.SetPos(-140, 40, 0);
     m_cursor.SetSize(50, 50, 0);
 }

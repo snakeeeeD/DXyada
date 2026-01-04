@@ -18,36 +18,36 @@ void Player::Init() {
 
     // アニメーション設定
     //アイドル
-    m_player.AddAnimation("LeftIdle", "asset/Player_Idle.png", 5, 2, 0, 0, 3, 5, true, 1);
-    m_player.AddAnimation("RightIdle", "asset/Player_Idle.png", 5, 2, 1, 0, 3, 5, true, 1);
+    m_player.AddAnimation("LeftIdle", "asset/Player/Player_Idle.png", 5, 2, 0, 0, 3, 5, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/Player/Player_Idle.png", 5, 2, 1, 0, 3, 5, true, 1);
 
     //移動
-    m_player.AddAnimation("Left", "asset/Player_Walk.png", 4, 1, 0, 0, 1, 5, true, 1);
-    m_player.AddAnimation("Right", "asset/Player_Walk.png", 4, 1, 0, 2, 3, 5, true, 1);
+    m_player.AddAnimation("Left", "asset/Player/Player_Walk.png", 4, 1, 0, 0, 1, 5, true, 1);
+    m_player.AddAnimation("Right", "asset/Player/Player_Walk.png", 4, 1, 0, 2, 3, 5, true, 1);
     
     //小ジャンプ
-    m_player.AddAnimation("LJump", "asset/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
-    m_player.AddAnimation("RJump", "asset/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("LJump", "asset/Player/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
+    m_player.AddAnimation("RJump", "asset/Player/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
     
     //ダメージ
-    m_player.AddAnimation("LDamage", "asset/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
-    m_player.AddAnimation("RDamage", "asset/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
+    m_player.AddAnimation("LDamage", "asset/Player/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
+    m_player.AddAnimation("RDamage", "asset/Player/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
    
     //リボン出し
-    m_player.AddAnimation("LOutLibbon", "asset/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
-    m_player.AddAnimation("ROutLibbon", "asset/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
+    m_player.AddAnimation("LOutLibbon", "asset/Player/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
+    m_player.AddAnimation("ROutLibbon", "asset/Player/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
     
     //リボンジャンプ
-    m_player.AddAnimation("LRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 0, 0, 4, 9, false, 2);
-    m_player.AddAnimation("RRibbonJump", "asset/Player_RibbonJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("LRibbonJump", "asset/Player/Player_RibbonJump.png", 5, 2, 0, 0, 4, 9, false, 2);
+    m_player.AddAnimation("RRibbonJump", "asset/Player/Player_RibbonJump.png", 5, 2, 1, 0, 4, 9, false, 2);
     
     //引き寄せられる
-    m_player.AddAnimation("LPulled", "asset/Player_Pulled.png", 5, 2, 0, 0, 4, 15, true, 2);
-    m_player.AddAnimation("RPulled", "asset/Player_Pulled.png", 5, 2, 1, 0, 4, 15, true, 2);
+    m_player.AddAnimation("LPulled", "asset/Player/Player_Pulled.png", 5, 2, 0, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RPulled", "asset/Player/Player_Pulled.png", 5, 2, 1, 0, 4, 15, true, 2);
    
     //引き寄せる
-    m_player.AddAnimation("LRoll", "asset/Player_Roll.png", 5, 2, 0, 0, 4, 15, true, 2);
-    m_player.AddAnimation("RRoll", "asset/Player_Roll.png", 5, 2, 1, 0, 4, 15, true, 2);
+    m_player.AddAnimation("LRoll", "asset/Player/Player_Roll.png", 5, 2, 0, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RRoll", "asset/Player/Player_Roll.png", 5, 2, 1, 0, 4, 15, true, 2);
     m_animState = Idle;
     m_prevAnimState = static_cast<Player_AnimState>(-1);
 
@@ -77,12 +77,12 @@ void Player::Init() {
     //指示線用
     m_baseGuidelineLength = m_height * 3.5;//身長の3.5倍の長さ
     m_guideline.Init();
-    m_guideline.AddTexture("asset/block.png");
+    m_guideline.AddTexture("asset/Field/block.png");
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
     m_guideline.SetSize(m_baseGuidelineLength, 20, 0);
 
     m_Circle.Init();
-    m_Circle.AddTexture("asset/circle.png");
+    m_Circle.AddTexture("asset/Player/circle.png");
     m_Circle.SetSize(100, 100, 0);
 
     m_ribbon.Init();
