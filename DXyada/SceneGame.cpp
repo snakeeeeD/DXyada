@@ -147,8 +147,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         if (m_cursorNum < 2)
         {
             m_cursorNum+=1;
-        }
-        
+        } 
     }
 
     switch (m_cursorNum)
@@ -214,21 +213,50 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
 void SceneGame::UpdateResult(SceneManager& mgr) {
 
 }
+
 void SceneGame::UpdateGameOver(SceneManager& mgr) {
     GameOver_BackGround.SetSize(1920, 1080, 0);
     GameOver_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
 
-    if (input.GetKeyTrigger(VK_RETURN))
-    {
-        mgr.ChangeScene(SCENE_GAME);
+    m_Buttonretry.SetColor(1, 1, 1, 1);
+    m_Buttonretry.SetPos(g_cameraPos.x - 420, g_cameraPos.y - 335, 0);
+
+    m_ButtonStageselect.SetColor(1, 1, 1, 1);
+    m_ButtonStageselect.SetPos(g_cameraPos.x + 420, g_cameraPos.y - 335, 0);
+
+    m_cursor.SetSize(m_size, m_size, 0);
+
+    if (input.GetKeyTrigger(VK_LEFT) || input.GetButtonTrigger(XINPUT_LEFT)) {
+            m_cursorNum = 0;
+    }
+    if (input.GetKeyTrigger(VK_RIGHT) || input.GetButtonTrigger(XINPUT_RIGHT)) {
+            m_cursorNum = 1;
     }
 
-    // Esc でステージ選択に戻る
-    if (input.GetKeyTrigger(VK_ESCAPE))
+    switch (m_cursorNum)
     {
-        mgr.ChangeScene(SCENE_SELECT);
+    case 0:
+        m_cursor.SetPos(g_cameraPos.x - 700, g_cameraPos.y - 240, 0);
+        m_Buttonretry.SetSize(670, 185, 0);
+        m_ButtonStageselect.SetSize(572, 160, 0);
+        if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
+        {
+            mgr.ChangeScene(SCENE_GAME);
+        }
+        break;
+
+    case 1:
+        m_cursor.SetPos(g_cameraPos.x + 130, g_cameraPos.y - 240, 0);
+        m_Buttonretry.SetSize(572, 160, 0);
+        m_ButtonStageselect.SetSize(670, 185, 0);
+        if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
+        {
+            mgr.ChangeScene(SCENE_SELECT);
+        }
+        break;
     }
 }
+
 void SceneGame::Draw()
 {
     m_stageManager.Draw();

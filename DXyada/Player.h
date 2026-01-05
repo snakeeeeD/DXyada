@@ -52,7 +52,7 @@ private:
 	int m_maxhp;
 	bool m_isInvincible;			//無敵時間中かどうか
 	float m_Invincibletimer;		//無敵時間タイマー
-	float m_InvincibleDuration;	//無敵時間の長さ（秒）
+	float m_InvincibleDuration;		//無敵時間の長さ（秒）
 
 	//ノックバック関連
 	bool m_isKnockback;
@@ -65,20 +65,25 @@ private:
 	bool m_isRibbonOut = false;		//リボンが出ているかどうか
 	bool m_wasRTPressed = false;	//前フレームにRTが押されてるか
 
-	// リボン用オートエイム
+	//リボン用オートエイム
 	DirectX::XMFLOAT2 m_ribbonAimDir{ 1.0f, 0.0f };
 	float m_ribbonAimLength = 0.0f;
 	Enemy* m_ribbonTargetEnemy = nullptr;
 
-	float m_baseGuidelineLength;	//元の指示線の長さ
-	bool m_hasTarget;				//ターゲットがあるか	
+	float m_baseGuidelineLength;		//元の指示線の長さ
+	bool m_hasTarget;					//ターゲットがあるか	
 	DirectX::XMFLOAT3 m_targetPosition;	//ターゲットの座標用
 	DirectX::XMFLOAT2 m_aimDirection;	//エイム方向を保存
 	float m_aimAssistAngle = 20.0f;     // エイムアシストの角度範囲（度）
 
+	//LT長押し撃破用
+	float m_holdLTTimer;           //LT長押し時間
+	float m_holdLTRequired;        //撃破に必要な長押し時間
+	Enemy* m_targetEnemy;          //撃破対象の敵
+
 	//検出範囲の設定
-	float m_detectionRangeSquare = m_height * 3.5;  // 四角の範囲（半径）
-	float m_detectionRangeCircle = m_height * 3.5;  // 円の範囲（半径）
+	float m_detectionRangeSquare = m_height * 3.5;  //四角の範囲（半径）
+	float m_detectionRangeCircle = m_height * 3.5;  //円の範囲（半径）
 
 	//アニメーション関連
 	enum class AnimationState

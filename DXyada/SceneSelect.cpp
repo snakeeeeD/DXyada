@@ -34,11 +34,11 @@ void SceneSelect::Update(SceneManager& mgr)
     m_stage2.SetSize(SizeMin, SizeMin, 0);
     
         input.Update();
-    if (input.GetKeyPress(VK_LEFT)) {
+    if (input.GetKeyPress(VK_LEFT) || input.GetButtonTrigger(XINPUT_LEFT)) {
         m_stage = 1;
         m_cursor.SetPos(-140, 40, 0);
     }
-    if (input.GetKeyPress(VK_RIGHT)) {
+    if (input.GetKeyPress(VK_RIGHT) || input.GetButtonTrigger(XINPUT_RIGHT)) {
         m_stage = 2;
         m_cursor.SetPos(60, 40, 0);
     }
@@ -72,7 +72,7 @@ void SceneSelect::Update(SceneManager& mgr)
     }
 
 
-    if (input.GetKeyTrigger(VK_RETURN)) {
+    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
         mgr.SetSelectedStage(m_stage);
         mgr.ChangeScene(SCENE_GAME);
     }

@@ -87,6 +87,11 @@ void Player::Init() {
 
     m_ribbon.Init();
     m_ribbon.SetCollisionManager(m_collisionMgr);
+
+    //LT長押し撃破初期化
+    m_holdLTTimer = 0.0f;
+    m_holdLTRequired = 1.0f;  // 1秒長押しで撃破
+    m_targetEnemy = nullptr;
 }
 
 void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
@@ -390,15 +395,40 @@ void Player::Update(
                 m_ribbon.Return();
             }
 
+            // LT長押しで敵を撃破
             if (isLTPressed)
             {
-                hitEnemy->Disable();
-                m_ribbon.Return();
-                m_isRibbonOut = false;
-                hitEnemy->SetFrozen(false);
-                m_totalRotation = 0.0f;
-                m_isPulling = false;
-                m_isRotating = false;
+                // 対象の敵が変わったらタイマーリセット
+                if (m_targetEnemy != hitEnemy)
+                {
+                    m_targetEnemy = hitEnemy;
+                    m_holdLTTimer = 0.0f;
+                }
+
+                // タイマー加算
+                m_holdLTTimer += deltaTime;
+
+                // 必要時間に達したら撃破
+                if (m_holdLTTimer >= m_holdLTRequired)
+                {
+                    hitEnemy->Disable();
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    hitEnemy->SetFrozen(false);
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRotating = false;
+
+                    // リセット
+                    m_holdLTTimer = 0.0f;
+                    m_targetEnemy = nullptr;
+                }
+            }
+            else
+            {
+                // LTを離したらタイマーリセット
+                m_holdLTTimer = 0.0f;
+                m_targetEnemy = nullptr;
             }
            
         }
