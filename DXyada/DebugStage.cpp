@@ -27,7 +27,7 @@ void DebugStage::Init()
     m_platforms = { p1 };
 
     Enemy* e = new Enemy();
-    e->Init("asset/Field/title.png", 300, -300, 100, 100);
+    e->Init("asset/Field/rippa.png", 300, -300, 100, 100);
     m_enemies.push_back(e);
 
 
@@ -89,6 +89,10 @@ void DebugStage::Init()
     item.layer = DrawLayer::BackObject;
     m_drawList.push_back(item);
 
+    item.obj = m_player.GetCircle();
+    item.layer = DrawLayer::BackObject;
+    m_drawList.push_back(item);
+
     // リボン描画登録
     for (auto* obj : m_player.GetRibbon().GetDrawObjects())
     {
@@ -109,6 +113,46 @@ void DebugStage::Init()
     item.obj = &m_HP_UI3;
     item.layer = DrawLayer::UI;
     m_drawList.push_back(item);
+
+    //ピン
+    {
+        Pin* pin = new Pin();
+        pin->Init("asset/Field/Pin.png", -450, 0, 35, 35);
+        pin->SetCollisionManager(m_collision);
+        m_pins.push_back(pin);
+        pin->SetcanRollPin(false);
+    }
+    //ピン付きブロック (地面付近のやつ)
+    {
+        m_BlockPinPos.x = -300.0f;
+        m_BlockPinPos.y = -250.0f;
+
+        BlockPin* blockpin = new BlockPin();
+        blockpin->Init("asset/Field/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
+        blockpin->SetCollisionManager(m_collision);
+        m_pins.push_back(blockpin);
+        blockpin->SetcanRollPin(true);
+
+        // BlockPinのコリジョンを登録
+        m_collision->AddStatic(blockpin->GetObject());
+        m_collision->SetTag(blockpin->GetObject(), ColliderTag::Pin);
+    }
+
+    {
+        m_BlockPinPos.x = -600.0f;
+        m_BlockPinPos.y = -250.0f;
+
+        BlockPin* blockpin2 = new BlockPin();
+        blockpin2->Init("asset/Field/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
+        blockpin2->SetCollisionManager(m_collision);
+        m_pins.push_back(blockpin2);
+        blockpin2->SetcanRollPin(false);
+
+        // BlockPinのコリジョンを登録
+        m_collision->AddStatic(blockpin2->GetObject());
+        m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
+    }
+
 }
 
 void DebugStage::Update()
@@ -138,6 +182,20 @@ void DebugStage::Update()
             };
 
             m_player.TakeDamage(1, knockbackDir);
+        }
+    }
+
+
+    for (auto* pin : m_pins)
+    {
+        pin->Update(dt);
+
+        // BlockPinの場合、移動後のコリジョン更新
+        BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
+        if (blockPin)
+        {
+
+            m_collision->GetAABB(blockPin->GetObject());
         }
     }
 
@@ -199,6 +257,11 @@ void DebugStage::Draw()
             g_pConstantBuffer
         );
     }
+
+    for (auto* pin : m_pins)
+    {
+        pin->Draw();
+    }
 }
 
 void DebugStage::UnInit()
@@ -213,6 +276,7 @@ void DebugStage::UnInit()
 
     m_background.UnInit();
     m_player.Uninit();
+    for (auto& pin : m_pins) pin->UnInit();
 
     delete m_collision;
     m_collision = nullptr;

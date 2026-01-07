@@ -7,6 +7,13 @@ void WingRippa::Update(float deltaTime)
 {
     if (IsDead()) return;
 
+    // “€Œ‹’†‚Í‰½‚à‚µ‚È‚¢
+    if (m_isFrozen)
+    {
+        m_object.Update(deltaTime);
+        return;
+    }
+
     if (!m_InitBase)
     {
         auto pos = m_object.GetPos();
