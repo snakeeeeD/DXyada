@@ -76,7 +76,7 @@
       <Filter>ソースファイル\02-Object管理\02-Player\999-OldPlayer</Filter>
     </ClCompile>
     <ClCompile Include="NeedleFloor.cpp">
-      <Filter>ソースファイル\02-Object管理\03-Enemy\02-NeedleFloor</Filter>
+      <Filter>ソースファイル\02-Object管理\03-Enemy\03-NeedleFloor</Filter>
     </ClCompile>
     <ClCompile Include="Ribbon.cpp">
       <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
@@ -89,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="BlockPin.cpp">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\02-BlockPin</Filter>
+    </ClCompile>
+    <ClCompile Include="WingRippa.cpp">
+      <Filter>ソースファイル\02-Object管理\03-Enemy\02-WingRipper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,7 +174,7 @@
       <Filter>ソースファイル\02-Object管理\02-Player\00-Player</Filter>
     </ClInclude>
     <ClInclude Include="NeedleFloor.h">
-      <Filter>ソースファイル\02-Object管理\03-Enemy\02-NeedleFloor</Filter>
+      <Filter>ソースファイル\02-Object管理\03-Enemy\03-NeedleFloor</Filter>
     </ClInclude>
     <ClInclude Include="Ribbon.h">
       <Filter>ソースファイル\02-Object管理\04-Ribbon</Filter>
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="BlockPin.h">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\02-BlockPin</Filter>
+    </ClInclude>
+    <ClInclude Include="WingRippa.h">
+      <Filter>ソースファイル\02-Object管理\03-Enemy\02-WingRipper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -301,9 +307,6 @@
     <Filter Include="ソースファイル\02-Object管理\02-Player\999-OldPlayer">
       <UniqueIdentifier>{02226424-4e56-45d5-98ec-2768f6140eb8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソースファイル\02-Object管理\03-Enemy\02-NeedleFloor">
-      <UniqueIdentifier>{90b0d8fc-4d9c-42f3-bca3-a5dd33d017cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソースファイル\02-Object管理\04-Ribbon">
       <UniqueIdentifier>{fd131e57-3358-4d2d-9f9f-4f049795b7e6}</UniqueIdentifier>
     </Filter>
@@ -318,6 +321,12 @@
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\05-Gimmick\02-BlockPin">
       <UniqueIdentifier>{3b1f747d-101c-4161-8502-036a31861743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\03-Enemy\03-NeedleFloor">
+      <UniqueIdentifier>{90b0d8fc-4d9c-42f3-bca3-a5dd33d017cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\03-Enemy\02-WingRipper">
+      <UniqueIdentifier>{48c4e522-9d34-42c6-9a97-dd3593d94972}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

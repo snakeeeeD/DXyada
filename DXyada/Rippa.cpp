@@ -19,13 +19,13 @@ void Rippa::Update(float deltaTime)
 
     switch (m_type)
     {
-    case Type::Normal:
-        CheckCollision();
-        break;
+        case Type::Normal:
+            CheckCollision();
+            break;
 
         case Type::Wandering:
             CheckWandering(deltaTime);
-        break;
+            break;
     }
 
     m_object.SetFlipX(m_direction > 0);

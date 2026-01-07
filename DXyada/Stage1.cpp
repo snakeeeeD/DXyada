@@ -2,6 +2,7 @@
 #include "SceneGame.h"
 #include "Enemy.h"
 #include "Rippa.h"
+#include "WingRippa.h"
 #include "NeedleFloor.h"
 #include <algorithm>
 #include "BlockPin.h"
@@ -32,8 +33,8 @@ void Stage1::Init()
 
   
 
-    Platform plat1; plat1.Init("asset/Field/block.png", 0, -200, 100, 50);     //手前床
-    Platform plat2; plat2.Init("asset/Field/block.png", 150, -800, 100, 50);   //主人公が乗っている床
+    Platform plat1; plat1.Init("asset/Field/block.png", 0, -400, 100, 50);     //手前床
+    Platform plat2; plat2.Init("asset/Field/block.png", -200, -200, 1000, 50);   //主人公が乗っている床
     Platform plat3; plat3.Init("asset/Field/block.png", 1000, -150, 1500, 50); //ナガ床
 
     Platform plat4; plat4.Init("asset/Field/block.png", 400, -100, 100, 50); //左壁
@@ -42,6 +43,7 @@ void Stage1::Init()
     Platform plat6; plat6.Init("asset/Field/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
 
     Platform plat7; plat7.Init("asset/Field/block.png", 1000, -800, 1500, 50);  //下ナガ床
+    Platform plat8; plat8.Init("asset/Field/block.png", -400, 200, 100, 50);  //羽リッパーの壁反転用
 
     //エネミー1 (壁反転)
     {
@@ -69,6 +71,36 @@ void Stage1::Init()
         rippa_3->SetTurnInterval(2.5f); //個々の値変更で自由に変えられる
 
         m_enemies.push_back(rippa_3);
+    }
+
+    //羽リッパー (通常)
+    {
+		WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
+		wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 400, 100, 100);
+		wingrippa_1->SetCollisionManager(m_collision);
+
+		m_enemies.push_back(wingrippa_1);
+
+    }
+
+    //羽リッパー (通常・壁反転)
+    {
+        WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
+        wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 200, 100, 100);
+        wingrippa_1->SetCollisionManager(m_collision);
+
+        m_enemies.push_back(wingrippa_1);
+
+    }
+
+    //羽リッパー (徘徊)
+    {
+        WingRippa* wingrippa_2 = new WingRippa(WingRippa::Type::Wandering_Circle);
+        wingrippa_2->Init("asset/Field/Wing_Rippa.png", 800, 400, 100, 100);
+        wingrippa_2->SetCollisionManager(m_collision);
+
+        m_enemies.push_back(wingrippa_2);
+
     }
 
 
@@ -124,7 +156,11 @@ void Stage1::Init()
         m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
     }
 
-    m_platforms = { plat1, plat2, plat3, plat4, plat5, plat6, plat7 };
+    m_platforms = { 
+        plat1, plat2, plat3, plat4, 
+        plat5, plat6, plat7, plat8 
+    };
+
     for (auto& plat : m_platforms) 
     {
         m_collision->AddStatic(plat.GetObject());
