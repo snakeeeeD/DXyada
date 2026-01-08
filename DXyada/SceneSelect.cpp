@@ -72,8 +72,13 @@ void SceneSelect::Update(SceneManager& mgr)
     }
 
 
-    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
+    if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A)) {
         mgr.SetSelectedStage(m_stage);
+        mgr.ChangeScene(SCENE_GAME);
+    }
+
+    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
+        mgr.SetSelectedStage(99);
         mgr.ChangeScene(SCENE_GAME);
     }
 }

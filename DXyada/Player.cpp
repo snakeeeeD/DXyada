@@ -525,16 +525,28 @@ void Player::Update(
                     if (dist > 0.0f)
                     {
                         // 正規化して、Pinの方向に大ジャンプ
-                        float jumpForce = 1000.0f;  // ジャンプ力
+                       // float jumpForce = 1000.0f;  // ジャンプ力
+
+                        float minJumpForce = 400.0f;   //下限
+                        float maxJumpForce = 1200.0f;  //上限
+                        float distanceScale = 3.0f;   //距離倍率
+
+                        float jumpForce = dist * distanceScale;
+
+                        if (jumpForce < minJumpForce)
+                            jumpForce = minJumpForce;
+                        else if (jumpForce > maxJumpForce)
+                            jumpForce = maxJumpForce;
+
+                        float dirX = dx / dist;
+                        float dirY = dy / dist;
 
                         // Pinジャンプ開始
                         m_isPinJumping = true;
-                        m_pinJumpVelocity.x = (dx / dist) * jumpForce;
-                        m_pinJumpVelocity.y = (dy / dist) * jumpForce;
+                        m_pinJumpVelocity.x = dirX * jumpForce;
 
                         // Y方向の速度も設定
-                        m_velY = -(dy / dist) * jumpForce;
-
+                        m_velY = -dirY * jumpForce * 2.5;
                         // 重力をリセット
                         m_gravity = 2000.0f;
                     }

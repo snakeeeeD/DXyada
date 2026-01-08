@@ -276,29 +276,28 @@ void Stage1::Update()
 
         enemy->Update(dt);
 
-        //プレイヤーと敵との衝突判定
-        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
-        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
-
-        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
+        //プレイヤーが透明でないとき
+        if (!m_player.IsInvincible())
         {
-            // ノックバック方向を計算（プレイヤー位置 - 敵位置）
-            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
+            //プレイヤーと敵との衝突判定
+            auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+            auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
 
-            DirectX::XMFLOAT2 knockbackDir = 
+            if (m_collision->CheckOverlap(playerAABB, enemyAABB))
             {
-                playerPos.x - enemyPos.x,
-                playerPos.y - enemyPos.y
-            };
+                // ノックバック方向を計算（プレイヤー位置 - 敵位置）
+                DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+                DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
 
-            m_player.TakeDamage(1, knockbackDir);
+                DirectX::XMFLOAT2 knockbackDir =
+                {
+                    playerPos.x - enemyPos.x,
+                    playerPos.y - enemyPos.y
+                };
+
+                m_player.TakeDamage(1, knockbackDir);
+            }
         }
-    }
-
-    for (auto* enemy : m_enemies)
-    {
-        enemy->Update(dt);
     }
 
     m_enemies.erase(
@@ -331,8 +330,14 @@ void Stage1::Update()
         }
     }
 
+    /*const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
+    if (p.y < m_fallDeadLineY)
+    {
+        DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
+        m_player.TakeDamage(999, dummyDir);
 
-
+        m_isPlayerDead = true;
+    }*/
     // カメラ更新
     m_camera.Update(m_player.GetObject()->GetPos());
 
