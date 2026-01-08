@@ -1184,3 +1184,11 @@ void Player::ApplyAnimation()
         m_prevIsRightDirection = m_isLastRightDirection;
     }
 }
+
+//RibbonにCollisionManagerを渡すために.hから.cppへ移動
+void Player::SetCollisionManager(CollisionManager* mgr)
+{
+    m_collisionMgr = mgr;
+
+    m_ribbon.SetCollisionManager(mgr);
+}

@@ -77,7 +77,10 @@ private:
     DirectX::XMFLOAT2 m_hitPos{};
     CollisionManager* m_collisionMgr = nullptr;
 
-
+    //==============================
+    // °‚É“–‚½‚é‚Ü‚Å‚ÌÅ‘å“’B‹——£‚ğŒvZ
+    //==============================
+    float CalcMaxReachByWall() const;
 
     bool m_isRTheld = false;
 
@@ -127,6 +130,9 @@ public:
     std::vector<Object*> GetDrawObjects() const;
 
     void SetRTheld(bool held) { m_isRTheld = held; }
+
+    //ribbon‚Ì’†ŠÔ”»’è—p
+    void CheckBodyHitWall();
 
     // ‰ğ•ú
     void UnInit();

@@ -152,7 +152,6 @@ public:
 	Ribbon& GetRibbon();
 
 	// CollisionManagerİ’è—p
-	void SetCollisionManager(CollisionManager* mgr) { m_collisionMgr = mgr; }
-
+	void SetCollisionManager(CollisionManager* mgr);
 };
 
