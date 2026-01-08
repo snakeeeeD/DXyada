@@ -57,9 +57,6 @@
     <ClCompile Include="DebugStage.cpp">
       <Filter>ソースファイル\20-Stage管理\999-DebugStage</Filter>
     </ClCompile>
-    <ClCompile Include="Stage1.cpp">
-      <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
-    </ClCompile>
     <ClCompile Include="Stage2.cpp">
       <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
     </ClCompile>
@@ -92,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="WingRippa.cpp">
       <Filter>ソースファイル\02-Object管理\03-Enemy\02-WingRipper</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage1.cpp">
+      <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@
 #include <algorithm>
 #include "BlockPin.h"
 
-void Stage1::Init() 
+void Stage1::Init()
 {
     m_collision = new CollisionManager();
 
@@ -25,13 +25,13 @@ void Stage1::Init()
     m_mae.AddTexture("asset/Field/block.png");
     m_mae.SetPos(0, 0, 0);
     m_mae.SetSize(100, 100, 0);
-    
+
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
     m_player.GetObject()->SetPos(150, -50, 0);
 
 
-  
+
 
     Platform plat1; plat1.Init("asset/Field/block.png", 0, -400, 100, 50);     //手前床
     Platform plat2; plat2.Init("asset/Field/block.png", -200, -200, 1000, 50);   //主人公が乗っている床
@@ -75,11 +75,11 @@ void Stage1::Init()
 
     //羽リッパー (通常)
     {
-		WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
-		wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 400, 100, 100);
-		wingrippa_1->SetCollisionManager(m_collision);
+        WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
+        wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 400, 100, 100);
+        wingrippa_1->SetCollisionManager(m_collision);
 
-		m_enemies.push_back(wingrippa_1);
+        m_enemies.push_back(wingrippa_1);
 
     }
 
@@ -156,18 +156,18 @@ void Stage1::Init()
         m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
     }
 
-    m_platforms = { 
-        plat1, plat2, plat3, plat4, 
-        plat5, plat6, plat7, plat8 
+    m_platforms = {
+        plat1, plat2, plat3, plat4,
+        plat5, plat6, plat7, plat8
     };
 
-    for (auto& plat : m_platforms) 
+    for (auto& plat : m_platforms)
     {
         m_collision->AddStatic(plat.GetObject());
         m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
     }
 
-    for (auto& enemy : m_enemies) 
+    for (auto& enemy : m_enemies)
     {
         m_collision->AddMoved(enemy->GetObject());
         m_collision->SetTag(enemy->GetObject(), ColliderTag::Enemy);
@@ -186,7 +186,7 @@ void Stage1::Init()
 
     m_HP_UI3.Init();
     m_HP_UI3.AddTexture("asset/UI/cursor.png");
-    m_HP_UI3.SetSize(200, 200, 0); 
+    m_HP_UI3.SetSize(200, 200, 0);
 
 
     // プレイヤーのコリジョン登録
@@ -204,14 +204,14 @@ void Stage1::Init()
     item.layer = DrawLayer::BackObject;
     m_drawList.push_back(item);
 
-    for (size_t i = 0; i < m_platforms.size(); ++i) 
+    for (size_t i = 0; i < m_platforms.size(); ++i)
     {
         item.obj = m_platforms[i].GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
 
-    for (size_t i = 0; i < m_enemies.size(); ++i) 
+    for (size_t i = 0; i < m_enemies.size(); ++i)
     {
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
@@ -258,7 +258,7 @@ void Stage1::Init()
 
 }
 
-void Stage1::Update() 
+void Stage1::Update()
 {
     float dt = 1.0f / 60.0f;
 
@@ -266,7 +266,7 @@ void Stage1::Update()
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
     // 敵更新
-    for (auto& enemy : m_enemies) 
+    for (auto& enemy : m_enemies)
     {
 
         //範囲判定
@@ -325,7 +325,7 @@ void Stage1::Update()
         BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
         if (blockPin)
         {
-    
+
             m_collision->GetAABB(blockPin->GetObject());
         }
     }
@@ -372,25 +372,25 @@ void Stage1::Update()
     // コリジョン更新
     m_collision->CheckAll();
 
-    if (m_player.isDead()) 
-    {  
+    if (m_player.isDead())
+    {
         m_isPlayerDead = true;
     }
 }
 
-void Stage1::Draw() 
+void Stage1::Draw()
 {
     std::sort(
         m_drawList.begin(),
         m_drawList.end(),
-        [](const DrawItem& a, const DrawItem& b) 
+        [](const DrawItem& a, const DrawItem& b)
         {
             return static_cast<int>(a.layer) < static_cast<int>(b.layer);
         }
     );
 
     // 並べ替えた順に描画
-    for (size_t i = 0; i < m_drawList.size(); ++i) 
+    for (size_t i = 0; i < m_drawList.size(); ++i)
     {
         Object* obj = m_drawList[i].obj;
         if (!obj) continue; // 念のため
@@ -405,10 +405,10 @@ void Stage1::Draw()
         );
     }
 
-    for(auto* pin : m_pins)
-	{
-		pin->Draw();
-	}
+    for (auto* pin : m_pins)
+    {
+        pin->Draw();
+    }
 }
 
 void Stage1::UnInit() {
