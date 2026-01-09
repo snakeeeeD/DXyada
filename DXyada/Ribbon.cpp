@@ -90,6 +90,9 @@ void Ribbon::Throw(const XMFLOAT2& dir, float maxLength)
     m_state = State::Throwing;
 }
 
+
+
+
 //====================================================
 // ñﬂÇ∑èàóù
 //====================================================
@@ -174,7 +177,11 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                     m_hitPos = { tipX, tipY };
 
                     // RTÇâüÇµÇƒÇ¢Ç»ÇØÇÍÇŒñﬂÇ∑
-                    if (!m_isRTheld)
+                    if (m_isRTheld)
+                    {
+                        m_state = State::Holding;
+                    }
+                    else
                     {
                         m_state = State::Returning;
                     }
@@ -202,7 +209,11 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                     m_hitPos = { tipX, tipY };
 
                     // RTÇâüÇµÇƒÇ¢Ç»ÇØÇÍÇŒñﬂÇ∑
-                    if (!m_isRTheld)
+                    if (m_isRTheld)
+                    {
+                        m_state = State::Holding;
+                    }
+                    else
                     {
                         m_state = State::Returning;
                     }
@@ -222,46 +233,46 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                 }
             }
         }
-        else
+       
+    }
+    else if (m_state == State::Holding)
+    {
+        DirectX::XMFLOAT2 targetPos{};
+
+        if (m_hitEnemy)
         {
-            if (m_isRTheld)
-            {
-                m_currentLength += m_speed * deltaTime;
-            }
+            auto p = m_hitEnemy->GetObject()->GetPos();
+            targetPos = { p.x, p.y };
+        }
+        else if (m_hitPin)
+        {
+            auto p = m_hitPin->GetObject()->GetPos();
+            targetPos = { p.x, p.y };
+        }
 
-            if (m_hitEnemy)
-            {
-                auto pos3 = m_hitEnemy->GetObject()->GetPos();
-                targetPos = { pos3.x, pos3.y };
-                hasTarget = true;
-            }
-            else if (m_hitPin)
-            {
-                auto pos3 = m_hitPin->GetObject()->GetPos();
-                targetPos = { pos3.x, pos3.y };
-                hasTarget = true;
-            }
+        float dx = targetPos.x - m_playerPos.x;
+        float dy = targetPos.y - m_playerPos.y;
+        float dist = sqrt(dx * dx + dy * dy);
 
-            if (hasTarget)
-            {
-                float dx = targetPos.x - m_playerPos.x;
-                float dy = targetPos.y - m_playerPos.y;
-                float dist = sqrt(dx * dx + dy * dy);
+        if (dist > 0.0f)
+        {
+            m_direction = { dx / dist, dy / dist };
+        }
 
-                if (dist > 0.0f)
-                {
-                    m_direction.x = dx / dist;
-                    m_direction.y = dy / dist;
-                }
+        // RTí∑âüÇµíÜÇÕÇ≥ÇÁÇ…êLÇŒÇ∑
+        if (m_isRTheld)
+        {
+            m_currentLength += m_speed * deltaTime;
+        }
 
-                float wallLimit = CalcMaxReachByWall();
-                m_currentLength = (std::min)(dist, wallLimit);
+        // ï«êßå¿
+        float wallLimit = CalcMaxReachByWall();
+        m_currentLength = (std::min)(m_currentLength, wallLimit);
 
-                if (m_currentLength >= wallLimit - 1.0f && !m_isRTheld)
-                {
-                    m_state = State::Returning;
-                }
-            }
+        // ó£ÇµÇΩÇÁñﬂÇÈ
+        if (!m_isRTheld)
+        {
+            m_state = State::Returning;
         }
     }
     //----------------------------------
@@ -392,7 +403,7 @@ void Ribbon::CheckBodyHitWall()
     if (!m_collisionMgr)
         return;
 
-    if (m_state == State::Idle || m_state == State::Returning)
+    if (m_state != State::Throwing && m_state != State::Holding)
         return;
 
     const int steps = 25;

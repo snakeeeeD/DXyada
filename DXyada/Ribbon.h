@@ -20,6 +20,7 @@ public:
     {
         Idle,       // ë“ã@
         Throwing,   // êLÇ—ÇÈ
+        Holding,    // íÕÇÒÇæÇ‹Ç‹
         Returning   // ñﬂÇÈ
     };
 
