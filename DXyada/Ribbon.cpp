@@ -90,9 +90,6 @@ void Ribbon::Throw(const XMFLOAT2& dir, float maxLength)
     m_state = State::Throwing;
 }
 
-
-
-
 //====================================================
 // ñﬂÇ∑èàóù
 //====================================================

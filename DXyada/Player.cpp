@@ -88,6 +88,10 @@ void Player::Init() {
     m_ribbon.Init();
     m_ribbon.SetCollisionManager(m_collisionMgr);
 
+    //RT長押し撃破初期化
+    m_holdRTTimer = 0.0f;
+    m_holdRTRequired = 3.0f;  // 3秒長押しで離す
+
     //LT長押し撃破初期化
     m_holdLTTimer = 0.0f;
     m_holdLTRequired = 1.0f;  // 1秒長押しで撃破
@@ -370,8 +374,7 @@ void Player::Update(
 
             if (isRTPressed)
             {
-                //Enemyを停止
-                hitEnemy->SetFrozen(true);
+
 
                 //引き寄せ開始
                 if (m_isPulling)
@@ -381,7 +384,7 @@ void Player::Update(
                     {
                         m_ribbon.Return();
                         m_isRibbonOut = false;
-                        hitEnemy->SetFrozen(false);
+                        hitEnemy->SetSlow(false);
                         m_totalRotation = 0.0f;
                         m_isPulling = false;
                         m_isRotating = false;
@@ -394,6 +397,8 @@ void Player::Update(
                     m_isPulling = false;
                     m_isRotating = false;
                 }
+
+               
             }
             else
             {
@@ -403,6 +408,9 @@ void Player::Update(
             // LT長押しで敵を撃破
             if (isLTPressed)
             {
+                //Enemyを停止
+               hitEnemy->SetSlow(true);
+
                 // 対象の敵が変わったらタイマーリセット
                 if (m_targetEnemy != hitEnemy)
                 {
@@ -419,7 +427,7 @@ void Player::Update(
                     hitEnemy->Disable();
                     m_ribbon.Return();
                     m_isRibbonOut = false;
-                    hitEnemy->SetFrozen(false);
+                    hitEnemy->SetSlow(false);
                     m_totalRotation = 0.0f;
                     m_isPulling = false;
                     m_isRotating = false;
@@ -582,7 +590,7 @@ void Player::Update(
             for (auto enemy : enemies)
             {
                 if (enemy)
-                    enemy->SetFrozen(false);
+                    enemy->SetSlow(false);
             }
 
         }
@@ -919,6 +927,25 @@ void Player::Update(
 
     if (!m_isKnockback)
     {
+        //LTを押していない,リボンが何も当たっていない場合
+        if (!isLTPressed && !hitEnemy && !hitPin)
+        {
+            // タイマー加算
+            m_holdRTTimer += deltaTime;
+        }
+
+        if (m_holdRTTimer >= m_holdRTRequired)
+        {
+            m_ribbon.Return();
+            m_isRibbonOut = false;
+            m_totalRotation = 0.0f;
+            m_isPulling = false;
+            m_isRotating = false;
+
+            // リセット
+            m_holdRTTimer = 0.0f;
+        }
+
         // 発射入力
         if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
         {
@@ -941,6 +968,8 @@ void Player::Update(
 
                     m_ribbon.Throw(toTarget, dist);
 
+                   
+
                     
                 }
                 else
@@ -960,6 +989,9 @@ void Player::Update(
             }
 
             m_isRibbonOut = true;
+           
+
+
         }
 
         // 戻し処理

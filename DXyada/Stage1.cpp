@@ -137,7 +137,7 @@ void Stage1::Init()
         blockpin->SetcanRollPin(true);
 
         // BlockPin‚ÌƒRƒŠƒWƒ‡ƒ“‚ð“o˜^
-        m_collision->AddStatic(blockpin->GetObject());
+        //m_collision->AddStatic(blockpin->GetObject());
         m_collision->SetTag(blockpin->GetObject(), ColliderTag::Pin);
     }
 
@@ -152,7 +152,7 @@ void Stage1::Init()
         blockpin2->SetcanRollPin(false);
 
         // BlockPin‚ÌƒRƒŠƒWƒ‡ƒ“‚ð“o˜^
-        m_collision->AddStatic(blockpin2->GetObject());
+        //m_collision->AddStatic(blockpin2->GetObject());
         m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
     }
 

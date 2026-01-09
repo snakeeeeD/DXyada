@@ -29,7 +29,7 @@ protected:
     bool m_enableCollision = true;
     EnamyState m_enemystate = EnamyState::Idle;
 
-    bool m_isFrozen = false;
+    bool m_isSlow = false;
 
 public:
     Tag tag = Tag::Enemy;
@@ -58,6 +58,7 @@ public:
     bool IsCollisionEnabled() const { return m_enableCollision; }
     bool IsDead() const { return m_enemystate == EnamyState::YouDied; }
 
-    void SetFrozen(bool flozen) { m_isFrozen = flozen; }
-    bool IsFrozen() const { return m_isFrozen; }
+    void SetSlow(bool slow) { m_isSlow = slow; }
+    bool IsSlow() const { return m_isSlow; }
+
 };

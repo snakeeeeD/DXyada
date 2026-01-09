@@ -76,6 +76,10 @@ private:
 	DirectX::XMFLOAT2 m_aimDirection;	//エイム方向を保存
 	float m_aimAssistAngle = 20.0f;     // エイムアシストの角度範囲（度）
 
+	//RT長押し撃破用
+	float m_holdRTTimer;           //LT長押し時間
+	float m_holdRTRequired;        //撃破に必要な長押し時間
+
 	//LT長押し撃破用
 	float m_holdLTTimer;           //LT長押し時間
 	float m_holdLTRequired;        //撃破に必要な長押し時間
