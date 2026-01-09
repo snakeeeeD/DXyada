@@ -227,6 +227,11 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         }
         else
         {
+            if (m_isRTheld)
+            {
+                m_currentLength += m_speed * deltaTime;
+            }
+
             if (m_hitEnemy)
             {
                 auto pos3 = m_hitEnemy->GetObject()->GetPos();
