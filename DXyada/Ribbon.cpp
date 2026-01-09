@@ -151,8 +151,7 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                         {
                             m_state = State::Returning;
                         }
-
-                        return; //Ç±ÇÍà»è„êLÇŒÇ≥Ç»Ç¢
+                        break; //Ç±ÇÍà»è„êLÇŒÇ≥Ç»Ç¢
                     }
                 }
             }
