@@ -96,6 +96,8 @@ private:
 
     SceneManager* m_sceneMgr = nullptr;
 
+    bool m_playerInvincible = false;
+
  
     DirectX::XMFLOAT2 GetMTV(const AABB& a, const AABB& b);
 
@@ -133,4 +135,7 @@ public:
     {
         m_staticObjects.push_back(aabb);
     }
+
+    void SetPlayerInvincible(bool invincible) { m_playerInvincible = invincible; }
+    bool IsPlayerInvincible() const { return m_playerInvincible; }
 };

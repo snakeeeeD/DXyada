@@ -162,6 +162,11 @@ void Player::Update(
         m_player.SetColor(1, 1, 1, 1);
     }
 
+    if (m_collisionMgr)
+    {
+        m_collisionMgr->SetPlayerInvincible(m_isInvincible);
+    }
+
     //ノックバック更新
     if (m_isKnockback)
     {

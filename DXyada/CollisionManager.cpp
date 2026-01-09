@@ -122,6 +122,15 @@ void CollisionManager::CheckAll()
             ColliderTag tagB = GetTag(moveObj);
 
             if (!CheckOverlap(a, b)) continue;
+
+            if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy)
+            {
+                if (m_playerInvincible)
+                {
+                    continue;  // –³“GŽž‚Í‚·‚è”²‚¯
+                }
+            }
+
             XMFLOAT2 mtv = GetMTV(a, b);
             DirectX::XMFLOAT3 posA = dynObj->GetPos();
             DirectX::XMFLOAT3 posB = moveObj->GetPos();
