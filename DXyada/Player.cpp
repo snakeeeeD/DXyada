@@ -10,6 +10,7 @@
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
 
+
 void Player::Init() {
 
     m_player.Init();

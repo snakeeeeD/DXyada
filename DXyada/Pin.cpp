@@ -20,7 +20,7 @@ void Pin::Update(float dt)
 
     if (GetState() == State::Decorated)
     {
-        m_object.SetColor(1.0, 0, 0, 0);
+        m_object.SetColor(1.0, 1.0, 1.0, 1.0);
     }
 }
 
@@ -44,7 +44,7 @@ void Pin::OnHit()
     }
 
     // 見た目を変える（リボン付き画像にするなど）
-    // m_object.SetTexture("asset/pin_ribbon.png");
+     m_object.AddTexture("asset/pin_ribbon.png");
 
     // 足場として登録する
     if (m_pCollision) 

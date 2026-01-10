@@ -123,6 +123,7 @@ void DebugStage::Init()
         pin->SetcanRollPin(false);
         pin->SetcanDecorate(false);
     }
+
     {
         Pin* pin2 = new Pin();
         pin2->Init("asset/Field/Pin.png", -800, -250, 35, 35);
