@@ -124,6 +124,7 @@ void Stage1::Init()
         pin->SetCollisionManager(m_collision);
         m_pins.push_back(pin);
         pin->SetcanRollPin(false);
+        pin->SetcanDecorate(false);
     }
     //ピン付きブロック (地面付近のやつ)
     {

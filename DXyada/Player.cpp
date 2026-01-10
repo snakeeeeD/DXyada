@@ -329,6 +329,34 @@ void Player::Update(
         }
     }
 
+    //ピンを飾ったら地面と同じ仕様に
+    for (auto * pin : pins)
+    {
+        if (pin->GetState() == Pin::State::Decorated)
+        {
+            auto pPos = pin->GetObject()->GetPos();
+            auto pSize = pin->GetObject()->GetSize();
+
+            float platTop = pPos.y + pSize.y * 0.5f;
+            float platLeft = pPos.x - pSize.x * 0.5f;
+            float platRight = pPos.x + pSize.x * 0.5f;
+
+            float playerBottom = pos.y - m_height * 0.5f;
+            float playerLeft = pos.x - m_width * 0.5f;
+            float playerRight = pos.x + m_width * 0.5f;
+
+            if (playerRight > platLeft && playerLeft < platRight)
+            {
+                if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+                {
+                    pos.y = platTop + m_height * 0.5f;
+                    m_velY = 0.0f;
+                    m_isOnGround = true;
+                }
+            }
+        }
+    }
+
     //操作関係
     bool moveLeft =
         input.GetKeyPress(VK_A) ||
@@ -523,10 +551,39 @@ void Player::Update(
                     }
 
                 }
+
+                if (hitPin->GetcanDecorate())
+                {
+                    // LT長押しで敵を撃破
+                    if (isLTPressed)
+                    {
+                        // タイマー加算
+                        m_holdLTTimer += deltaTime;
+
+                        // 必要時間に達したら
+                        if (m_holdLTTimer >= m_holdLTRequired)
+                        {
+                            m_ribbon.Return();
+                            m_isRibbonOut = false;
+                            m_totalRotation = 0.0f;
+                            m_isPulling = false;
+                            m_isRotating = false;
+                            hitPin->SetState(Pin::State::Decorated);
+
+                            // リセット
+                            m_holdLTTimer = 0.0f;
+                        }
+                    }
+                    else
+                    {
+                        // LTを離したらタイマーリセット
+                        m_holdLTTimer = 0.0f;
+                    }
+                }
             }
             else
             {
-                if (wasPinGrabbedLastFrame && !m_isOnGround &&!blockPin && !hitPin->GetcanRollPin())
+                if (wasPinGrabbedLastFrame && !m_isOnGround &&!blockPin && !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
                 {
                     auto pinPos = hitPin->GetObject()->GetPos();
 
@@ -564,6 +621,7 @@ void Player::Update(
                         m_gravity = 2000.0f;
                     }
                 }
+             
                 m_ribbon.Return();
             }
             
@@ -864,7 +922,7 @@ void Player::Update(
         //------------------------------------
         // ガイドライン描画
         //------------------------------------
-        if (m_ribbon.GetState() != Ribbon::State::Throwing)
+        if (m_ribbon.GetState() != Ribbon::State::Throwing && m_ribbon.GetState() != Ribbon::State::Holding)
         {
             // 発射基準点（胸あたり）
             float originX = p.x;

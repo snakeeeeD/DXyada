@@ -121,6 +121,17 @@ void DebugStage::Init()
         pin->SetCollisionManager(m_collision);
         m_pins.push_back(pin);
         pin->SetcanRollPin(false);
+        pin->SetcanDecorate(false);
+    }
+    {
+        Pin* pin2 = new Pin();
+        pin2->Init("asset/Field/Pin.png", -800, -250, 35, 35);
+        pin2->SetCollisionManager(m_collision);
+        m_pins.push_back(pin2);
+        pin2->SetcanRollPin(false);
+        pin2->SetcanDecorate(true);
+
+       
     }
     //ピン付きブロック (地面付近のやつ)
     {
@@ -194,7 +205,6 @@ void DebugStage::Update()
         BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
         if (blockPin)
         {
-
             m_collision->GetAABB(blockPin->GetObject());
         }
     }
