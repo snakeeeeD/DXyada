@@ -83,6 +83,7 @@ void CollisionManager::CheckAll()
 
         for (auto* stObj : m_static) {
 
+
             AABB b = GetAABB(stObj);    //stObj：静的なオブジェクト（static）
 
             ColliderTag tagA = GetTag(dynObj);  //tagAを動的オブジェクト

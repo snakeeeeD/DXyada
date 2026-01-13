@@ -2,9 +2,9 @@
 #include "Renderer.h"
 #include <algorithm>
 
+
 void DebugStage::Init()
 {
-
     g_cameraPos = { 0, 0, 0 };
 
     m_collision = new CollisionManager();
@@ -12,7 +12,7 @@ void DebugStage::Init()
     // プレイヤー初期位置
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, -200, 0);
+    m_player.GetObject()->SetPos(-300, 200, 0);
 
     // 背景
     m_background.Init();
@@ -74,11 +74,11 @@ void DebugStage::Init()
     }
 
     // 敵
-    for (size_t i = 0; i < m_enemies.size(); ++i) {
-        item.obj = m_enemies[i]->GetObject();
-        item.layer = DrawLayer::Enemy;
-        m_drawList.push_back(item);
-    }
+    //for (size_t i = 0; i < m_enemies.size(); ++i) {
+    //    item.obj = m_enemies[i]->GetObject();
+    //    item.layer = DrawLayer::Enemy;
+    //    m_drawList.push_back(item);
+    //}
 
     // プレイヤー
     item.obj = m_player.GetObject();
@@ -131,7 +131,6 @@ void DebugStage::Init()
         m_pins.push_back(pin2);
         pin2->SetcanRollPin(false);
         pin2->SetcanDecorate(true);
-
        
     }
     //ピン付きブロック (地面付近のやつ)
@@ -165,10 +164,43 @@ void DebugStage::Init()
         m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
     }
 
+
+    m_targetPin = new BlockPin();
+    m_targetPin->Init("asset/Field/Pin.png", -300, -250, 35, 35);
+    m_targetPin->SetCollisionManager(m_collision);
+    m_targetPin->SetcanRollPin(true);
+    m_targetPin->SetcanDecorate(false);
+    m_pins.push_back(m_targetPin);
+    m_collision->AddStatic(m_targetPin->GetObject());
+    m_targetPin->SetForceGround(true);
+    m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
+    m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
+
+    m_hook = new RemoteWindPin();
+    m_hook->Init("asset/Field/Pin.png", 300, -250, 35, 35);
+    m_hook->SetCollisionManager(m_collision);
+    m_hook->SetcanRollPin(true);
+    m_hook->SetcanDecorate(false);
+    m_hook->SetTarget(m_targetPin);
+
+    // ガイド
+    m_hook->AddGuide({ 0,   -250, 0 });
+    m_hook->AddGuide({ 400, -100, 0 });
+    m_hook->AddGuide({ 800, -250, 0 });
+
+    m_pins.push_back(m_hook);
+    m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
+
 }
 
 void DebugStage::Update()
 {
+    // ★診断用：毎フレーム強制で巻く（あとで消す）
+    if (m_hook)
+    {
+       // m_hook->OnWindUp({ 0,0,0 }, 0.01, 1200.0f); // pullSpeed を大きく
+    }
+
     float dt = 1.0f / 60.0f;
 
     // プレイヤー更新
@@ -272,7 +304,14 @@ void DebugStage::Draw()
     for (auto* pin : m_pins)
     {
         pin->Draw();
+
+        if (auto* r = dynamic_cast<RemoteWindPin*>(pin))
+        {
+            r->DrawGuides();
+        }
     }
+   
+
 }
 
 void DebugStage::UnInit()

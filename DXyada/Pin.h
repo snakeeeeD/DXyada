@@ -17,10 +17,15 @@ protected:
 	State m_state = State::Normal;
 	CollisionManager* m_pCollision = nullptr;
 
+	bool m_forceGround = false;
+
 	bool m_canRollPin = false;
 	bool m_canDecorate = false;
 	bool m_isPlatformRegistered = false;
 
+private:
+	bool m_enablePlatformRegisterOnDecorated = true;
+	bool m_canBeGround = true;
 public:
 	Pin() = default;
 	~Pin() = default;
@@ -52,4 +57,23 @@ public:
 	void SetCollisionManager(CollisionManager* pCol) { m_pCollision = pCol; }
 	
 	void SetPos(float Pos_X, float Pos_Y);
+
+	void SetEnablePlatformRegisterOnDecorated(bool enable)
+	{
+		m_enablePlatformRegisterOnDecorated = enable;
+	}
+
+	bool CanBeGround() const { return m_canBeGround; }
+	void SetCanBeGround(bool v) { m_canBeGround = v; }
+
+	virtual bool IsGround() const
+	{
+		return m_forceGround || m_state == State::Decorated;
+	}
+
+	void SetForceGround(bool enable)
+	{
+		m_forceGround = enable;
+	}
+
 };

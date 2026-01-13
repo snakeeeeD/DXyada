@@ -93,6 +93,12 @@
     <ClCompile Include="Stage1.cpp">
       <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialStage.cpp">
+      <Filter>ソースファイル\20-Stage管理\01-TutorialStage</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteWindPin.cpp">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\02-RemoteWindPin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -190,6 +196,12 @@
     </ClInclude>
     <ClInclude Include="WingRippa.h">
       <Filter>ソースファイル\02-Object管理\03-Enemy\02-WingRipper</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialStage.h">
+      <Filter>ソースファイル\20-Stage管理\01-TutorialStage</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteWindPin.h">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\02-RemoteWindPin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -327,6 +339,12 @@
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\03-Enemy\02-WingRipper">
       <UniqueIdentifier>{48c4e522-9d34-42c6-9a97-dd3593d94972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理\01-TutorialStage">
+      <UniqueIdentifier>{7d075e80-0e8c-4888-81db-5f0eb93457ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\02-RemoteWindPin">
+      <UniqueIdentifier>{98dd7a9a-a51d-4257-8f73-6e3e4955e3a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

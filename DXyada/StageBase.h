@@ -9,6 +9,7 @@
 #include "Ribbon.h"
 #include "Pin.h"
 #include "BlockPin.h"
+#include "RemoteWindPin.h"
 
 enum class DrawLayer {
     Background = 0,

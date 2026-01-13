@@ -42,9 +42,9 @@ void Pin::OnHit()
     {
         return;
     }
-
+    m_object.SetColor(1, 0, 0, 1); // まず赤くして確認
     // 見た目を変える（リボン付き画像にするなど）
-     m_object.AddTexture("asset/pin_ribbon.png");
+     m_object.AddTexture("asset/block.png");
 
     // 足場として登録する
     if (m_pCollision) 
@@ -69,28 +69,53 @@ void Pin::SetPos(float Pos_X, float Pos_Y) {
     m_object.SetPos(Pos_X, Pos_Y, 0);
 }
 
+//void Pin::SetState(State state)
+//{
+//    if (m_state == state) return;
+//
+//    m_state = state;
+//
+//    //Decoratedになったら自動的にPlatformとして登録
+//    if (m_state == State::Decorated && !m_isPlatformRegistered)
+//    {
+//        if (m_pCollision)
+//        {
+//            //Platformとして静的コリジョンに登録
+//            
+//            m_pCollision->SetTag(&m_object, ColliderTag::Platform);
+//            m_pCollision->AddStatic(&m_object);
+//            m_isPlatformRegistered = true;
+//
+//            auto currentSize = m_object.GetSize();
+//            m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
+//
+//            // テクスチャ変更
+//           m_object.AddTexture("asset/Field/block.png");
+//        }
+//    }
+//}
+
 void Pin::SetState(State state)
 {
     if (m_state == state) return;
 
     m_state = state;
 
-    //Decoratedになったら自動的にPlatformとして登録
-    if (m_state == State::Decorated && !m_isPlatformRegistered)
-    {
-        if (m_pCollision)
-        {
-            //Platformとして静的コリジョンに登録
-            
-            m_pCollision->SetTag(&m_object, ColliderTag::Platform);
-            m_pCollision->AddStatic(&m_object);
-            m_isPlatformRegistered = true;
+    //// Decorated → Platform登録（ただし許可されている場合のみ）
+    //if (m_state == State::Decorated &&
+    //    m_enablePlatformRegisterOnDecorated &&
+    //    !m_isPlatformRegistered)
+    //{
+    //    if (m_pCollision)
+    //    {
+    //        m_pCollision->SetTag(&m_object, ColliderTag::Platform);
+    //        m_pCollision->AddStatic(&m_object);
+    //        m_isPlatformRegistered = true;
 
-            auto currentSize = m_object.GetSize();
-            m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
+    //        auto currentSize = m_object.GetSize();
+    //        m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
 
-            // テクスチャ変更
-           m_object.AddTexture("asset/Field/Rippa.png");
-        }
-    }
+    //        m_object.AddTexture("asset/Field/block.png");
+    //    }
+    //}
 }

@@ -331,14 +331,14 @@ void Stage1::Update()
         }
     }
 
-    /*const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
+    const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
     if (p.y < m_fallDeadLineY)
     {
         DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
         m_player.TakeDamage(999, dummyDir);
 
         m_isPlayerDead = true;
-    }*/
+    }
     // ƒJƒƒ‰XV
     m_camera.Update(m_player.GetObject()->GetPos());
 
