@@ -115,7 +115,7 @@ void TutorialStage::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(7000, 150, 0);
+    m_player.GetObject()->SetPos(0, 150, 0);
 
     m_background.Init();
     m_background.AddTexture("asset/Field/aa.png");

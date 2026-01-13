@@ -66,6 +66,7 @@ private:
 
     // Œ»İ‚ÌƒŠƒ{ƒ“’·‚³
     float m_currentLength = 0.0f;
+    float m_breakLength = 0.0f;   // Ø’f‚³‚ê‚éÅ‘å’·
 
     // “Š‚°‚é•ûŒüi³‹K‰»Ï‚İj
     DirectX::XMFLOAT2 m_direction{};

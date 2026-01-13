@@ -176,6 +176,8 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                     m_hitEnemy = enemy;
                     m_hitPos = { tipX, tipY };
 
+                    m_breakLength = m_currentLength + 200.0f;
+
                     // RT‚ğ‰Ÿ‚µ‚Ä‚¢‚È‚¯‚ê‚Î–ß‚·
                     if (m_isRTheld)
                     {
@@ -208,6 +210,8 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                     m_hitPin = pin;
                     m_hitPos = { tipX, tipY };
 
+                    m_breakLength = m_currentLength + 200.0f;
+
                     // RT‚ğ‰Ÿ‚µ‚Ä‚¢‚È‚¯‚ê‚Î–ß‚·
                     if (m_isRTheld)
                     {
@@ -233,8 +237,11 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                 }
             }
         }
-       
+
     }
+    //----------------------------------
+    // RT’·‰Ÿ‚µ’†
+    //----------------------------------
     else if (m_state == State::Holding)
     {
         DirectX::XMFLOAT2 targetPos{};
@@ -259,7 +266,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
             m_direction = { dx / dist, dy / dist };
         }
 
-        // RT’·‰Ÿ‚µ’†‚Í‚³‚ç‚ÉL‚Î‚·
+        m_currentLength = dist;
+
+        // RT’·‰Ÿ‚µ’†‚¾‚¯—]—T•ª‚ğL‚Î‚¹‚é
         if (m_isRTheld)
         {
             m_currentLength += m_speed * deltaTime;
@@ -267,6 +276,15 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
 
         // •Ç§ŒÀ
         float wallLimit = CalcMaxReachByWall();
+        m_currentLength = (std::min)(m_currentLength, wallLimit);
+
+        // ©Ø
+        if (m_currentLength >= m_breakLength)
+        {
+            m_state = State::Returning;
+            return;
+        }
+
         m_currentLength = (std::min)(m_currentLength, wallLimit);
 
         // —£‚µ‚½‚ç–ß‚é
@@ -373,10 +391,10 @@ void Ribbon::UnInit()
 float Ribbon::CalcMaxReachByWall() const
 {
     if (!m_collisionMgr)
-        return m_maxLength;
+        return m_currentLength;
 
-    const int steps = 30;                 // ¸“x
-    float stepLen = m_maxLength / steps;
+    const int steps = 30;
+    float stepLen = m_currentLength / steps;
 
     for (int i = 1; i <= steps; ++i)
     {
@@ -390,12 +408,11 @@ float Ribbon::CalcMaxReachByWall() const
 
         if (m_collisionMgr->CheckHitStatic(box))
         {
-            // °‚É“–‚½‚é’¼‘O‚Ü‚Å
             return stepLen * (i - 1);
         }
     }
 
-    return m_maxLength;
+    return m_currentLength;
 }
 
 void Ribbon::CheckBodyHitWall()
