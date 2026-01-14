@@ -72,6 +72,7 @@ void RemoteWindPin::AddGuide(const DirectX::XMFLOAT3& p)
 void RemoteWindPin::Finish()
 {
     // ここで canRollPin を落とすと、誤Finishで永久に巻けなくなるので状態だけにする
+    SetcanRollPin(false);
     m_finished = true;
 }
 
@@ -193,10 +194,10 @@ void RemoteWindPin::RebuildGuideObjects()
         o.Init();
         o.AddTexture(m_guideTex);
         o.SetPos(p.x, p.y, 0.0f);
-        o.SetSize(m_guideSize, m_guideSize, 0.0f);
+        o.SetSize(m_guideSize*3, m_guideSize*3, 0.0f);
 
         // 必要なら到達済みを薄くするなど（任意）
-        // if ((int)i < m_guideIndex) o.SetColor(1,1,1,0.4f);
+        if ((int)i < m_guideIndex) o.SetColor(1,0,0,0.4);
 
         m_guideObjects.push_back(o);
     }

@@ -32,11 +32,16 @@ private:
     BlockPin* AddPullPin(float x, float y, bool canRollPin);
     void BuildDrawList();
 
+
 public:
+    BlockPin* m_targetPin2 = new BlockPin;
     void Init() override;
     void Update() override;
     void Draw() override;
     void UnInit() override;
+
+    int StageState = 0;
+    bool on = false;
 
     bool IsPlayerDead() override { return m_isPlayerDead; }
 };
