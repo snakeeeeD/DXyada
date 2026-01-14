@@ -115,7 +115,7 @@ void TutorialStage::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(10000, 150, 0);
+    m_player.GetObject()->SetPos(0, 150, 0);
 
     m_background.Init();
     m_background.AddTexture("asset/Field/aa.png");
@@ -251,7 +251,7 @@ void TutorialStage::Init()
 
         {
             BlockPin* m_targetPin2 = new BlockPin;
-            m_targetPin2->Init("asset/Field/block.png", x + 700.0, -620.0f, 500, 35);
+            m_targetPin2->Init("asset/Field/block.png", x + 700.0, -600.0f, 350, 35);
             m_targetPin2->SetCollisionManager(m_collision);
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
@@ -267,7 +267,7 @@ void TutorialStage::Init()
             m_hook->SetTarget(m_targetPin2);
 
             // ガイド
-            m_hook->AddGuide({ x+250, -620, 0 });
+            m_hook->AddGuide({ x+150, -600, 0 });
 
             m_pins.push_back(m_hook);
             m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
@@ -375,15 +375,6 @@ void TutorialStage::Update()
     float dt = 1.0f / 60.0f;
 
     m_camera.Update(m_player.GetObject()->GetPos());
-
-    DirectX::XMFLOAT3 nowPos;
-
-    nowPos = m_player.GetObject()->GetPos();
-
-    if (nowPos.x < 11500 && nowPos.x>10100) {
-        g_cameraPos = { 10600, -300, 0 };
-
-    }
 
     // プレイヤー更新
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
