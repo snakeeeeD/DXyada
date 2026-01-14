@@ -76,15 +76,11 @@ void Stage1::Init()
 
     //羽リッパー (通常)
     {
-<<<<<<< HEAD
 		WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
 		wingrippa_1->Init("asset/Field/Wing_Rippa.png", -500, 400, 150, 150);
 		wingrippa_1->SetCollisionManager(m_collision);
-=======
-        WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
         wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 400, 100, 100);
         wingrippa_1->SetCollisionManager(m_collision);
->>>>>>> 0b814f552b4263dec1df54af9d81e4dbc1a1fcb1
 
         m_enemies.push_back(wingrippa_1);
 
@@ -321,7 +317,6 @@ void Stage1::Update()
         }
     }
 
-<<<<<<< HEAD
     for (auto* enemy : m_enemies)
     {
         enemy->Update(dt);
@@ -336,8 +331,6 @@ void Stage1::Update()
         m_spawnQueue.clear(); //予約リストを空にする
     }
 
-=======
->>>>>>> 0b814f552b4263dec1df54af9d81e4dbc1a1fcb1
     m_enemies.erase(
         std::remove_if(
             m_enemies.begin(),
@@ -443,7 +436,6 @@ void Stage1::Draw()
         );
     }
 
-<<<<<<< HEAD
     for (auto* e : m_enemies)
     {
         e->Draw();
@@ -453,12 +445,10 @@ void Stage1::Draw()
 	{
 		pin->Draw();
 	}
-=======
     for (auto* pin : m_pins)
     {
         pin->Draw();
     }
->>>>>>> 0b814f552b4263dec1df54af9d81e4dbc1a1fcb1
 }
 
 void Stage1::UnInit() {

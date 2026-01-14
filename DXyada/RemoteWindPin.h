@@ -59,5 +59,7 @@ private:
     float m_guideSize = 12.0f;
     const char* m_guideTex = "asset/ui/cursor.png";
 
+    float m_guideReachedScale = 2.0f; // “ž’B‚µ‚½‚ç2”{
+
     void RebuildGuideObjects();
 };

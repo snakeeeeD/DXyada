@@ -250,8 +250,13 @@ void TutorialStage::Init()
         x += w1;
 
         {
+<<<<<<< HEAD
+            BlockPin* m_targetPin2 = new BlockPin;
+            m_targetPin2->Init("asset/Field/block.png", x + 700.0, -600.0f, 350, 35);
+=======
             
             m_targetPin2->Init("asset/Field/block.png", x + 700.0, -620.0f, 500, 35);
+>>>>>>> 919836158523217677bf9f02aba371f903768102
             m_targetPin2->SetCollisionManager(m_collision);
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
