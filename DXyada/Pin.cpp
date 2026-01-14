@@ -101,21 +101,21 @@ void Pin::SetState(State state)
 
     m_state = state;
 
-    //// Decorated ¨ Platform“o˜^i‚½‚¾‚µ‹–‰Â‚³‚ê‚Ä‚¢‚éê‡‚Ì‚Ýj
-    //if (m_state == State::Decorated &&
-    //    m_enablePlatformRegisterOnDecorated &&
-    //    !m_isPlatformRegistered)
-    //{
-    //    if (m_pCollision)
-    //    {
-    //        m_pCollision->SetTag(&m_object, ColliderTag::Platform);
-    //        m_pCollision->AddStatic(&m_object);
-    //        m_isPlatformRegistered = true;
+    // Decorated ¨ Platform“o˜^i‚½‚¾‚µ‹–‰Â‚³‚ê‚Ä‚¢‚éê‡‚Ì‚Ýj
+    if (m_state == State::Decorated &&
+        m_enablePlatformRegisterOnDecorated &&
+        !m_isPlatformRegistered)
+    {
+        if (m_pCollision)
+        {
+            m_pCollision->SetTag(&m_object, ColliderTag::Platform);
+            m_pCollision->AddStatic(&m_object);
+            m_isPlatformRegistered = true;
 
-    //        auto currentSize = m_object.GetSize();
-    //        m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
+            auto currentSize = m_object.GetSize();
+            m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
 
-    //        m_object.AddTexture("asset/Field/block.png");
-    //    }
-    //}
+            m_object.AddTexture("asset/Field/block.png");
+        }
+    }
 }
