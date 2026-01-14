@@ -144,6 +144,7 @@
     <ClInclude Include="Pin.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RemoteWindPin.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Ribbon.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TutorialStage.h" />
     <ClInclude Include="WingRippa.h" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +184,7 @@
     <ClCompile Include="Pin.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RemoteWindPin.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Ribbon.cpp" />
     <ClCompile Include="Rippa.cpp" />
@@ -194,6 +197,7 @@
     <ClCompile Include="Stage2.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TutorialStage.cpp" />
     <ClCompile Include="WingRippa.cpp" />
   </ItemGroup>
   <ItemGroup>

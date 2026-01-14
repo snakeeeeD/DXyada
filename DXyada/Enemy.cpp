@@ -40,11 +40,11 @@ void Enemy::Update(float deltaTime)
     if (m_enemystate == EnemyState::YouDied)
         return;
 
-    // “€Œ‹’†‚Í•`‰æXV‚Ì‚İs‚¤
-    if (m_isFrozen)
+    //LT‰Ÿ‚µ‚Ä‚é‚Æ‚«‚Í’x‚­
+    if (m_isSlow)
     {
-        m_object.Update(deltaTime);
-        return;
+        //m_object.Update(deltaTime);
+        //return;
     }
 
     auto pos = m_object.GetPos();

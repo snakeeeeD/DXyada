@@ -31,7 +31,7 @@ SceneGame::SceneGame(int stageNum)
 
 void SceneGame::Init()
 {
-    CheckAllPads();
+  //  CheckAllPads();
     // 選択されたステージ番号でロード
     m_stageManager.LoadStage(m_stageNumber);
 

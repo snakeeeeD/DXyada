@@ -10,6 +10,40 @@
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
 
+static bool ResolveGroundLanding(
+    DirectX::XMFLOAT3& ioPos,      // プレイヤー位置（更新される）
+    float& ioVelY,                 // 落下速度（更新される）
+    bool& ioIsOnGround,            // 接地フラグ（更新される）
+    float playerW,
+    float playerH,
+    const DirectX::XMFLOAT3& groundPos,
+    const DirectX::XMFLOAT3& groundSize
+)
+{
+    // ground は中心座標 + 幅高さ（あなたの Object/Platform と同じ前提）
+    float platTop = groundPos.y + groundSize.y * 0.5f;
+    float platLeft = groundPos.x - groundSize.x * 0.5f;
+    float platRight = groundPos.x + groundSize.x * 0.5f;
+
+    float playerBottom = ioPos.y - playerH * 0.5f;
+    float playerLeft = ioPos.x - playerW * 0.5f;
+    float playerRight = ioPos.x + playerW * 0.5f;
+
+    // X が重なっているか
+    if (playerRight > platLeft && playerLeft < platRight)
+    {
+        // 「上から着地」だけ拾う（50は許容）
+        if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+        {
+            ioPos.y = platTop + playerH * 0.5f;
+            ioVelY = 0.0f;
+            ioIsOnGround = true;
+            return true;
+        }
+    }
+    return false;
+}
+
 void Player::Init() {
 
     m_player.Init();
@@ -88,6 +122,10 @@ void Player::Init() {
     m_ribbon.Init();
     m_ribbon.SetCollisionManager(m_collisionMgr);
 
+    //RT長押し撃破初期化
+    m_holdRTTimer = 0.0f;
+    m_holdRTRequired = 3.0f;  // 3秒長押しで離す
+
     //LT長押し撃破初期化
     m_holdLTTimer = 0.0f;
     m_holdLTRequired = 1.0f;  // 1秒長押しで撃破
@@ -160,6 +198,11 @@ void Player::Update(
     else
     {
         m_player.SetColor(1, 1, 1, 1);
+    }
+
+    if (m_collisionMgr)
+    {
+        m_collisionMgr->SetPlayerInvincible(m_isInvincible);
     }
 
     //ノックバック更新
@@ -287,37 +330,85 @@ void Player::Update(
         m_isPulling = false;
     }
 
-    // 重力を加算
-    m_velY += m_gravity * deltaTime;
-    pos.y -= m_velY * deltaTime;
+    // 巻き取り中は重力を止める（BlockPinを巻いている最中）
+    const bool freezeGravity = m_isPulling;
 
-    m_isOnGround = false;
-
-    // Platform上の着地判定
-    for (auto& plat : platforms)
+    if (!freezeGravity)
     {
-        auto pPos = plat.GetObject()->GetPos();
-        auto pSize = plat.GetObject()->GetSize();
+        // 重力を加算
+        m_velY += m_gravity * deltaTime;
+        pos.y -= m_velY * deltaTime;
 
-        float platTop = pPos.y + pSize.y * 0.5f;
-        float platLeft = pPos.x - pSize.x * 0.5f;
-        float platRight = pPos.x + pSize.x * 0.5f;
+        m_isOnGround = false;
 
-        float playerBottom = pos.y - m_height * 0.5f;
-        float playerLeft = pos.x - m_width * 0.5f;
-        float playerRight = pos.x + m_width * 0.5f;
-
-        // 横方向が重なるか
-        if (playerRight > platLeft && playerLeft < platRight)
+        // Platform上の着地判定
+        for (auto& plat : platforms)
         {
-            // 下端が上面に接触しているか
-            if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+            auto pPos = plat.GetObject()->GetPos();
+            auto pSize = plat.GetObject()->GetSize();
+
+            float platTop = pPos.y + pSize.y * 0.5f;
+            float platLeft = pPos.x - pSize.x * 0.5f;
+            float platRight = pPos.x + pSize.x * 0.5f;
+
+            float playerBottom = pos.y - m_height * 0.5f;
+            float playerLeft = pos.x - m_width * 0.5f;
+            float playerRight = pos.x + m_width * 0.5f;
+
+            if (playerRight > platLeft && playerLeft < platRight)
             {
-                pos.y = platTop + m_height * 0.5f;
-                m_velY = 0.0f;
-                m_isOnGround = true;
+                if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+                {
+                    pos.y = platTop + m_height * 0.5f;
+                    m_velY = 0.0f;
+                    m_isOnGround = true;
+                }
             }
         }
+
+        // 飾ったピンを地面扱い
+        for (auto* pin : pins)
+        {
+            if (!pin) continue;
+
+            // ここで「地面になれるPin」だけ許可
+            if (!pin->CanBeGround())
+                continue;
+
+            // ★ Decorated限定をやめて、Pin側の判定に寄せる
+            if (!pin->IsGround())
+                continue;
+
+            auto pPos = pin->GetObject()->GetPos();
+            auto pSize = pin->GetObject()->GetSize();
+
+            float platTop = pPos.y + pSize.y * 0.5f;
+            float platLeft = pPos.x - pSize.x * 0.5f;
+            float platRight = pPos.x + pSize.x * 0.5f;
+
+            float playerBottom = pos.y - m_height * 0.5f;
+            float playerLeft = pos.x - m_width * 0.5f;
+            float playerRight = pos.x + m_width * 0.5f;
+
+            if (playerRight > platLeft && playerLeft < platRight)
+            {
+                if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+                {
+                    pos.y = platTop + m_height * 0.5f;
+                    m_velY = 0.0f;
+                    m_isOnGround = true;
+                }
+            }
+        }
+
+    }
+    else
+    {
+        // 巻き取り中は落下させない。速度もリセットして「終わった瞬間に落下開始」を防ぐ
+        m_velY = 0.0f;
+
+        // 任意：巻き取り中にジャンプ判定や接地が欲しいならここで制御
+        // m_isOnGround = false; // これは好み
     }
 
     //操作関係
@@ -352,8 +443,8 @@ void Player::Update(
         else                              m_inputDir = 0;
 
         // 通常の移動
-        if (m_inputDir == 1)  pos.x -= 200.0f * deltaTime;
-        if (m_inputDir == -1) pos.x += 200.0f * deltaTime;
+        if (m_inputDir == 1)  pos.x -= 250.0f * deltaTime;
+        if (m_inputDir == -1) pos.x += 250.0f * deltaTime;
 
         // 敵を掴んでいる場合の処理
         if (hitEnemy)
@@ -365,8 +456,7 @@ void Player::Update(
 
             if (isRTPressed)
             {
-                //Enemyを停止
-                hitEnemy->SetFrozen(true);
+
 
                 //引き寄せ開始
                 if (m_isPulling)
@@ -376,7 +466,7 @@ void Player::Update(
                     {
                         m_ribbon.Return();
                         m_isRibbonOut = false;
-                        hitEnemy->SetFrozen(false);
+                        hitEnemy->SetSlow(false);
                         m_totalRotation = 0.0f;
                         m_isPulling = false;
                         m_isRotating = false;
@@ -389,6 +479,8 @@ void Player::Update(
                     m_isPulling = false;
                     m_isRotating = false;
                 }
+
+               
             }
             else
             {
@@ -398,6 +490,9 @@ void Player::Update(
             // LT長押しで敵を撃破
             if (isLTPressed)
             {
+                //Enemyを停止
+               hitEnemy->SetSlow(true);
+
                 // 対象の敵が変わったらタイマーリセット
                 if (m_targetEnemy != hitEnemy)
                 {
@@ -414,7 +509,7 @@ void Player::Update(
                     hitEnemy->Disable();
                     m_ribbon.Return();
                     m_isRibbonOut = false;
-                    hitEnemy->SetFrozen(false);
+                    hitEnemy->SetSlow(false);
                     m_totalRotation = 0.0f;
                     m_isPulling = false;
                     m_isRotating = false;
@@ -434,125 +529,353 @@ void Player::Update(
         }
 
         // Pinを掴んでいる場合の処理
-        else if (hitPin)
-        {
-            auto pinPos = hitPin->GetObject()->GetPos();
-            float dx = pinPos.x - pos.x;
-            float dy = pinPos.y - pos.y;
-            float currentDist = sqrt(dx * dx + dy * dy);
+//        else if (hitPin)
+//        {
+//            auto pinPos = hitPin->GetObject()->GetPos();
+//            float dx = pinPos.x - pos.x;
+//            float dy = pinPos.y - pos.y;
+//            float currentDist = sqrt(dx * dx + dy * dy);
+//
+//            if (isRTPressed)
+//            {
+//                if (blockPin)
+//                {
+//
+//                    if (m_isPulling)
+//                    {
+//                        //引き寄せれるPinの場合
+//                        if (hitPin->GetcanRollPin())
+//                        {
+//                            m_isPulling = false;
+//                            m_isRolling = true;
+//                            float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+//                            pullProgress = fmin(pullProgress, 1.0f);
+//
+//                            m_pullSpeed = 500.0f * pullProgress;
+//
+//                            // BlockPinのOnWindUpを呼び出す
+//                            blockPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
+//
+//                            //BlockPinがプレイヤーに到達
+//                            if (currentDist < 80.0f)
+//                            {
+//                                // 完了処理
+//                                m_ribbon.Return();
+//                                m_isRibbonOut = false;
+//                                m_totalRotation = 0.0f;
+//                                m_isPulling = false;
+//                                m_isRolling = false;
+//                                m_isRotating = false;
+//                            }
+//
+//                        }
+//                        //プレイヤーが引き寄せられる
+//                        else
+//                        {
+//                            m_isPulling = true;
+//                            m_isRolling = false;
+//                            if (currentDist > 50.0f)
+//                            {
+//                                //m_gravity = 0.0f;
+//
+//                                float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+//                                pullProgress = fmin(pullProgress, 1.0f);
+//
+//                                m_pullSpeed = 800.0f * pullProgress;
+//
+//                                // プレイヤーがPinの方向へ移動
+//                                float dirX = dx / currentDist;
+//                                float dirY = dy / currentDist;
+//
+//                                pos.x += dirX * m_pullSpeed * deltaTime;
+//                                pos.y += dirY * m_pullSpeed * deltaTime;
+//                            }
+//                            // 2回転完了またはPinに到達
+//                            if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
+//                            {
+//                                m_ribbon.Return();
+//                                m_isRibbonOut = false;
+//                                m_totalRotation = 0.0f;
+//                                m_isPulling = false;
+//                                m_isRolling = false;
+//                                m_isRotating = false;
+//                            }
+//                        }
+//
+//                    }
+//
+//                }
+//
+//                if (hitPin->GetcanDecorate())
+//                {
+//                    // LT長押しで敵を撃破
+//                    if (isLTPressed)
+//                    {
+//                        // タイマー加算
+//                        m_holdLTTimer += deltaTime;
+//
+//                        // 必要時間に達したら
+//                        if (m_holdLTTimer >= m_holdLTRequired)
+//                        {
+//                            m_ribbon.Return();
+//                            m_isRibbonOut = false;
+//                            m_totalRotation = 0.0f;
+//                            m_isPulling = false;
+//                            m_isRotating = false;
+//                            hitPin->SetState(Pin::State::Decorated);
+//
+//                            // リセット
+//                            m_holdLTTimer = 0.0f;
+//                        }
+//                    }
+//                    else
+//                    {
+//                        // LTを離したらタイマーリセット
+//                        m_holdLTTimer = 0.0f;
+//                    }
+//                }
+//            }
+//            else
+//            {
+//                if (wasPinGrabbedLastFrame && !m_isOnGround &&!blockPin && !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
+//                {
+//                    auto pinPos = hitPin->GetObject()->GetPos();
+//
+//                    // プレイヤーからPinへの方向ベクトル
+//                    float dx = pinPos.x - pos.x;
+//                    float dy = pinPos.y - pos.y;
+//                    float dist = sqrt(dx * dx + dy * dy);
+//
+//                    if (dist > 0.0f)
+//                    {
+//                        // 正規化して、Pinの方向に大ジャンプ
+//                       // float jumpForce = 1000.0f;  // ジャンプ力
+//
+//                        float minJumpForce = 400.0f;   //下限
+//                        float maxJumpForce = 1200.0f;  //上限
+//                        float distanceScale = 3.0f;   //距離倍率
+//
+//                        float jumpForce = dist * distanceScale;
+//
+//                        if (jumpForce < minJumpForce)
+//                            jumpForce = minJumpForce;
+//                        else if (jumpForce > maxJumpForce)
+//                            jumpForce = maxJumpForce;
+//
+//                        float dirX = dx / dist;
+//                        float dirY = dy / dist;
+//
+//                        // Pinジャンプ開始
+//                        m_isPinJumping = true;
+//                        m_pinJumpVelocity.x = dirX * jumpForce;
+//
+//                        // Y方向の速度も設定
+//                        m_velY = -dirY * jumpForce * 2.5;
+//                        // 重力をリセット
+//                        m_gravity = 2000.0f;
+//                    }
+//                }
+//             
+//                m_ribbon.Return();
+//            }
+//            
+//            // 最大長を超えたら自動でリボンを外す
+//            if (currentDist > m_baseGuidelineLength)
+//            {
+//                m_ribbon.Return();
+//                m_isRibbonOut = false;
+//                m_totalRotation = 0.0f;
+//                m_isPulling = false;
+//                m_isRolling = false;
+//                m_isRotating = false;
+//            }
+//}
 
-            if (isRTPressed)
+// Pinを掴んでいる場合の処理
+else if (hitPin)
+{
+    auto pinPos = hitPin->GetObject()->GetPos();
+    float dx = pinPos.x - pos.x;
+    float dy = pinPos.y - pos.y;
+    float currentDist = sqrt(dx * dx + dy * dy);
+
+    // BlockPinかどうか（距離で完了判定したい時に使う）
+    BlockPin* blockPin = dynamic_cast<BlockPin*>(hitPin);
+
+    if (isRTPressed)
+    {
+        //========================================
+        // 巻き取り・引き寄せ処理（m_isPulling中）
+        //========================================
+        if (m_isPulling)
+        {
+            // -----------------------------
+            // 1) 「巻けるピン」：ピン側が動く
+            //    BlockPin も RemoteWindPin もここに入る
+            // -----------------------------
+            if (hitPin->GetcanRollPin())
             {
+                m_isPulling = false;
+                m_isRolling = true;
+
+                float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                pullProgress = fmin(pullProgress, 1.0f);
+
+                // 速度は今の設計を踏襲
+                m_pullSpeed = 500.0f * pullProgress;
+
+                // ★重要：BlockPin限定をやめて Pin 基底で呼ぶ
+                hitPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
+
+                // 完了判定
+                // - BlockPin は「距離」で完了（既存仕様を維持）
+                // - RemoteWindPin は「完走で canRollPin=false に落ちる」想定
                 if (blockPin)
                 {
-
-                    if (m_isPulling)
+                    if (currentDist < 80.0f)
                     {
-                        //引き寄せれるPinの場合
-                        if (hitPin->GetcanRollPin())
-                        {
-                            m_isPulling = false;
-                            m_isRolling = true;
-                            float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-                            pullProgress = fmin(pullProgress, 1.0f);
-
-                            m_pullSpeed = 500.0f * pullProgress;
-
-                            // BlockPinのOnWindUpを呼び出す
-                            blockPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
-
-                            //BlockPinがプレイヤーに到達
-                            if (currentDist < 80.0f)
-                            {
-                                // 完了処理
-                                m_ribbon.Return();
-                                m_isRibbonOut = false;
-                                m_totalRotation = 0.0f;
-                                m_isPulling = false;
-                                m_isRolling = false;
-                                m_isRotating = false;
-                            }
-
-                        }
-                        //プレイヤーが引き寄せられる
-                        else
-                        {
-                            m_isPulling = true;
-                            m_isRolling = false;
-                            if (currentDist > 50.0f)
-                            {
-                                //m_gravity = 0.0f;
-
-                                float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-                                pullProgress = fmin(pullProgress, 1.0f);
-
-                                m_pullSpeed = 800.0f * pullProgress;
-
-                                // プレイヤーがPinの方向へ移動
-                                float dirX = dx / currentDist;
-                                float dirY = dy / currentDist;
-
-                                pos.x += dirX * m_pullSpeed * deltaTime;
-                                pos.y += dirY * m_pullSpeed * deltaTime;
-                            }
-                            // 2回転完了またはPinに到達
-                            if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
-                            {
-                                m_ribbon.Return();
-                                m_isRibbonOut = false;
-                                m_totalRotation = 0.0f;
-                                m_isPulling = false;
-                                m_isRolling = false;
-                                m_isRotating = false;
-                            }
-                        }
-
+                        m_ribbon.Return();
+                        m_isRibbonOut = false;
+                        m_totalRotation = 0.0f;
+                        m_isPulling = false;
+                        m_isRolling = false;
+                        m_isRotating = false;
                     }
+                }
+                else
+                {
+                    // RemoteWindPin 側が完走したら SetcanRollPin(false) にする設計ならこれで確定
+                    if (!hitPin->GetcanRollPin())
+                    {
+                        m_ribbon.Return();
+                        m_isRibbonOut = false;
+                        m_totalRotation = 0.0f;
+                        m_isPulling = false;
+                        m_isRolling = false;
+                        m_isRotating = false;
+                    }
+                }
+            }
+            // -----------------------------
+            // 2) 「巻けないピン」：プレイヤーが引き寄せられる（既存仕様）
+            // -----------------------------
+            else
+            {
+                m_isPulling = true;
+                m_isRolling = false;
 
+                if (currentDist > 50.0f)
+                {
+                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                    pullProgress = fmin(pullProgress, 1.0f);
+
+                    m_pullSpeed = 800.0f * pullProgress;
+
+                    // プレイヤーがPinの方向へ移動
+                    float dirX = dx / currentDist;
+                    float dirY = dy / currentDist;
+
+                    pos.x += dirX * m_pullSpeed * deltaTime;
+                    pos.y += dirY * m_pullSpeed * deltaTime;
+                }
+
+                // 2回転完了またはPinに到達
+                if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
+                {
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRolling = false;
+                    m_isRotating = false;
+                }
+            }
+        }
+
+        //========================================
+        // Decorate（既存仕様そのまま）
+        //========================================
+        if (hitPin->GetcanDecorate())
+        {
+            if (isLTPressed)
+            {
+                m_holdLTTimer += deltaTime;
+
+                if (m_holdLTTimer >= m_holdLTRequired)
+                {
+                    m_ribbon.Return();
+                    m_isRibbonOut = false;
+                    m_totalRotation = 0.0f;
+                    m_isPulling = false;
+                    m_isRotating = false;
+
+                    hitPin->SetState(Pin::State::Decorated);
+
+                    m_holdLTTimer = 0.0f;
                 }
             }
             else
             {
-                if (wasPinGrabbedLastFrame && !m_isOnGround &&!blockPin && !hitPin->GetcanRollPin())
-                {
-                    auto pinPos = hitPin->GetObject()->GetPos();
-
-                    // プレイヤーからPinへの方向ベクトル
-                    float dx = pinPos.x - pos.x;
-                    float dy = pinPos.y - pos.y;
-                    float dist = sqrt(dx * dx + dy * dy);
-
-                    if (dist > 0.0f)
-                    {
-                        // 正規化して、Pinの方向に大ジャンプ
-                        float jumpForce = 1000.0f;  // ジャンプ力
-
-                        // Pinジャンプ開始
-                        m_isPinJumping = true;
-                        m_pinJumpVelocity.x = (dx / dist) * jumpForce;
-                        m_pinJumpVelocity.y = (dy / dist) * jumpForce;
-
-                        // Y方向の速度も設定
-                        m_velY = -(dy / dist) * jumpForce;
-
-                        // 重力をリセット
-                        m_gravity = 2000.0f;
-                    }
-                }
-                m_ribbon.Return();
+                m_holdLTTimer = 0.0f;
             }
-            
-            // 最大長を超えたら自動でリボンを外す
-            if (currentDist > m_baseGuidelineLength)
+        }
+    }
+    else
+    {
+        //========================================
+        // RTを離した瞬間のPinジャンプ（既存仕様そのまま）
+        //========================================
+        if (wasPinGrabbedLastFrame && !m_isOnGround && !blockPin &&
+            !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
+        {
+            auto ppos = hitPin->GetObject()->GetPos();
+
+            float jdx = ppos.x - pos.x;
+            float jdy = ppos.y - pos.y;
+            float dist = sqrt(jdx * jdx + jdy * jdy);
+
+            if (dist > 0.0f)
             {
-                m_ribbon.Return();
-                m_isRibbonOut = false;
-                m_totalRotation = 0.0f;
-                m_isPulling = false;
-                m_isRolling = false;
-                m_isRotating = false;
+                float minJumpForce = 400.0f;
+                float maxJumpForce = 1200.0f;
+                float distanceScale = 3.0f;
+
+                float jumpForce = dist * distanceScale;
+                if (jumpForce < minJumpForce) jumpForce = minJumpForce;
+                else if (jumpForce > maxJumpForce) jumpForce = maxJumpForce;
+
+                float dirX = jdx / dist;
+                float dirY = jdy / dist;
+
+                // Pinジャンプ開始
+                m_isPinJumping = true;
+                m_pinJumpVelocity.x = dirX * jumpForce;
+
+                // Y方向の速度も設定
+                m_velY = -dirY * jumpForce * 2.5f;
+
+                // 重力をリセット
+                m_gravity = 2000.0f;
             }
-}
+        }
+
+        m_ribbon.Return();
+    }
+
+    //========================================
+    // 最大長を超えたら自動でリボンを外す（既存）
+    //========================================
+    if (currentDist > m_baseGuidelineLength)
+    {
+        m_ribbon.Return();
+        m_isRibbonOut = false;
+        m_totalRotation = 0.0f;
+        m_isPulling = false;
+        m_isRolling = false;
+        m_isRotating = false;
+    }
+    }
+
         else if (!hitEnemy && !hitPin)
         {
             // 何も掴んでいない場合はリセット
@@ -565,7 +888,7 @@ void Player::Update(
             for (auto enemy : enemies)
             {
                 if (enemy)
-                    enemy->SetFrozen(false);
+                    enemy->SetSlow(false);
             }
 
         }
@@ -839,7 +1162,7 @@ void Player::Update(
         //------------------------------------
         // ガイドライン描画
         //------------------------------------
-        if (m_ribbon.GetState() != Ribbon::State::Throwing)
+        if (m_ribbon.GetState() != Ribbon::State::Throwing && m_ribbon.GetState() != Ribbon::State::Holding)
         {
             // 発射基準点（胸あたり）
             float originX = p.x;
@@ -902,6 +1225,25 @@ void Player::Update(
 
     if (!m_isKnockback)
     {
+        //LTを押していない,リボンが何も当たっていない場合
+        if (!isLTPressed && !hitEnemy && !hitPin)
+        {
+            // タイマー加算
+            m_holdRTTimer += deltaTime;
+        }
+
+        if (m_holdRTTimer >= m_holdRTRequired)
+        {
+            m_ribbon.Return();
+            m_isRibbonOut = false;
+            m_totalRotation = 0.0f;
+            m_isPulling = false;
+            m_isRotating = false;
+
+            // リセット
+            m_holdRTTimer = 0.0f;
+        }
+
         // 発射入力
         if ((input.GetKeyTrigger(VK_X) || (isRTPressed && !m_wasRTPressed)) && !m_isRibbonOut)
         {
@@ -924,6 +1266,8 @@ void Player::Update(
 
                     m_ribbon.Throw(toTarget, dist);
 
+                   
+
                     
                 }
                 else
@@ -943,6 +1287,9 @@ void Player::Update(
             }
 
             m_isRibbonOut = true;
+           
+
+
         }
 
         // 戻し処理
@@ -1171,4 +1518,12 @@ void Player::ApplyAnimation()
 
         m_prevIsRightDirection = m_isLastRightDirection;
     }
+}
+
+//RibbonにCollisionManagerを渡すために.hから.cppへ移動
+void Player::SetCollisionManager(CollisionManager* mgr)
+{
+    m_collisionMgr = mgr;
+
+    m_ribbon.SetCollisionManager(mgr);
 }

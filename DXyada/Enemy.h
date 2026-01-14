@@ -35,7 +35,7 @@ protected:
     bool m_enableCollision = true;
     EnemyState m_enemystate = EnemyState::Idle;
 
-    bool m_isFrozen = false;
+    bool m_isSlow = false;
 
 public:
     Tag tag = Tag::Enemy;
@@ -64,9 +64,15 @@ public:
     bool IsCollisionEnabled() const { return m_enableCollision; }
     bool IsDead() const { return m_enemystate == EnemyState::YouDied; }
 
+<<<<<<< HEAD
     void SetFrozen(bool flozen) { m_isFrozen = flozen; }
     bool IsFrozen() const { return m_isFrozen; }
 
     //プレイヤーをセットする関数
     void SetPlayer(Player* player) { m_pPlayer = player; } 
+=======
+    void SetSlow(bool slow) { m_isSlow = slow; }
+    bool IsSlow() const { return m_isSlow; }
+
+>>>>>>> 0b814f552b4263dec1df54af9d81e4dbc1a1fcb1
 };

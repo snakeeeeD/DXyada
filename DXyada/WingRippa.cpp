@@ -7,11 +7,14 @@ void WingRippa::Update(float deltaTime)
 {
     if (IsDead()) return;
 
-    // “€Œ‹’†‚Í‰½‚à‚µ‚È‚¢
-    if (m_isFrozen)
+    //LT‰Ÿ‚µ‚Ä‚é‚Æ‚«‚Í’x‚­
+    if (m_isSlow)
     {
-        m_object.Update(deltaTime);
-        return;
+        m_walkspeed = 60.0f;
+    }
+    else
+    {
+        m_walkspeed = 120.0f;
     }
 
     if (!m_InitBase)

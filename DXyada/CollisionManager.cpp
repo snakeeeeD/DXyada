@@ -83,6 +83,7 @@ void CollisionManager::CheckAll()
 
         for (auto* stObj : m_static) {
 
+
             AABB b = GetAABB(stObj);    //stObj：静的なオブジェクト（static）
 
             ColliderTag tagA = GetTag(dynObj);  //tagAを動的オブジェクト
@@ -122,6 +123,15 @@ void CollisionManager::CheckAll()
             ColliderTag tagB = GetTag(moveObj);
 
             if (!CheckOverlap(a, b)) continue;
+
+            if (tagA == ColliderTag::Player && tagB == ColliderTag::Enemy)
+            {
+                if (m_playerInvincible)
+                {
+                    continue;  // 無敵時はすり抜け
+                }
+            }
+
             XMFLOAT2 mtv = GetMTV(a, b);
             DirectX::XMFLOAT3 posA = dynObj->GetPos();
             DirectX::XMFLOAT3 posB = moveObj->GetPos();

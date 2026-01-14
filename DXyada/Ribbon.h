@@ -20,6 +20,7 @@ public:
     {
         Idle,       // 待機
         Throwing,   // 伸びる
+        Holding,    // 掴んだまま
         Returning   // 戻る
     };
 
@@ -65,6 +66,7 @@ private:
 
     // 現在のリボン長さ
     float m_currentLength = 0.0f;
+    float m_breakLength = 0.0f;   // 切断される最大長
 
     // 投げる方向（正規化済み）
     DirectX::XMFLOAT2 m_direction{};
@@ -77,7 +79,10 @@ private:
     DirectX::XMFLOAT2 m_hitPos{};
     CollisionManager* m_collisionMgr = nullptr;
 
-
+    //==============================
+    // 床に当たるまでの最大到達距離を計算
+    //==============================
+    float CalcMaxReachByWall() const;
 
     bool m_isRTheld = false;
 
@@ -127,6 +132,9 @@ public:
     std::vector<Object*> GetDrawObjects() const;
 
     void SetRTheld(bool held) { m_isRTheld = held; }
+
+    //ribbonの中間判定用
+    void CheckBodyHitWall();
 
     // 解放
     void UnInit();

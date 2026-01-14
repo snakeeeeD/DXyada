@@ -27,6 +27,8 @@ private:
 
     bool m_isPlayerDead = false;
 
+    float m_fallDeadLineY = -2000.0f;
+
 public:
     void Init() override;
     void Update() override;

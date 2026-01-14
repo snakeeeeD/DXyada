@@ -1,27 +1,42 @@
 #pragma once
 #include "Pin.h"
+#include "Platform.h"
+#include <DirectXMath.h>
 
 class BlockPin : public Pin
 {
-private:
-	//DirectX::XMFLOAT3 m_initialPos; //ミスしたときのリセット
-	float m_moveSpeed;      //移動速度
-
 public:
-	BlockPin();
-	virtual ~BlockPin();
+    enum class MoveAxis
+    {
+        Both,
+        Horizontal,
+        Vertical
+    };
+public:
+    BlockPin();
+    virtual ~BlockPin();
 
-	void Init
-	(
-		const char* texture, 
-		float x, float y, 
-		float width, 
-		float height
-	) override;
+    void Init(const char* texture, float x, float y, float width, float height);
+    void Update(float dt);
+    void Draw();
 
-	void Update(float dt) override;
+    // 巻き取り：ピン自身が動く
+    virtual void OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float playerSpeed);
 
-	virtual void Draw() override;
+    void AttachPlatform(Platform* plat);
+    void DetachPlatform();
+    Platform* GetAttachedPlatform() const { return m_attachedPlatform; }
 
-	void OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float playerSpeed) override;
+    void SetMoveAxis(MoveAxis axis) { m_moveAxis = axis; }
+    MoveAxis GetMoveAxis() const { return m_moveAxis; }
+
+private:
+    float m_moveSpeed;
+
+    Platform* m_attachedPlatform;
+
+    DirectX::XMFLOAT3 m_prevPos;
+
+    MoveAxis m_moveAxis = MoveAxis::Both;
+
 };
