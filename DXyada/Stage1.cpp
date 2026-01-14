@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "Rippa.h"
 #include "WingRippa.h"
+#include "Hariyama.h"
 #include "NeedleFloor.h"
 #include <algorithm>
 #include "BlockPin.h"
@@ -43,12 +44,12 @@ void Stage1::Init()
     Platform plat6; plat6.Init("asset/Field/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
 
     Platform plat7; plat7.Init("asset/Field/block.png", 1000, -800, 1500, 50);  //下ナガ床
-    Platform plat8; plat8.Init("asset/Field/block.png", -400, 200, 100, 50);  //羽リッパーの壁反転用
+    Platform plat8; plat8.Init("asset/Field/block.png", -1000, 200, 100, 50);  //羽リッパーの壁反転用
 
     //エネミー1 (壁反転)
     {
         Rippa* rippa = new Rippa(Rippa::Type::Normal);
-        rippa->Init("asset/Field/rippa.png", 800, -100, 100, 100);
+        rippa->Init("asset/Field/rippa.png", 800, -100, 150, 150);
         rippa->SetCollisionManager(m_collision);
         m_enemies.push_back(rippa);
     }
@@ -56,7 +57,7 @@ void Stage1::Init()
     //エネミー2 (崖反転)
     {
         Rippa* rippa_2 = new Rippa(Rippa::Type::Normal);
-        rippa_2->Init("asset/Field/rippa.png", 1000, 150, 100, 100);
+        rippa_2->Init("asset/Field/rippa.png", 1000, 150, 150, 150);
         rippa_2->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa_2);
@@ -65,7 +66,7 @@ void Stage1::Init()
     //エネミー3 (徘徊)
     {
         Rippa* rippa_3 = new Rippa(Rippa::Type::Wandering);
-        rippa_3->Init("asset/Field/rippa.png", 1000, -700, 100, 100);
+        rippa_3->Init("asset/Field/rippa.png", 1000, -700, 150, 150);
         rippa_3->SetCollisionManager(m_collision);
 
         rippa_3->SetTurnInterval(2.5f); //個々の値変更で自由に変えられる
@@ -76,7 +77,7 @@ void Stage1::Init()
     //羽リッパー (通常)
     {
 		WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
-		wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 400, 100, 100);
+		wingrippa_1->Init("asset/Field/Wing_Rippa.png", -500, 400, 150, 150);
 		wingrippa_1->SetCollisionManager(m_collision);
 
 		m_enemies.push_back(wingrippa_1);
@@ -86,7 +87,7 @@ void Stage1::Init()
     //羽リッパー (通常・壁反転)
     {
         WingRippa* wingrippa_1 = new WingRippa(WingRippa::Type::ZigZag);
-        wingrippa_1->Init("asset/Field/Wing_Rippa.png", 100, 200, 100, 100);
+        wingrippa_1->Init("asset/Field/Wing_Rippa.png", -500, 200, 150, 150);
         wingrippa_1->SetCollisionManager(m_collision);
 
         m_enemies.push_back(wingrippa_1);
@@ -96,7 +97,7 @@ void Stage1::Init()
     //羽リッパー (徘徊)
     {
         WingRippa* wingrippa_2 = new WingRippa(WingRippa::Type::Wandering_Circle);
-        wingrippa_2->Init("asset/Field/Wing_Rippa.png", 800, 400, 100, 100);
+        wingrippa_2->Init("asset/Field/Wing_Rippa.png", 1000, 500, 150, 150);
         wingrippa_2->SetCollisionManager(m_collision);
 
         m_enemies.push_back(wingrippa_2);
@@ -115,6 +116,19 @@ void Stage1::Init()
         nf->SetCollisionManager(m_collision);
 
         m_enemies.push_back(nf);
+    }
+
+    //はりやまさん
+    {
+        Hariyama* hariyama = new Hariyama();
+		hariyama->Init("asset/Field/hariyama.png", 600, 600, 200, 200);
+        hariyama->SetCollisionManager(m_collision);
+        hariyama->SetEnemyList(&m_spawnQueue);
+
+        hariyama->SetPlayer(&m_player);
+
+		m_enemies.push_back(hariyama);
+
     }
 
     //ピン
@@ -301,6 +315,15 @@ void Stage1::Update()
         enemy->Update(dt);
     }
 
+    if (!m_spawnQueue.empty())
+    {
+        for (auto* newEnemy : m_spawnQueue)
+        {
+            m_enemies.push_back(newEnemy);
+        }
+        m_spawnQueue.clear(); //予約リストを空にする
+    }
+
     m_enemies.erase(
         std::remove_if(
             m_enemies.begin(),
@@ -398,6 +421,11 @@ void Stage1::Draw()
             g_pPixelShader,
             g_pConstantBuffer
         );
+    }
+
+    for (auto* e : m_enemies)
+    {
+        e->Draw();
     }
 
     for(auto* pin : m_pins)

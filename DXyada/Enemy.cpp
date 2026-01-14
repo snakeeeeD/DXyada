@@ -28,7 +28,7 @@ void Enemy::Disable()
         return;
 
     m_enableCollision = false;
-    m_enemystate = EnamyState::YouDied;
+    m_enemystate = EnemyState::YouDied;
 
     // ”¼“§–¾‚É‚·‚é
     m_object.SetColor(1, 1, 1, 0.3f);
@@ -37,7 +37,7 @@ void Enemy::Disable()
 
 void Enemy::Update(float deltaTime) 
 {
-    if (m_enemystate == EnamyState::YouDied)
+    if (m_enemystate == EnemyState::YouDied)
         return;
 
     // “€Œ‹’†‚Í•`‰æXV‚Ì‚İs‚¤
@@ -81,6 +81,9 @@ void Enemy::Update(float deltaTime)
 
 void Enemy::Draw() 
 {
+
+    OutputDebugStringA("Enemy Draw\n");
+
     m_object.Draw
     (
         g_pDeviceContext,

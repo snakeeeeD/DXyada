@@ -22,8 +22,8 @@ private:
     float m_walkspeed = 60.0f; //移動速度
 
     //センサーの厚み
-    const float SENSOR_WIDTH = 10.0f;
-    const float SENSOR_HEIGHT = 10.0f;
+    const float SENSOR_WIDTH = 15.0f;
+    const float SENSOR_HEIGHT = 15.0f;
 
     int m_direction = -1; //向き
     //-1: 左

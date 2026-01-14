@@ -18,6 +18,7 @@ private:
 
     std::vector<Platform> m_platforms;
     std::vector<Enemy*> m_enemies;
+    std::vector<Enemy*> m_spawnQueue;
     std::vector<Pin*> m_pins;
 
     DirectX::XMFLOAT2 m_BlockPinPos;

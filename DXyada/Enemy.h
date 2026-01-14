@@ -2,15 +2,21 @@
 #include "Object.h"
 #include "CollisionManager.h"
 
+class Player;
+
 class Enemy 
 {
 protected:
-    enum class EnamyState
+
+    Player* m_pPlayer = nullptr; // プレイヤーへのポインタ
+
+    enum class EnemyState
     {
         Idle,
         Active,
         YouDied
     };
+
     Object m_object;
     CollisionManager* m_pCollision = nullptr;
     int m_direction = 1;
@@ -27,7 +33,7 @@ protected:
     //強調表示用
     bool m_isHighlighted = false;
     bool m_enableCollision = true;
-    EnamyState m_enemystate = EnamyState::Idle;
+    EnemyState m_enemystate = EnemyState::Idle;
 
     bool m_isFrozen = false;
 
@@ -56,8 +62,11 @@ public:
 
     void Disable();
     bool IsCollisionEnabled() const { return m_enableCollision; }
-    bool IsDead() const { return m_enemystate == EnamyState::YouDied; }
+    bool IsDead() const { return m_enemystate == EnemyState::YouDied; }
 
     void SetFrozen(bool flozen) { m_isFrozen = flozen; }
     bool IsFrozen() const { return m_isFrozen; }
+
+    //プレイヤーをセットする関数
+    void SetPlayer(Player* player) { m_pPlayer = player; } 
 };

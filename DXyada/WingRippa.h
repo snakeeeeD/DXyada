@@ -17,7 +17,7 @@ private:
 	// --- 移動パラメータ ---
 	float m_walkspeed = 120.0f;    // X及びYの移動速度
 	float m_amplitude = 60.0f;     // 上下の振れ幅
-	float m_frequency = 3.0f;      // 上下の揺れスピード
+	float m_frequency = 1.5f;      // 上下の揺れスピード
 	float m_radius = 100.0f;       // 円の半径
 
 	// --- 制御用変数 ---
