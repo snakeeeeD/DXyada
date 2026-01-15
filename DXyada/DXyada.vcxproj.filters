@@ -99,6 +99,9 @@
     <ClCompile Include="RemoteWindPin.cpp">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\02-RemoteWindPin</Filter>
     </ClCompile>
+    <ClCompile Include="Goal.cpp">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\10-Goal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="RemoteWindPin.h">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\02-RemoteWindPin</Filter>
+    </ClInclude>
+    <ClInclude Include="Goal.h">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\10-Goal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -345,6 +351,9 @@
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\05-Gimmick\02-RemoteWindPin">
       <UniqueIdentifier>{98dd7a9a-a51d-4257-8f73-6e3e4955e3a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\10-Goal">
+      <UniqueIdentifier>{1a64ee99-8e71-4e62-bef4-d1cf36e4f084}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

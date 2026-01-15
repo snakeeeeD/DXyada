@@ -37,10 +37,10 @@ public:
 private:
     float m_moveSpeed;
 
-    float m_LimitRight;
-    float m_LimitLeft;
-    float m_LimitTop;
-    float m_LimitDown;
+    float m_LimitRight=0;
+    float m_LimitLeft=0;
+    float m_LimitTop=0;
+    float m_LimitDown=0;
 
     Platform* m_attachedPlatform;
 

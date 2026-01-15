@@ -332,11 +332,7 @@ void Player::Update(
         m_isPulling = false;
     }
 
-    // 巻き取り中は重力を止める（BlockPinを巻いている最中）
-    const bool freezeGravity = m_isPulling;
-
-    if (!freezeGravity)
-    {
+   
         // 重力を加算
         m_velY += m_gravity * deltaTime;
         pos.y -= m_velY * deltaTime;
@@ -402,16 +398,6 @@ void Player::Update(
                 }
             }
         }
-
-    }
-    else
-    {
-        // 巻き取り中は落下させない。速度もリセットして「終わった瞬間に落下開始」を防ぐ
-        m_velY = 0.0f;
-
-        // 任意：巻き取り中にジャンプ判定や接地が欲しいならここで制御
-        // m_isOnGround = false; // これは好み
-    }
 
     //操作関係
     bool moveLeft =
@@ -780,6 +766,8 @@ else if (hitPin)
 
                         m_pullSpeed = 800.0f * pullProgress;
 
+                        m_gravity = 0.0f;
+
                         // プレイヤーがPinの方向へ移動
                         float dirX = dx / currentDist;
                         float dirY = dy / currentDist;
@@ -797,6 +785,7 @@ else if (hitPin)
                         m_isPulling = false;
                         m_isRolling = false;
                         m_isRotating = false;
+                        m_gravity = 2000.0f;
                     }
                 }
             }
@@ -846,23 +835,34 @@ else if (hitPin)
 
             if (dist > 0.0f)
             {
-                float minJumpForce = 400.0f;
+                float minJumpForce = 800.0f;
                 float maxJumpForce = 1200.0f;
                 float distanceScale = 3.0f;
 
                 float jumpForce = dist * distanceScale;
-                if (jumpForce < minJumpForce) jumpForce = minJumpForce;
-                else if (jumpForce > maxJumpForce) jumpForce = maxJumpForce;
+                if (jumpForce < minJumpForce)
+                {
+                    jumpForce = minJumpForce;
+                }
+                else if (jumpForce > maxJumpForce)
+                {
+                    jumpForce = maxJumpForce;
+                }
+                   
 
-                float dirX = jdx / dist;
+                //float dirX = jdx / dist;
                 float dirY = jdy / dist;
+
+                // X方向は一定の強さ・方向
+                float XForce = 1200.0f;
+                float dirX = (jdx > 0) ? 1.0f : -1.0f;
 
                 // Pinジャンプ開始
                 m_isPinJumping = true;
-                m_pinJumpVelocity.x = dirX * jumpForce;
+                m_pinJumpVelocity.x = dirX * XForce;
 
                 // Y方向の速度も設定
-                m_velY = -dirY * jumpForce * 2.5f;
+                m_velY = -dirY * (jumpForce / 2) * 2.5f;
 
                 // 重力をリセット
                 m_gravity = 2000.0f;
@@ -1155,6 +1155,17 @@ else if (hitPin)
 
         if (foundEnemy || foundPin)
         {
+            float toTargetX = m_targetPosition.x - p.x;
+            float toTargetY = m_targetPosition.y - p.y;
+            float distToTarget = sqrt(toTargetX * toTargetX + toTargetY * toTargetY);
+
+            if (distToTarget > 0.0f)
+            {
+                dirX = toTargetX / distToTarget;
+                dirY = toTargetY / distToTarget;
+                angleRad = atan2(dirY, dirX);
+            }
+
             // ターゲットあり色
             m_guideline.SetColor(1, 0.5f, 0.5f, 0.8f);
 
@@ -1239,8 +1250,6 @@ else if (hitPin)
         {
             if (!hitPin)
             {
-
-
                 if (hitEnemy)
                 {
                     //LTを押していない,リボンが何も当たっていない場合
