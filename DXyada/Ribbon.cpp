@@ -27,22 +27,18 @@ void Ribbon::Init()
 {
     m_segments.clear();
 
-    // 最大節数分の Object を作る
-    for (int i = 0; i < m_maxSegments; ++i)
-    {
-        Segment seg{};
-        seg.obj = new Object();
+    Segment seg{};
+    seg.obj = new Object();
 
-        // 細長い板ポリとして初期化
-        seg.obj->Init();
-        seg.obj->AddTexture("asset/Field/block.png"); // 仮テクスチャ
-        seg.obj->SetSize(m_segmentLength, 6.0f, 0); // 細いリボン
-        seg.obj->SetColor(1.0f, 0.2f, 0.7f, 1.0f);   // ピンク
-        seg.obj->SetPos(0, 0, 0);
+    // 細長い板ポリとして初期化
+    seg.obj->Init();
+    seg.obj->AddTexture("asset/Field/block.png"); // 仮テクスチャ
+    seg.obj->SetSize(m_segmentLength, 6.0f, 0); // 細いリボン
+    seg.obj->SetColor(1.0f, 0.2f, 0.7f, 0.0f);
+    seg.obj->SetPos(0, 0, 0);
 
-        seg.pos = { 0.0f, 0.0f };
-        m_segments.push_back(seg);
-    }
+    seg.pos = { 0.0f, 0.0f };
+    m_segments.push_back(seg);
 
     m_state = State::Idle;
     m_time = 0.0f;
