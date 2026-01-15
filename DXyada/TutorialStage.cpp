@@ -268,7 +268,7 @@ void TutorialStage::Init()
             m_hook->SetTarget(m_targetPin2);
 
             // ガイド
-            m_hook->AddGuide({ x, -620, 0 });
+            m_hook->AddGuide({ x, -500, 0 });
 
             m_pins.push_back(m_hook);
             m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
@@ -315,7 +315,7 @@ void TutorialStage::Init()
 
         m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x - 250, x - 300, -600.0f, -600.0f);
+        m_targetPin->SetLimitPos(x - 200, x - 300, -600.0f, -600.0f);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
         m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
 

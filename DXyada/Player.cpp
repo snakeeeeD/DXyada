@@ -854,7 +854,7 @@ else if (hitPin)
                 float dirY = jdy / dist;
 
                 // X方向は一定の強さ・方向
-                float XForce = 1200.0f;
+                float XForce = 1400.0f;
                 float dirX = (jdx > 0) ? 1.0f : -1.0f;
 
                 // Pinジャンプ開始

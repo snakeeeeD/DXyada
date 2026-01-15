@@ -163,6 +163,7 @@
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Tutorial.h" />
     <ClInclude Include="TutorialStage.h" />
     <ClInclude Include="WingRippa.h" />
   </ItemGroup>
@@ -199,6 +200,7 @@
     <ClCompile Include="Stage2.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Tutorial.cpp" />
     <ClCompile Include="TutorialStage.cpp" />
     <ClCompile Include="WingRippa.cpp" />
   </ItemGroup>

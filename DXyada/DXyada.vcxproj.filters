@@ -102,6 +102,9 @@
     <ClCompile Include="Goal.cpp">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\10-Goal</Filter>
     </ClCompile>
+    <ClCompile Include="Tutorial.cpp">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\20-Tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -208,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="Goal.h">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\10-Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial.h">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\20-Tutorial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -354,6 +360,9 @@
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\05-Gimmick\10-Goal">
       <UniqueIdentifier>{1a64ee99-8e71-4e62-bef4-d1cf36e4f084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\20-Tutorial">
+      <UniqueIdentifier>{29077aaa-1882-4080-b177-9bbf34f8e169}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
