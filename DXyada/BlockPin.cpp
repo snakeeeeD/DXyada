@@ -67,6 +67,11 @@ void BlockPin::OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float play
     currentPos.x += dirX * m_moveSpeed * dt;
     currentPos.y += dirY * m_moveSpeed * dt;
 
+    if (currentPos.x > m_LimitRight) currentPos.x = m_LimitRight;
+    if (currentPos.x < m_LimitLeft) currentPos.x = m_LimitLeft;
+    if (currentPos.y > m_LimitTop) currentPos.y = m_LimitTop;
+    if (currentPos.y < m_LimitDown) currentPos.y = m_LimitDown;
+
     // s‚«‰ß‚¬–hŽ~iŽ²§ŒÀŒã‚Ì dx/dy ‚ðŽg‚Á‚Ä”»’èj
     float newDx = playerPos.x - currentPos.x;
     float newDy = playerPos.y - currentPos.y;
@@ -75,9 +80,9 @@ void BlockPin::OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float play
     {
         // Ž²§ŒÀ‚É‡‚í‚¹‚ÄŒÅ’è
         if (m_moveAxis == MoveAxis::Horizontal)
-            currentPos.x = playerPos.x;
+            currentPos.x = newDx;
         else if (m_moveAxis == MoveAxis::Vertical)
-            currentPos.y = playerPos.y;
+            currentPos.y = newDy;
         else
         {
             currentPos.x = playerPos.x;
@@ -85,5 +90,15 @@ void BlockPin::OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float play
         }
     }
 
+
+
     m_object.SetPos(currentPos.x, currentPos.y, currentPos.z);
+}
+
+void BlockPin::SetLimitPos(float right, float left, float top, float down)
+{
+    m_LimitRight = right;
+    m_LimitLeft = left;
+    m_LimitTop = top;
+    m_LimitDown = down;
 }

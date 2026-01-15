@@ -22,6 +22,10 @@ public:
 
     // 巻き取り：ピン自身が動く
     virtual void OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float playerSpeed);
+    
+    // 巻き取りの移動の範囲設定
+    // 右端、左端、上端、下端
+    void SetLimitPos(float right, float left, float top, float down);
 
     void AttachPlatform(Platform* plat);
     void DetachPlatform();
@@ -32,6 +36,11 @@ public:
 
 private:
     float m_moveSpeed;
+
+    float m_LimitRight;
+    float m_LimitLeft;
+    float m_LimitTop;
+    float m_LimitDown;
 
     Platform* m_attachedPlatform;
 

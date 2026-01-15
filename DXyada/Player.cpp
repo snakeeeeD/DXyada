@@ -235,6 +235,8 @@ void Player::Update(
     Pin* hitPin = m_ribbon.GetHitPin();
     // BlockPinかどうかをチェック
     BlockPin* blockPin = dynamic_cast<BlockPin*>(hitPin);
+    // RemoteWindPinかどうかをチェック
+    RemoteWindPin* remotewindPin = dynamic_cast<RemoteWindPin*>(hitPin);
 
     //--------------------------------------
     // エイム入力（右スティック or マウス）
@@ -456,8 +458,6 @@ void Player::Update(
 
             if (isRTPressed)
             {
-
-
                 //引き寄せ開始
                 if (m_isPulling)
                 {
@@ -506,6 +506,10 @@ void Player::Update(
                 // 必要時間に達したら撃破
                 if (m_holdLTTimer >= m_holdLTRequired)
                 {
+                    if (1.0f < m_holdRTTimer < 2.0f)
+                    {
+                        Log("aaa");
+                    }
                     hitEnemy->Disable();
                     m_ribbon.Return();
                     m_isRibbonOut = false;
@@ -516,6 +520,7 @@ void Player::Update(
 
                     // リセット
                     m_holdLTTimer = 0.0f;
+                    m_holdRTTimer = 0.0f;
                     m_targetEnemy = nullptr;
                 }
             }
@@ -523,7 +528,9 @@ void Player::Update(
             {
                 // LTを離したらタイマーリセット
                 m_holdLTTimer = 0.0f;
+                m_holdRTTimer = 0.0f;
                 m_targetEnemy = nullptr;
+                hitEnemy->SetSlow(false);
             }
            
         }
@@ -700,7 +707,7 @@ else if (hitPin)
     float currentDist = sqrt(dx * dx + dy * dy);
 
     // BlockPinかどうか（距離で完了判定したい時に使う）
-    BlockPin* blockPin = dynamic_cast<BlockPin*>(hitPin);
+
 
     if (isRTPressed)
     {
@@ -761,33 +768,36 @@ else if (hitPin)
             // -----------------------------
             else
             {
-                m_isPulling = true;
-                m_isRolling = false;
-
-                if (currentDist > 50.0f)
+                if (!remotewindPin && blockPin)
                 {
-                    float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-                    pullProgress = fmin(pullProgress, 1.0f);
-
-                    m_pullSpeed = 800.0f * pullProgress;
-
-                    // プレイヤーがPinの方向へ移動
-                    float dirX = dx / currentDist;
-                    float dirY = dy / currentDist;
-
-                    pos.x += dirX * m_pullSpeed * deltaTime;
-                    pos.y += dirY * m_pullSpeed * deltaTime;
-                }
-
-                // 2回転完了またはPinに到達
-                if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
-                {
-                    m_ribbon.Return();
-                    m_isRibbonOut = false;
-                    m_totalRotation = 0.0f;
-                    m_isPulling = false;
+                    m_isPulling = true;
                     m_isRolling = false;
-                    m_isRotating = false;
+
+                    if (currentDist > 50.0f)
+                    {
+                        float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
+                        pullProgress = fmin(pullProgress, 1.0f);
+
+                        m_pullSpeed = 800.0f * pullProgress;
+
+                        // プレイヤーがPinの方向へ移動
+                        float dirX = dx / currentDist;
+                        float dirY = dy / currentDist;
+
+                        pos.x += dirX * m_pullSpeed * deltaTime;
+                        pos.y += dirY * m_pullSpeed * deltaTime;
+                    }
+
+                    // 2回転完了またはPinに到達
+                    if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
+                    {
+                        m_ribbon.Return();
+                        m_isRibbonOut = false;
+                        m_totalRotation = 0.0f;
+                        m_isPulling = false;
+                        m_isRolling = false;
+                        m_isRotating = false;
+                    }
                 }
             }
         }
@@ -825,7 +835,7 @@ else if (hitPin)
         //========================================
         // RTを離した瞬間のPinジャンプ（既存仕様そのまま）
         //========================================
-        if (wasPinGrabbedLastFrame && !m_isOnGround && !blockPin &&
+        if (wasPinGrabbedLastFrame && !m_isOnGround && !blockPin && !remotewindPin &&
             !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
         {
             auto ppos = hitPin->GetObject()->GetPos();
@@ -1225,12 +1235,26 @@ else if (hitPin)
 
     if (!m_isKnockback)
     {
-        //LTを押していない,リボンが何も当たっていない場合
-        if (!isLTPressed && !hitEnemy && !hitPin)
+        if (isRTPressed)
         {
-            // タイマー加算
-            m_holdRTTimer += deltaTime;
+            if (!hitPin)
+            {
+
+
+                if (hitEnemy)
+                {
+                    //LTを押していない,リボンが何も当たっていない場合
+                    if (isLTPressed)
+                    {
+                        // タイマー加算
+                        m_holdRTTimer -= deltaTime;
+                    }
+                }
+                m_holdRTTimer += deltaTime;
+            }
         }
+          
+
 
         if (m_holdRTTimer >= m_holdRTRequired)
         {
@@ -1264,11 +1288,7 @@ else if (hitPin)
                         toTarget.y /= dist;
                     }
 
-                    m_ribbon.Throw(toTarget, dist);
-
-                   
-
-                    
+                    m_ribbon.Throw(toTarget, dist); 
                 }
                 else
                 {
@@ -1339,7 +1359,7 @@ else if (hitPin)
     if (m_isKnockback)            m_animState = Damage;
     else if (m_isPinJumping)      m_animState = RibbonJump;
     else if (m_isPulling && blockPin)         m_animState = Pulled;
-    else if (m_isRolling)         m_animState = Roll;
+    else if (m_isRolling && (blockPin || remotewindPin))         m_animState = Roll;
     else if (!m_isOnGround && !m_isRolling && !m_isPulling)       m_animState = Jump;
     else if (m_inputDir != 0)     m_animState = Run;
     else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
