@@ -94,7 +94,7 @@ void Ribbon::Throw(const XMFLOAT2& dir, float maxLength)
 //====================================================
 void Ribbon::Return()
 {
-    if (m_state == State::Throwing || m_state == State::Holding)
+    if (m_state == State::Throwing)
     {
         m_state = State::Returning;
     }
@@ -110,9 +110,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
     DirectX::XMFLOAT2 targetPos{};
     bool hasTarget = false;
 
-    //----------------------------------
+    //====================================================
     // 伸びる
-    //----------------------------------
+    //====================================================
     if (m_state == State::Throwing)
     {
         if (!m_hasHit)
@@ -235,9 +235,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         }
 
     }
-    //----------------------------------
+    //====================================================
     // RT長押し中
-    //----------------------------------
+    //====================================================
     else if (m_state == State::Holding)
     {
         DirectX::XMFLOAT2 targetPos{};
@@ -289,9 +289,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
             m_state = State::Returning;
         }
     }
-    //----------------------------------
+    //====================================================
     // 戻る
-    //----------------------------------
+    //====================================================
     else if (m_state == State::Returning)
     {
         m_currentLength -= m_speed * deltaTime;
@@ -303,9 +303,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         }
     }
     CheckBodyHitWall();
-    //----------------------------------
+    //====================================================
     // 描画更新（共通）
-    //----------------------------------
+    //====================================================
     float px = m_playerPos.x;
     float py = m_playerPos.y;
 
@@ -381,9 +381,9 @@ void Ribbon::UnInit()
 }
 
 
-//==============================
+//====================================================
 //床に当たるまでの最大到達距離を計算
-//==============================
+//====================================================
 float Ribbon::CalcMaxReachByWall() const
 {
     if (!m_collisionMgr)
