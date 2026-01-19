@@ -51,37 +51,37 @@ void Player::Init() {
     m_player.SetSize(100, m_height, 0);
 
     // アニメーション設定
-    //アイドル
-    m_player.AddAnimation("LeftIdle", "asset/Player/Player_Idle.png", 5, 2, 0, 0, 3, 5, true, 1);
-    m_player.AddAnimation("RightIdle", "asset/Player/Player_Idle.png", 5, 2, 1, 0, 3, 5, true, 1);
+    //アイドル//
+    m_player.AddAnimation("LeftIdle", "asset/Player/Player_Idle.png", 4, 2, 1, 0, 3, 5, true, 1);
+    m_player.AddAnimation("RightIdle", "asset/Player/Player_Idle.png", 4, 2, 0, 0, 3, 5, true, 1);
 
-    //移動
-    m_player.AddAnimation("Left", "asset/Player/Player_Walk.png", 4, 1, 0, 0, 1, 5, true, 1);
-    m_player.AddAnimation("Right", "asset/Player/Player_Walk.png", 4, 1, 0, 2, 3, 5, true, 1);
+    //移動//
+    m_player.AddAnimation("Left", "asset/Player/Player_Walk.png", 4, 2, 1, 0, 3, 5, true, 1);
+    m_player.AddAnimation("Right", "asset/Player/Player_Walk.png", 4, 2, 0, 0, 3, 5, true, 1);
     
-    //小ジャンプ
-    m_player.AddAnimation("LJump", "asset/Player/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
-    m_player.AddAnimation("RJump", "asset/Player/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    //小ジャンプ//
+    m_player.AddAnimation("LJump", "asset/Player/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("RJump", "asset/Player/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, 2);
     
-    //ダメージ
-    m_player.AddAnimation("LDamage", "asset/Player/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
-    m_player.AddAnimation("RDamage", "asset/Player/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
+    //ダメージ//
+    m_player.AddAnimation("LDamage", "asset/Player/Player_Damage.png", 5, 2, 1, 0, 4, 9, false, 3);
+    m_player.AddAnimation("RDamage", "asset/Player/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, 3);
    
-    //リボン出し
-    m_player.AddAnimation("LOutLibbon", "asset/Player/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
-    m_player.AddAnimation("ROutLibbon", "asset/Player/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
+    //リボン出し//
+    m_player.AddAnimation("LOutLibbon", "asset/Player/Player_Ribbon.png", 5, 2, 1, 0, 4, 15, false, 2);
+    m_player.AddAnimation("ROutLibbon", "asset/Player/Player_Ribbon.png", 5, 2, 0, 0, 4, 15, false, 2);
     
-    //リボンジャンプ
-    m_player.AddAnimation("LRibbonJump", "asset/Player/Player_RibbonJump.png", 5, 2, 0, 0, 4, 9, false, 2);
-    m_player.AddAnimation("RRibbonJump", "asset/Player/Player_RibbonJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    //リボンジャンプ//
+    m_player.AddAnimation("LRibbonJump", "asset/Player/Player_RibbonJump.png", 5, 2, 1, 0, 4, 9, false, 2);
+    m_player.AddAnimation("RRibbonJump", "asset/Player/Player_RibbonJump.png", 5, 2, 0, 0, 4, 9, false, 2);
     
-    //引き寄せられる
-    m_player.AddAnimation("LPulled", "asset/Player/Player_Pulled.png", 5, 2, 0, 0, 4, 15, true, 2);
-    m_player.AddAnimation("RPulled", "asset/Player/Player_Pulled.png", 5, 2, 1, 0, 4, 15, true, 2);
+    //引き寄せられる//
+    m_player.AddAnimation("LPulled", "asset/Player/Player_Pulled.png", 5, 2, 1, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RPulled", "asset/Player/Player_Pulled.png", 5, 2, 0, 0, 4, 15, true, 2);
    
     //引き寄せる
-    m_player.AddAnimation("LRoll", "asset/Player/Player_Roll.png", 5, 2, 0, 0, 4, 15, true, 2);
-    m_player.AddAnimation("RRoll", "asset/Player/Player_Roll.png", 5, 2, 1, 0, 4, 15, true, 2);
+    m_player.AddAnimation("LRoll", "asset/Player/Player_Roll2.png", 5, 2, 1, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RRoll", "asset/Player/Player_Roll2.png", 5, 2, 0, 0, 4, 15, true, 2);
     m_animState = Idle;
     m_prevAnimState = static_cast<Player_AnimState>(-1);
 
@@ -1370,8 +1370,8 @@ else if (hitPin)
     else if (m_isPulling && blockPin)         m_animState = Pulled;
     else if (m_isRolling && (blockPin || remotewindPin))         m_animState = Roll;
     else if (!m_isOnGround && !m_isRolling && !m_isPulling)       m_animState = Jump;
-    else if (m_inputDir != 0)     m_animState = Run;
     else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
+    else if (m_inputDir != 0)     m_animState = Run;
     
     else                          m_animState = Idle;
 

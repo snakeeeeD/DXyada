@@ -82,6 +82,18 @@ void TutorialStage::BuildDrawList()
         m_drawList.push_back(item);
     }
 
+    for (size_t i = 0; i < m_tutorials.size(); ++i) {
+        item.obj = m_tutorials[i]->GetObject();
+        item.layer = DrawLayer::StageObject;
+        m_drawList.push_back(item);
+    }
+
+    for (size_t i = 0; i < m_tutorials.size(); ++i) {
+        item.obj = m_tutorials[i]->GetDisplayObject();
+        item.layer = DrawLayer::FrontObject;  // プレイヤーより手前に表示
+        m_drawList.push_back(item);
+    }
+
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
@@ -268,7 +280,7 @@ void TutorialStage::Init()
             m_hook->SetTarget(m_targetPin2);
 
             // ガイド
-            m_hook->AddGuide({ x, -500, 0 });
+            m_hook->AddGuide({ x + 250, -620, 0 });
 
             m_pins.push_back(m_hook);
             m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
@@ -365,6 +377,21 @@ void TutorialStage::Init()
         x += w1;
     }
 
+    Tutorial* tutorial1 = new Tutorial();
+    tutorial1->Init(
+        "asset/Field/Boad.png", 
+        100, -230, 200, 200,
+        Tutorial::Type::Move,
+        true,   //チュートリアル表示ON
+        true    //チェックポイントON
+    );
+    tutorial1->InitTutorialImage(
+        "asset/Ui/title.png",
+        200, 150,   // 表示サイズ
+        0, 120      // 看板からのオフセット
+    );
+    m_tutorials.push_back(tutorial1);
+
     BuildDrawList();
 
     // HP系初期値
@@ -435,6 +462,12 @@ void TutorialStage::Update()
     // 衝突判定
     m_collision->CheckAll();
 
+    auto playerPos = m_player.GetObject()->GetPos();
+    for (auto& tutorial : m_tutorials)
+    {
+        tutorial->Update(dt, playerPos);
+    }
+
     // UI追従
     m_HP_UI1.SetPos(g_cameraPos.x - 800, g_cameraPos.y + 400, 0);
     m_HP_UI2.SetPos(g_cameraPos.x - 600, g_cameraPos.y + 400, 0);
@@ -503,7 +536,7 @@ void TutorialStage::Draw()
             r->DrawGuides();
         }
     }
-   
+
 }
 
 void TutorialStage::UnInit()
@@ -529,6 +562,12 @@ void TutorialStage::UnInit()
         delete pin;
     }
     m_pins.clear();
+
+    for (auto& tutorial : m_tutorials)
+    {
+        tutorial->UnInit();
+        delete tutorial;
+    }
 
     delete m_collision;
     m_collision = nullptr;
