@@ -1,6 +1,7 @@
 #include "DebugStage.h"
 #include "Renderer.h"
 #include <algorithm>
+#include "Rippa.h"
 
 
 void DebugStage::Init()
@@ -24,11 +25,13 @@ void DebugStage::Init()
     // ‘«ê
     Platform p1; p1.Init("asset/Field/block.png", 0, -600, 1800, 600);
 
-    m_platforms = { p1 };
-
-    Enemy* e = new Enemy();
-    e->Init("asset/Field/rippa.png", 300, -300, 100, 100);
-    m_enemies.push_back(e);
+    //“G
+    {
+        Rippa* rippa = new Rippa(Rippa::Type::Normal);
+        rippa->Init("asset/Field/rippa.png", 300, 250, 100, 100);
+        rippa->SetCollisionManager(m_collision);
+        m_enemies.push_back(rippa);
+    }
 
 
     for (auto& plat : m_platforms) {
@@ -57,6 +60,9 @@ void DebugStage::Init()
     m_collision->AddDynamic(m_player.GetObject());
     m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
 
+    //‘«êˆê——
+    m_platforms = { p1 };
+
     ///////////////////////////////////////////////////////////‚Ñ‚å‚¤‚ª‚¶‚ã‚ñ`//////////////////////////////////////////////////////////
 
     DrawItem item;
@@ -74,11 +80,11 @@ void DebugStage::Init()
     }
 
     // “G
-    //for (size_t i = 0; i < m_enemies.size(); ++i) {
-    //    item.obj = m_enemies[i]->GetObject();
-    //    item.layer = DrawLayer::Enemy;
-    //    m_drawList.push_back(item);
-    //}
+    for (size_t i = 0; i < m_enemies.size(); ++i) {
+        item.obj = m_enemies[i]->GetObject();
+        item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);
+    }
 
     // ƒvƒŒƒCƒ„[
     item.obj = m_player.GetObject();
