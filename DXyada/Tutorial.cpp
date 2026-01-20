@@ -47,7 +47,6 @@ void Tutorial::Init(
     m_isActivated = false;
     m_wasPlayerNear = false;
 }
-
 void Tutorial::InitTutorialImage(
     const std::string& imagePath,
     float displayWidth,
@@ -58,6 +57,11 @@ void Tutorial::InitTutorialImage(
 {
     m_tutorialDisplay.Init();
 
+    // テクスチャパスが空でないか確認
+    if (!imagePath.empty())
+    {
+        m_tutorialDisplay.AddTexture(imagePath.c_str());
+    }
 
     m_tutorialDisplay.SetSize(displayWidth, displayHeight, 0);
 
@@ -67,6 +71,7 @@ void Tutorial::InitTutorialImage(
     m_hasAnimation = false;
     m_displayAlpha = 0.0f;
 
+    // 初期状態は透明
     m_tutorialDisplay.SetColor(1, 1, 1, 0);
 }
 
@@ -88,6 +93,20 @@ void Tutorial::InitTutorialAnimation(
 {
     m_tutorialDisplay.Init();
 
+    // テクスチャパスが空でないか確認
+    if (!imagePath.empty())
+    {
+        m_tutorialDisplay.AddAnimation(
+            "Tutorial",
+            imagePath.c_str(),
+            row, col,
+            startRow, startCol,
+            endRow, endCol,
+            loop,
+            animSpeed
+        );
+    }
+
     m_tutorialDisplay.SetSize(displayWidth, displayHeight, 0);
 
     auto signPos = m_object.GetPos();
@@ -96,9 +115,9 @@ void Tutorial::InitTutorialAnimation(
     m_hasAnimation = true;
     m_displayAlpha = 0.0f;
 
+    // 初期状態は透明
     m_tutorialDisplay.SetColor(1, 1, 1, 0);
 }
-
 void Tutorial::Update(float deltaTime, const DirectX::XMFLOAT3& playerPos)
 {
     auto pos = m_object.GetPos();

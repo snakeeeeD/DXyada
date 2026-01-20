@@ -90,7 +90,7 @@ void TutorialStage::BuildDrawList()
 
     for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetDisplayObject();
-        item.layer = DrawLayer::FrontObject;  // プレイヤーより手前に表示
+        item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
 
@@ -114,6 +114,8 @@ void TutorialStage::BuildDrawList()
         m_drawList.push_back(it);
     }
 
+  
+
     item.obj = &m_HP_UI1; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI2; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI3; item.layer = DrawLayer::UI; m_drawList.push_back(item);
@@ -128,6 +130,9 @@ void TutorialStage::Init()
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
     m_player.GetObject()->SetPos(0, 150, 0);
+
+    m_currentCheckpoint = { 0, 150, 0 };
+    m_hasCheckpoint = true;
 
     m_background.Init();
     m_background.AddTexture("asset/Field/aa.png");
@@ -387,14 +392,15 @@ void TutorialStage::Init()
     );
     tutorial1->InitTutorialImage(
         "asset/Ui/title.png",
-        200, 150,   // 表示サイズ
-        0, 120      // 看板からのオフセット
+        200, 150,   //表示サイズ
+        0, 120      //看板からのオフセット
     );
+    tutorial1->SetRespawnPosition(100, -150, 0);
     m_tutorials.push_back(tutorial1);
 
     BuildDrawList();
 
-    // HP系初期値
+    //HP系初期値
     maxHP = m_player.GetMaxHP();
     currentHP = m_player.GetHP();
 }
@@ -463,11 +469,17 @@ void TutorialStage::Update()
     m_collision->CheckAll();
 
     auto playerPos = m_player.GetObject()->GetPos();
-    for (auto& tutorial : m_tutorials)
+    for (auto* tutorial : m_tutorials)
     {
         tutorial->Update(dt, playerPos);
-    }
 
+        // チェックポイントとして有効化されたら記録
+        if (tutorial->IsActivated() && tutorial->IsCheckpoint())
+        {
+            m_currentCheckpoint = tutorial->GetRespawnPosition();
+            m_hasCheckpoint = true;
+        }
+    }
     // UI追従
     m_HP_UI1.SetPos(g_cameraPos.x - 800, g_cameraPos.y + 400, 0);
     m_HP_UI2.SetPos(g_cameraPos.x - 600, g_cameraPos.y + 400, 0);
@@ -571,4 +583,26 @@ void TutorialStage::UnInit()
 
     delete m_collision;
     m_collision = nullptr;
+}
+
+void TutorialStage::Respawn()
+{
+    if (!m_hasCheckpoint)
+        return;
+
+    //チェックポイント位置にプレイヤーを配置
+    m_player.GetObject()->SetPos(
+        m_currentCheckpoint.x,
+        m_currentCheckpoint.y,
+        m_currentCheckpoint.z
+    );
+
+    //死亡フラグをリセット
+    m_isPlayerDead = false;
+
+}
+
+void TutorialStage::SetResoawnPos(DirectX::XMFLOAT3 respawnpos)
+{
+    m_currentCheckpoint = respawnpos;
 }
