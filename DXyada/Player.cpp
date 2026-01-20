@@ -80,8 +80,8 @@ void Player::Init() {
     m_player.AddAnimation("RPulled", "asset/Player/Player_Pulled.png", 5, 2, 0, 0, 4, 15, true, 2);
    
     //引き寄せる
-    m_player.AddAnimation("LRoll", "asset/Player/Player_Roll2.png", 5, 2, 1, 0, 4, 15, true, 2);
-    m_player.AddAnimation("RRoll", "asset/Player/Player_Roll2.png", 5, 2, 0, 0, 4, 15, true, 2);
+    m_player.AddAnimation("LRoll", "asset/Player/Player_Roll.png", 5, 2, 1, 0, 4, 15, true, 2);
+    m_player.AddAnimation("RRoll", "asset/Player/Player_Roll.png", 5, 2, 0, 0, 4, 15, true, 2);
     m_animState = Idle;
     m_prevAnimState = static_cast<Player_AnimState>(-1);
 
