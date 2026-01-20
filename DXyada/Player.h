@@ -41,6 +41,11 @@ private:
 	float m_width = 100.0f;
 	float m_height = 150.0f;
 
+	bool m_moveLeft = false;
+	bool m_moveRight = false;
+
+	bool m_isCanMove = false;
+
 	bool m_isLastRightDirection = true;	//ÅI‰E‚Ş‚¢‚Ä‚é‚©
 
 	bool m_isPinJumping = false;
