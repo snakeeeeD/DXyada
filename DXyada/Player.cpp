@@ -89,6 +89,8 @@ void Player::Init() {
     m_isThrowingThisFrame = false;
     m_waitReleaseAfterThrow = false;
 
+    m_isCanMove = true;
+
     // 重力・ジャンプ初期化
     m_velY = 0.0f;
     m_gravity = 2000.0f;    // 下方向加速度（ピクセル/秒^2）
@@ -130,6 +132,8 @@ void Player::Init() {
     m_holdLTTimer = 0.0f;
     m_holdLTRequired = 1.0f;  // 1秒長押しで撃破
     m_targetEnemy = nullptr;
+
+  
 }
 
 void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
@@ -399,16 +403,20 @@ void Player::Update(
             }
         }
 
-    //操作関係
-    bool moveLeft =
-        input.GetKeyPress(VK_A) ||
-        input.GetButtonPress(XINPUT_LEFT) ||
-        (leftStick.x < -moveThreshold);
+        if (m_isCanMove ==true)
+        {
+            //操作関係
+            m_moveLeft =
+                input.GetKeyPress(VK_A) ||
+                input.GetButtonPress(XINPUT_LEFT) ||
+                (leftStick.x < -moveThreshold);
 
-    bool moveRight =
-        input.GetKeyPress(VK_D) ||
-        input.GetButtonPress(XINPUT_RIGHT) ||
-        (leftStick.x > moveThreshold);
+            m_moveRight =
+                input.GetKeyPress(VK_D) ||
+                input.GetButtonPress(XINPUT_RIGHT) ||
+                (leftStick.x > moveThreshold);
+        }
+    
     if (m_isPinJumping)
     {
         pos.x += m_pinJumpVelocity.x * deltaTime;
@@ -426,8 +434,8 @@ void Player::Update(
     //ノックバック中出ない場合のみ移動
     else if (!m_isKnockback)
     {
-        if (moveLeft && !moveRight)       m_inputDir = 1;
-        else if (moveRight && !moveLeft)  m_inputDir = -1;
+        if (m_moveLeft && !m_moveRight)       m_inputDir = 1;
+        else if (m_moveRight && !m_moveLeft)  m_inputDir = -1;
         else                              m_inputDir = 0;
 
         // 通常の移動
@@ -692,6 +700,7 @@ else if (hitPin)
     float dy = pinPos.y - pos.y;
     float currentDist = sqrt(dx * dx + dy * dy);
 
+
     // BlockPinかどうか（距離で完了判定したい時に使う）
 
 
@@ -702,6 +711,7 @@ else if (hitPin)
         //========================================
         if (m_isPulling)
         {
+           
             // -----------------------------
             // 1) 「巻けるピン」：ピン側が動く
             //    BlockPin も RemoteWindPin もここに入る
@@ -747,13 +757,16 @@ else if (hitPin)
                         m_isRolling = false;
                         m_isRotating = false;
                     }
-                }
+                }     
+        
             }
             // -----------------------------
             // 2) 「巻けないピン」：プレイヤーが引き寄せられる（既存仕様）
             // -----------------------------
             else
             {
+
+                m_isCanMove = false;
                 if (!remotewindPin && blockPin)
                 {
                     m_isPulling = true;
@@ -767,6 +780,8 @@ else if (hitPin)
                         m_pullSpeed = 800.0f * pullProgress;
 
                         m_gravity = 0.0f;
+
+                        m_isCanMove = false;
 
                         // プレイヤーがPinの方向へ移動
                         float dirX = dx / currentDist;
@@ -790,6 +805,7 @@ else if (hitPin)
                 }
             }
         }
+        
 
         //========================================
         // Decorate（既存仕様そのまま）
@@ -870,6 +886,7 @@ else if (hitPin)
         }
 
         m_ribbon.Return();
+        m_isCanMove = true;
     }
 
     //========================================
@@ -1337,23 +1354,15 @@ else if (hitPin)
 
     if (!isRTPressed)
     {
-        // 1. 移動入力が最優先
-        if (m_isPulling || m_isRolling)
-        {
-            
-        }
-        // 2.引き寄せ・ロール中は向きを固定
+       
         if (m_inputDir != 0)
         {
             m_isLastRightDirection = (m_inputDir == -1);
         }
-
-        // 3.エイム中（移動していない時）
         else if (aiming)
         {
             m_isLastRightDirection = (m_aimDirection.x > 0);
         }
-        // 4.投げモーションロック
         else if (m_isThrowAnimLock)
         {
             m_isLastRightDirection = m_throwDirectionRight;
@@ -1363,15 +1372,29 @@ else if (hitPin)
     {
         m_isLastRightDirection = (m_inputDir == -1);
     }
+
+    if (m_isPulling || m_isRolling)
+    {
+        auto ppos = hitPin->GetObject()->GetPos();
+
+        if (ppos.x < pos.x)
+        {
+            m_isLastRightDirection = false;
+        }
+        else if (ppos.x > pos.x)
+        {
+            m_isLastRightDirection = true;
+        }
+    }
   
 
     if (m_isKnockback)            m_animState = Damage;
     else if (m_isPinJumping)      m_animState = RibbonJump;
-    else if (m_isPulling && blockPin)         m_animState = Pulled;
+    else if (m_isPulling || blockPin && !m_isCanMove)         m_animState = Pulled;
     else if (m_isRolling && (blockPin || remotewindPin))         m_animState = Roll;
-    else if (!m_isOnGround && !m_isRolling && !m_isPulling)       m_animState = Jump;
-    else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
+    else if (!m_isOnGround && (!m_isRolling || !m_isPulling) && m_isCanMove)       m_animState = Jump;
     else if (m_inputDir != 0)     m_animState = Run;
+    else if (m_ribbon.GetState() == Ribbon::State::Throwing)   m_animState = Throw;
     
     else                          m_animState = Idle;
 
