@@ -6,7 +6,7 @@
 extern Input input;
 
 extern DirectX::XMFLOAT3 g_cameraPos;
-
+DirectX::XMFLOAT3 g_respawnPos;
 
 #include <Xinput.h>
 #pragma comment(lib, "xinput.lib")

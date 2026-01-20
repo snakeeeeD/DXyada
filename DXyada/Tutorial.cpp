@@ -7,7 +7,7 @@ Tutorial::Tutorial()
     , m_isCheckpoint(true)
     , m_respawnPosition({ 0, 0, 0 })
     , m_isActivated(false)
-    , m_triggerRange(150.0f)
+    , m_triggerRange(400.0f)
     , m_wasPlayerNear(false)
     , m_hasAnimation(false)
     , m_displayAlpha(0.0f)
@@ -123,7 +123,7 @@ void Tutorial::Update(float deltaTime, const DirectX::XMFLOAT3& playerPos)
     auto pos = m_object.GetPos();
 
     //プレイヤーとの距離を計算
-    float dx = playerPos.x - pos.x;
+    float dx = playerPos.x - pos.x - 300;
     float dy = playerPos.y - pos.y;
     float distance = sqrt(dx * dx + dy * dy);
 

@@ -1342,18 +1342,18 @@ else if (hitPin)
         {
             
         }
-        // 2. 引き寄せ・ロール中は向きを固定
+        // 2.引き寄せ・ロール中は向きを固定
         if (m_inputDir != 0)
         {
             m_isLastRightDirection = (m_inputDir == -1);
         }
 
-        // 3. エイム中（移動していない時）
+        // 3.エイム中（移動していない時）
         else if (aiming)
         {
             m_isLastRightDirection = (m_aimDirection.x > 0);
         }
-        // 4. 投げモーションロック
+        // 4.投げモーションロック
         else if (m_isThrowAnimLock)
         {
             m_isLastRightDirection = m_throwDirectionRight;

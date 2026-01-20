@@ -99,18 +99,18 @@ void TutorialStage::BuildDrawList()
     m_drawList.push_back(item);
 
     item.obj = m_player.GetGuideLineObject();
-    item.layer = DrawLayer::BackObject;
+    item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
     item.obj = m_player.GetCircle();
-    item.layer = DrawLayer::BackObject;
+    item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
     for (auto* obj : m_player.GetRibbon().GetDrawObjects())
     {
         DrawItem it;
         it.obj = obj;
-        it.layer = DrawLayer::BackObject;
+        it.layer = DrawLayer::Player;
         m_drawList.push_back(it);
     }
 
@@ -164,9 +164,26 @@ void TutorialStage::Init()
 
         AddDecorPin(x + TILE * 10.0f+ 0.85f * TILE, -317.0f, true);
 
+        Tutorial* tutorial1 = new Tutorial();
+        tutorial1->Init(
+            "asset/Field/Boad.png",
+            1000, -230, 200, 200,
+            Tutorial::Type::Move,
+            true,   //チュートリアル表示ON
+            true    //チェックポイントON
+        );
+        tutorial1->InitTutorialImage(
+            "asset/Ui/title.png",
+            1000, 750,   //表示サイズ
+            300, 450      //看板からのオフセット
+        );
+        tutorial1->SetRespawnPosition(100, -150, 0);
+        m_tutorials.push_back(tutorial1);
+
         x += w;
 
         x += TILE * 1.7f;
+
     }
 
     //2
@@ -186,6 +203,22 @@ void TutorialStage::Init()
 
         float w2 = TILE * 5.0f;
         AddPlatform("asset/Field/block.png", x + w2 * 0.5f, LOW_Y, w2, H);
+
+        Tutorial* tutorial1 = new Tutorial();
+        tutorial1->Init(
+            "asset/Field/Boad.png",
+            2500, -230, 200, 200,
+            Tutorial::Type::Move,
+            true,   //チュートリアル表示ON
+            true    //チェックポイントON
+        );
+        tutorial1->InitTutorialImage(
+            "asset/Ui/title.png",
+            1000, 750,   //表示サイズ
+            300, 450      //看板からのオフセット
+        );
+        tutorial1->SetRespawnPosition(100, -150, 0);
+        m_tutorials.push_back(tutorial1);
 
         x += w2;
     }
@@ -382,21 +415,7 @@ void TutorialStage::Init()
         x += w1;
     }
 
-    Tutorial* tutorial1 = new Tutorial();
-    tutorial1->Init(
-        "asset/Field/Boad.png", 
-        100, -230, 200, 200,
-        Tutorial::Type::Move,
-        true,   //チュートリアル表示ON
-        true    //チェックポイントON
-    );
-    tutorial1->InitTutorialImage(
-        "asset/Ui/title.png",
-        200, 150,   //表示サイズ
-        0, 120      //看板からのオフセット
-    );
-    tutorial1->SetRespawnPosition(100, -150, 0);
-    m_tutorials.push_back(tutorial1);
+   
 
     BuildDrawList();
 

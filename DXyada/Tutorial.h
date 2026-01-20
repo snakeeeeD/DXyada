@@ -64,7 +64,7 @@ public:
         float displayWidth,
         float displayHeight,
         float offsetX = 0.0f,   // 看板からの相対位置X
-        float offsetY = 100.0f  // 看板からの相対位置Y
+        float offsetY = 0.0f  // 看板からの相対位置Y
     );
 
     // チュートリアル表示の初期化（アニメーションの場合）
