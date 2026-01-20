@@ -94,7 +94,7 @@ void Ribbon::Throw(const XMFLOAT2& dir, float maxLength)
 //====================================================
 void Ribbon::Return()
 {
-    if (m_state == State::Throwing)
+    if (m_state == State::Throwing || m_state == State::Holding)
     {
         m_state = State::Returning;
     }

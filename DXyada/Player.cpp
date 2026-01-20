@@ -56,8 +56,8 @@ void Player::Init() {
     m_player.AddAnimation("RightIdle", "asset/Player/Player_Idle.png", 4, 2, 0, 0, 3, 5, true, 1);
 
     //移動//
-    m_player.AddAnimation("Left", "asset/Player/Player_Walk.png", 4, 2, 1, 0, 3, 5, true, 1);
-    m_player.AddAnimation("Right", "asset/Player/Player_Walk.png", 4, 2, 0, 0, 3, 5, true, 1);
+    m_player.AddAnimation("Left", "asset/Player/Player_Walk.png", 4, 2, 1, 0, 3, 10, true, 1);
+    m_player.AddAnimation("Right", "asset/Player/Player_Walk.png", 4, 2, 0, 0, 3, 10, true, 1);
     
     //小ジャンプ//
     m_player.AddAnimation("LJump", "asset/Player/Player_SmallJump.png", 5, 2, 1, 0, 4, 9, false, 2);
@@ -130,7 +130,7 @@ void Player::Init() {
 
     //LT長押し撃破初期化
     m_holdLTTimer = 0.0f;
-    m_holdLTRequired = 1.0f;  // 1秒長押しで撃破
+    m_holdLTRequired = 0.5f;  // 1秒長押しで撃破
     m_targetEnemy = nullptr;
 
   
@@ -247,12 +247,42 @@ void Player::Update(
     //--------------------------------------
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
     DirectX::XMFLOAT2 rightStick = input.GetRightAnalogStick();// エイム専用
-    const float moveThreshold = 0.5f;
+    const float moveThresholdR = 0.1f;  //右スティックのデッドゾーン(あえて甘く判定とってます)
+    const float moveThresholdL = 0.5f;  //左スティックのデッドゾーン
+
+    //左スティックの今フレームの上入力
+   bool stickUpNow = (leftStick.y > moveThresholdL);
+
+    //==========================================================
+    // 
+    // 左スティックの角度(30°～150°)ばーじょん
+    // 
+    // 
+    //float angle = atan2(leftStick.y, leftStick.x); // -π ～ π
+
+    //float length = sqrt(leftStick.x * leftStick.x + leftStick.y * leftStick.y);
+
+    //bool stickUpNow = false;
+
+    //if (length > 0.3)
+    //{
+    //    float angle = atan2(leftStick.y, leftStick.x);
+
+    //    stickUpNow =
+    //        angle > DirectX::XM_PI * 30.0f / 180.0f &&   // 30°
+    //        angle < DirectX::XM_PI * 150.0f / 180.0f;    // 150°
+    //}
+
+
+    //==========================================================
+    //左スティック立ち上がり判定
+
+    bool leftStickUpTrigger = stickUpNow && !m_prevLeftStickUp;
 
     // 右スティック判定
     bool stickAiming =
-        fabs(rightStick.x) > moveThreshold ||
-        fabs(rightStick.y) > moveThreshold;
+        fabs(rightStick.x) > moveThresholdR ||
+        fabs(rightStick.y) > moveThresholdR;
 
     // マウス判定
     POINT mouse = input.GetMousePos();
@@ -409,12 +439,12 @@ void Player::Update(
             m_moveLeft =
                 input.GetKeyPress(VK_A) ||
                 input.GetButtonPress(XINPUT_LEFT) ||
-                (leftStick.x < -moveThreshold);
+                (leftStick.x < -moveThresholdR);
 
             m_moveRight =
                 input.GetKeyPress(VK_D) ||
                 input.GetButtonPress(XINPUT_RIGHT) ||
-                (leftStick.x > moveThreshold);
+                (leftStick.x > moveThresholdR);
         }
     
     if (m_isPinJumping)
@@ -439,8 +469,8 @@ void Player::Update(
         else                              m_inputDir = 0;
 
         // 通常の移動
-        if (m_inputDir == 1)  pos.x -= 250.0f * deltaTime;
-        if (m_inputDir == -1) pos.x += 250.0f * deltaTime;
+        if (m_inputDir == 1)  pos.x -= 350.0f * deltaTime;
+        if (m_inputDir == -1) pos.x += 350.0f * deltaTime;
 
         // 敵を掴んでいる場合の処理
         if (hitEnemy)
@@ -452,7 +482,6 @@ void Player::Update(
 
             if (isRTPressed)
             {
-                //引き寄せ開始
                 if (m_isPulling)
                 {
                     // 最大長を超えたら自動でリボンを外す
@@ -765,12 +794,13 @@ else if (hitPin)
             // -----------------------------
             else
             {
-
-                m_isCanMove = false;
+                
                 if (!remotewindPin && blockPin)
                 {
                     m_isPulling = true;
                     m_isRolling = false;
+                    m_isCanMove = false;
+                    m_gravity = 0.0f;
 
                     if (currentDist > 50.0f)
                     {
@@ -778,10 +808,6 @@ else if (hitPin)
                         pullProgress = fmin(pullProgress, 1.0f);
 
                         m_pullSpeed = 800.0f * pullProgress;
-
-                        m_gravity = 0.0f;
-
-                        m_isCanMove = false;
 
                         // プレイヤーがPinの方向へ移動
                         float dirX = dx / currentDist;
@@ -791,8 +817,8 @@ else if (hitPin)
                         pos.y += dirY * m_pullSpeed * deltaTime;
                     }
 
-                    // 2回転完了またはPinに到達
-                    if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
+                    //Pinに到達
+                    if (currentDist < 80.0f)
                     {
                         m_ribbon.Return();
                         m_isRibbonOut = false;
@@ -801,6 +827,7 @@ else if (hitPin)
                         m_isRolling = false;
                         m_isRotating = false;
                         m_gravity = 2000.0f;
+                        m_isCanMove = true;
                     }
                 }
             }
@@ -840,9 +867,12 @@ else if (hitPin)
         //========================================
         // RTを離した瞬間のPinジャンプ（既存仕様そのまま）
         //========================================
-        if (wasPinGrabbedLastFrame && !m_isOnGround && !blockPin && !remotewindPin &&
+        if ((wasPinGrabbedLastFrame && (!m_isOnGround || leftStickUpTrigger)&& !blockPin && !remotewindPin )&&
             !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
         {
+            m_isCanMove = true;
+            m_isPulling = false;
+            m_isRolling = false;
             auto ppos = hitPin->GetObject()->GetPos();
 
             float jdx = ppos.x - pos.x;
@@ -930,7 +960,11 @@ else if (hitPin)
 
     // ジャンプ
     if (m_isOnGround &&
-        (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A)))
+        (       input.GetKeyTrigger(VK_SPACE) 
+            ||  input.GetButtonTrigger(XINPUT_A)
+            ||  input.GetButtonTrigger(XINPUT_UP)
+            ||  leftStickUpTrigger)
+        )
     {
         m_velY = -m_jumpPower;
         m_isOnGround = false;
@@ -1351,6 +1385,7 @@ else if (hitPin)
 
     // 次フレーム用
     m_wasRTPressed = isRTPressed;
+    m_prevLeftStickUp = stickUpNow;
 
     if (!isRTPressed)
     {
@@ -1390,7 +1425,7 @@ else if (hitPin)
 
     if (m_isKnockback)            m_animState = Damage;
     else if (m_isPinJumping)      m_animState = RibbonJump;
-    else if (m_isPulling || blockPin && !m_isCanMove)         m_animState = Pulled;
+    else if (m_isPulling && blockPin && !m_isCanMove)         m_animState = Pulled;
     else if (m_isRolling && (blockPin || remotewindPin))         m_animState = Roll;
     else if (!m_isOnGround && (!m_isRolling || !m_isPulling) && m_isCanMove)       m_animState = Jump;
     else if (m_inputDir != 0)     m_animState = Run;
