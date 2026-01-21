@@ -13,18 +13,11 @@ private:
     Object m_HP_UI2;
     Object m_HP_UI3;
 
-    std::vector<Platform*> m_platforms;
-    std::vector<Enemy*> m_enemies;
-    std::vector<Enemy*> m_spawnQueue;
-    std::vector<Pin*> m_pins;
-    //std::vector<BlockPin*> m_pins;
-
-    DirectX::XMFLOAT2 m_BlockPinPos;
-
     std::vector<Platform> m_platforms;
     std::vector<Enemy*>   m_enemies;
     std::vector<Pin*>     m_pins;
     std::vector<Tutorial*>     m_tutorials;
+
     std::vector<DrawItem> m_drawList;
 
     bool m_isPlayerDead = false;

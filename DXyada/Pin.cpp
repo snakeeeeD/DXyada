@@ -5,7 +5,7 @@ void Pin::Init()
 
 }
 
-void Pin::Init(const char* texture, float x, float y, float width, float height) 
+void Pin::Init(const char* texture, float x, float y, float width, float height)
 {
     m_object.Init();
     m_object.AddTexture(texture);
@@ -14,7 +14,7 @@ void Pin::Init(const char* texture, float x, float y, float width, float height)
     m_state = State::Normal;
 }
 
-void Pin::Update(float dt) 
+void Pin::Update(float dt)
 {
     m_object.Update(dt);
 
@@ -24,7 +24,7 @@ void Pin::Update(float dt)
     }
 }
 
-void Pin::Draw() 
+void Pin::Draw()
 {
     m_object.Draw
     (
@@ -36,7 +36,7 @@ void Pin::Draw()
     );
 }
 
-void Pin::OnHit() 
+void Pin::OnHit()
 {
     if (m_state == State::Decorated)
     {
@@ -44,10 +44,10 @@ void Pin::OnHit()
     }
     m_object.SetColor(1, 0, 0, 1); // まず赤くして確認
     // 見た目を変える（リボン付き画像にするなど）
-     m_object.AddTexture("asset/block.png");
+    m_object.AddTexture("asset/block.png");
 
     // 足場として登録する
-    if (m_pCollision) 
+    if (m_pCollision)
     {
         auto pos = m_object.GetPos();
         auto size = m_object.GetSize();
@@ -62,7 +62,7 @@ void Pin::OnHit()
 
 void Pin::UnInit()
 {
-    m_object.UnInit();  
+    m_object.UnInit();
 }
 
 void Pin::SetPos(float Pos_X, float Pos_Y) {
@@ -111,7 +111,6 @@ void Pin::SetState(State state)
             m_pCollision->SetTag(&m_object, ColliderTag::Platform);
             m_pCollision->AddStatic(&m_object);
             m_isPlatformRegistered = true;
-            m_canBeHookedByRibbon = false;
 
             auto currentSize = m_object.GetSize();
             m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);

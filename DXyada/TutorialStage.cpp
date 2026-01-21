@@ -7,13 +7,13 @@ extern DirectX::XMFLOAT3 g_cameraPos;
 
 void TutorialStage::AddPlatform(const char* tex, float x, float y, float w, float h)
 {
-    Platform* p = new Platform();
-    p->Init(tex, x, y, w, h);
+    Platform p;
+    p.Init(tex, x, y, w, h);
     m_platforms.push_back(p);
 
-    Platform* back = m_platforms.back();
-    m_collision->AddStatic(back->GetObject());
-    m_collision->SetTag(back->GetObject(), ColliderTag::Platform);
+    Platform& back = m_platforms.back();
+    m_collision->AddStatic(back.GetObject());
+    m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
 }
 
 void TutorialStage::AddDecorPin(float x, float y, bool canDecorate)
@@ -73,7 +73,7 @@ void TutorialStage::BuildDrawList()
     m_drawList.push_back(item);
 
     for (size_t i = 0; i < m_platforms.size(); ++i) {
-        item.obj = m_platforms[i]->GetObject();
+        item.obj = m_platforms[i].GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
@@ -116,7 +116,7 @@ void TutorialStage::BuildDrawList()
         m_drawList.push_back(it);
     }
 
-  
+
 
     item.obj = &m_HP_UI1; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI2; item.layer = DrawLayer::UI; m_drawList.push_back(item);
@@ -164,7 +164,7 @@ void TutorialStage::Init()
         float w = TILE * 10.0f;
         AddPlatform("asset/Field/block.png", x + w * 0.5f, LOW_Y, w, H);
 
-        AddDecorPin(x + TILE * 10.0f+ 0.85f * TILE, -317.0f, true);
+        AddDecorPin(x + TILE * 10.0f + 0.85f * TILE, -317.0f, true);
 
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
@@ -252,7 +252,7 @@ void TutorialStage::Init()
 
         float gap = TILE * 2.0f;
 
-        AddPullPin(x + gap +150.0f, -100.0f, false);
+        AddPullPin(x + gap + 150.0f, -100.0f, false);
 
         x += gap;
 
@@ -272,7 +272,7 @@ void TutorialStage::Init()
 
         float w2 = TILE * 10.0f;
         AddPlatform("asset/Field/block.png", x + w2 * 0.5f, HIGH_Y, w2, H);
-        x += w2 + 2*TILE;
+        x += w2 + 2 * TILE;
     }
 
     //6
@@ -282,10 +282,10 @@ void TutorialStage::Init()
         x += w1;
 
         BlockPin* m_targetPin;
-        m_targetPin = AddPullPin(x-150.0, -200.0f, true);
+        m_targetPin = AddPullPin(x - 150.0, -200.0f, true);
 
         // 足場化（地面として衝突させたい）
-        m_collision->AddStatic(m_targetPin->GetObject());  
+        m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
         m_targetPin->SetLimitPos(x - 150.0, x - 300.0, -200.0, -200.0);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
@@ -303,7 +303,7 @@ void TutorialStage::Init()
         x += w1;
 
         {
-            
+
             m_targetPin2->Init("asset/Field/block.png", x + 700.0, -620.0f, 500, 35);
             m_targetPin2->SetCollisionManager(m_collision);
             m_targetPin2->SetcanRollPin(true);
@@ -313,7 +313,7 @@ void TutorialStage::Init()
             m_targetPin2->SetForceGround(true);
             m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
 
-            RemoteWindPin* m_hook =new RemoteWindPin;
+            RemoteWindPin* m_hook = new RemoteWindPin;
             m_hook->Init("asset/Field/Pin1.png", x - 100, 150, 35, 35);
             m_hook->SetCollisionManager(m_collision);
             m_hook->SetcanRollPin(false);
@@ -336,10 +336,10 @@ void TutorialStage::Init()
     //8
     {
         x += 500;
-        
+
         Pin* JumpPin = new Pin;
 
-        JumpPin->Init("asset/Field/Pin.png", x-250, -300, 35, 35);
+        JumpPin->Init("asset/Field/Pin.png", x - 250, -300, 35, 35);
         JumpPin->SetCollisionManager(m_collision);
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);
@@ -417,7 +417,7 @@ void TutorialStage::Init()
         x += w1;
     }
 
-   
+
 
     BuildDrawList();
 
@@ -547,7 +547,7 @@ void TutorialStage::Draw()
             return static_cast<int>(a.layer) < static_cast<int>(b.layer);
         }
     );
-    
+
     for (size_t i = 0; i < m_drawList.size(); ++i) {
         Object* obj = m_drawList[i].obj;
         if (!obj) continue;
@@ -575,7 +575,7 @@ void TutorialStage::Draw()
 void TutorialStage::UnInit()
 {
     // Platform
-    for (auto& plat : m_platforms) plat->UnInit();
+    for (auto& plat : m_platforms) plat.UnInit();
     m_platforms.clear();
 
     // Enemy

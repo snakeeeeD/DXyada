@@ -10,13 +10,13 @@ extern DirectX::XMFLOAT3 g_cameraPos;
 
 void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, float h)
 {
-    Platform* p=new Platform();
-    p->Init(tex, x, y, w, h);
+    Platform p= Platform();
+    p.Init(tex, x, y, w, h);
     m_platforms.push_back(p);
 
-    Platform* back = m_platforms.back();
-    m_collision->AddStatic(back->GetObject());
-    m_collision->SetTag(back->GetObject(), ColliderTag::Platform);
+    Platform back = m_platforms.back();
+    m_collision->AddStatic(back.GetObject());
+    m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
 }
 
 void TutorialStage2::AddDecorPin(float x, float y, bool canDecorate)
@@ -60,7 +60,7 @@ void TutorialStage2::BuildDrawList()
     m_drawList.push_back(item);
 
     for (size_t i = 0; i < m_platforms.size(); ++i) {
-        item.obj = m_platforms[i]->GetObject();
+        item.obj = m_platforms[i].GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
@@ -570,7 +570,7 @@ void TutorialStage2::Draw()
 void TutorialStage2::UnInit()
 {
     // Platform
-    for (auto& plat : m_platforms) plat->UnInit();
+    for (auto& plat : m_platforms) plat.UnInit();
     m_platforms.clear();
 
     // Enemy

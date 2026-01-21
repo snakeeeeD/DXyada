@@ -5,7 +5,7 @@
 
 extern Input input;
 // デフォルト Init
-void Enemy::Init() 
+void Enemy::Init()
 {
 
 }
@@ -35,7 +35,7 @@ void Enemy::Disable()
 }
 
 
-void Enemy::Update(float deltaTime) 
+void Enemy::Update(float deltaTime)
 {
     if (m_enemystate == EnemyState::YouDied)
         return;
@@ -80,8 +80,10 @@ void Enemy::Update(float deltaTime)
     m_object.Update(1 / 240.0f);
 }
 
-void Enemy::Draw() 
+void Enemy::Draw()
 {
+
+    OutputDebugStringA("Enemy Draw\n");
 
     m_object.Draw
     (
@@ -93,7 +95,7 @@ void Enemy::Draw()
     );
 }
 
-void Enemy::UnInit() 
+void Enemy::UnInit()
 {
     m_object.UnInit();
 }

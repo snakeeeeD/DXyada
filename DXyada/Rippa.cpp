@@ -14,9 +14,9 @@ void Rippa::Update(float deltaTime)
         m_walkspeed = 175.0f;
     }
 
-	auto pos = m_object.GetPos();
+    auto pos = m_object.GetPos();
 
-     if (m_useTurnRange)
+    if (m_useTurnRange)
     {
         if (pos.x < m_turnMinX)
             m_direction = 1;
@@ -24,24 +24,24 @@ void Rippa::Update(float deltaTime)
             m_direction = -1;
     }
 
-	// 1. 移動処理
-	pos.x += m_walkspeed * m_direction * deltaTime;
-	m_object.SetPos(pos.x, pos.y, pos.z);
+    // 1. 移動処理
+    pos.x += m_walkspeed * m_direction * deltaTime;
+    m_object.SetPos(pos.x, pos.y, pos.z);
 
     switch (m_type)
     {
-        case Type::Normal:
-            CheckCollision();
-            break;
+    case Type::Normal:
+        CheckCollision();
+        break;
 
-        case Type::Wandering:
-            CheckWandering(deltaTime);
-            break;
+    case Type::Wandering:
+        CheckWandering(deltaTime);
+        break;
     }
 
     m_object.SetFlipX(m_direction > 0);
 
-	m_object.Update(deltaTime);
+    m_object.Update(deltaTime);
 
     // 座標を即座に更新して、次のフレームの二重判定を防ぐ
     if (m_direction > 0)
@@ -101,16 +101,16 @@ void Rippa::CheckCollision()
     {
         m_direction *= -1;
 
-       
+
     }
 
-	// 移動反映
-	pos.x += m_walkspeed * m_direction * deltaTime;
+    // 移動反映
+    pos.x += m_walkspeed * m_direction * deltaTime;
 
-	// 座標セット
-	m_object.SetPos(pos.x, pos.y, pos.z);
+    // 座標セット
+    m_object.SetPos(pos.x, pos.y, pos.z);
 
-	m_object.Update(deltaTime);
+    m_object.Update(deltaTime);
 }
 
 void Rippa::CheckWandering(float deltaTime)

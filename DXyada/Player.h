@@ -24,7 +24,7 @@ enum Player_AnimState
 
 class CollisionManager;
 
-class Player 
+class Player
 {
 private:
 	Object m_player;
@@ -143,10 +143,10 @@ public:
 	void SetPos(float Pos_X, float Pos_Y);
 	void Update(
 		float deltaTime,
-		std::vector<Platform*>& platforms,
+		const std::vector<Platform>& platforms,
 		std::vector<Enemy*>& enemies,
 		std::vector<Pin*>& pins
-	); 
+	);
 	void Draw();
 	void Uninit();
 

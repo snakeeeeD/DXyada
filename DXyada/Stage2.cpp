@@ -19,11 +19,10 @@ void Stage2::Init()
 
 
     // 足場
-    Platform* p1 = new Platform(); p1->Init("asset/Field/block.png", 0, -200, 100, 50);
-    Platform* p2 = new Platform(); p2->Init("asset/Field/block.png", 150, -150, 100, 50);
-    Platform* p3 = new Platform(); p3->Init("asset/Field/block.png", 1000, -150, 1800, 50);
-    Platform* p4 = new Platform(); p4->Init("asset/Field/block.png", 1000, 350, 1800, 50);
-
+    Platform p1; p1.Init("asset/Field/block.png", 0, -200, 100, 50);
+    Platform p2; p2.Init("asset/Field/block.png", 150, -150, 100, 50);
+    Platform p3; p3.Init("asset/Field/block.png", 1000, -150, 1800, 50);
+    Platform p4; p4.Init("asset/Field/block.png", 1000, 350, 1800, 50);
     //m_platforms = { p1, p2, p3, p4 };
     m_platforms.push_back(p1);
     m_platforms.push_back(p2);
@@ -31,8 +30,8 @@ void Stage2::Init()
     m_platforms.push_back(p4);
 
     for (auto& plat : m_platforms) {
-        m_collision->AddStatic(plat->GetObject());
-        m_collision->SetTag(plat->GetObject(), ColliderTag::Platform);
+        m_collision->AddStatic(plat.GetObject());
+        m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
     }
 
     // 敵
@@ -72,7 +71,7 @@ void Stage2::Init()
 
     // 足場（ステージオブジェクト）
     for (size_t i = 0; i < m_platforms.size(); ++i) {
-        item.obj = m_platforms[i]->GetObject();
+        item.obj = m_platforms[i].GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
@@ -215,7 +214,7 @@ void Stage2::Draw()
 
 void Stage2::UnInit()
 {
-    for (auto& plat : m_platforms) plat->UnInit();
+    for (auto& plat : m_platforms) plat.UnInit();
     for (auto& enemy : m_enemies) enemy->UnInit();
 
     m_background.UnInit();
