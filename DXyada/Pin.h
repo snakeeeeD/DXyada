@@ -26,6 +26,7 @@ protected:
 private:
 	bool m_enablePlatformRegisterOnDecorated = true;
 	bool m_canBeGround = true;
+	bool m_canBeHookedByRibbon = true;
 public:
 	Pin() = default;
 	~Pin() = default;
@@ -53,6 +54,7 @@ public:
 	//è¸ÇÍÇÈÇ©ÇÃîªï óp
 	bool GetcanDecorate() const { return m_canDecorate; }
 	void SetcanDecorate(bool canDeco) { m_canDecorate = canDeco; }
+	bool CanBeHookedByRibbon() const { return m_canBeHookedByRibbon; }
 
 	void SetCollisionManager(CollisionManager* pCol) { m_pCollision = pCol; }
 	

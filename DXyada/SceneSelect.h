@@ -9,6 +9,7 @@ private:
     Object m_select;
     Object m_stage1;
     Object m_stage2;
+    Object m_stage3;
     Object m_cursor;
     Camera m_camera;
 
@@ -22,11 +23,13 @@ private:
 
     bool Big = false;
     bool Small = false;
+
+    int MAX_STAGE = 3;
+
 public:
     void Init() override;
     void Update(SceneManager& mgr) override;
     void Draw() override;
     void UnInit() override;
-
 
 };

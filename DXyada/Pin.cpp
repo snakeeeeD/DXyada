@@ -111,6 +111,7 @@ void Pin::SetState(State state)
             m_pCollision->SetTag(&m_object, ColliderTag::Platform);
             m_pCollision->AddStatic(&m_object);
             m_isPlatformRegistered = true;
+            m_canBeHookedByRibbon = false;
 
             auto currentSize = m_object.GetSize();
             m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);

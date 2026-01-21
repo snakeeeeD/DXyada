@@ -202,6 +202,11 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                 if (tipX >= left && tipX <= right &&
                     tipY >= bottom && tipY <= top)
                 {
+                    if (!pin->CanBeHookedByRibbon())
+                    {
+                        m_state = State::Returning;
+                        return;
+                    }
                     m_hasHit = true;
                     m_hitPin = pin;
                     m_hitPos = { tipX, tipY };
