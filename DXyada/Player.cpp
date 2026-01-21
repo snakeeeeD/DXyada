@@ -172,7 +172,7 @@ void Player::SetPos(float Pos_X, float Pos_Y) {
 
 void Player::Update(
     float deltaTime,
-    const std::vector<Platform>& platforms,
+    std::vector<Platform*>& platforms,
     std::vector<Enemy*>& enemies,
     std::vector<Pin*>& pins
 )
@@ -346,8 +346,8 @@ void Player::Update(
         // Platform上の着地判定
         for (auto& plat : platforms)
         {
-            auto pPos = plat.GetObject()->GetPos();
-            auto pSize = plat.GetObject()->GetSize();
+            auto pPos = plat->GetObject()->GetPos();
+            auto pSize = plat->GetObject()->GetSize();
 
             float platTop = pPos.y + pSize.y * 0.5f;
             float platLeft = pPos.x - pSize.x * 0.5f;

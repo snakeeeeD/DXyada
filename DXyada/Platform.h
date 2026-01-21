@@ -15,7 +15,7 @@ public:
     Object* GetObject() { return &m_object; }
     const Object* GetObject() const { return &m_object; }
 
-    void Update();
+    void Update(float deltaTime);
     void Draw();
     void UnInit();
 };

@@ -17,8 +17,14 @@ public:
     virtual ~BlockPin();
 
     void Init(const char* texture, float x, float y, float width, float height);
-    void Update(float dt);
+    void Update(float dt) override;
     void Draw();
+
+    void SetTargetBlock(Platform* block)
+    {
+        m_pBlock = block;
+        OutputDebugStringA("BlockPin: TargetBlock set\n");
+    }
 
     // Šª‚«æ‚èFƒsƒ“©g‚ª“®‚­
     virtual void OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float playerSpeed);
@@ -37,10 +43,12 @@ public:
 private:
     float m_moveSpeed;
 
-    float m_LimitRight=0;
-    float m_LimitLeft=0;
-    float m_LimitTop=0;
-    float m_LimitDown=0;
+    float m_LimitRight = 0;
+    float m_LimitLeft = 0;
+    float m_LimitTop = 0;
+    float m_LimitDown = 0;
+
+    Platform* m_pBlock = nullptr;
 
     Platform* m_attachedPlatform;
 

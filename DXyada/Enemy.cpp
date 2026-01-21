@@ -82,8 +82,6 @@ void Enemy::Update(float deltaTime)
 void Enemy::Draw() 
 {
 
-    OutputDebugStringA("Enemy Draw\n");
-
     m_object.Draw
     (
         g_pDeviceContext,

@@ -12,7 +12,7 @@ private:
     Object m_HP_UI2;
     Object m_HP_UI3;
 
-    std::vector<Platform> m_platforms;
+    std::vector<Platform*> m_platforms;
     std::vector<Enemy*> m_enemies;
     std::vector<Pin*> m_pins;
 

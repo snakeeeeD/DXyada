@@ -139,7 +139,7 @@ public:
 	void SetPos(float Pos_X, float Pos_Y);
 	void Update(
 		float deltaTime,
-		const std::vector<Platform>& platforms,
+		std::vector<Platform*>& platforms,
 		std::vector<Enemy*>& enemies,
 		std::vector<Pin*>& pins
 	); 

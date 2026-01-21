@@ -12,7 +12,7 @@ void Platform::Init(const char* texture, float x, float y, float width, float he
     m_object.SetSize(width, height, 0);
 }
 
-void Platform::Update() {
+void Platform::Update(float deltaTime) {
     m_object.Update(1/240.0f);
 }
 

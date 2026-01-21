@@ -1,5 +1,6 @@
 #include "BlockPin.h"
 #include <cmath>
+#include <vector>
 
 BlockPin::BlockPin()
     : m_moveSpeed(0.0f)
@@ -24,6 +25,31 @@ void BlockPin::Init(const char* texture, float x, float y, float width, float he
 void BlockPin::Update(float dt)
 {
     Pin::Update(dt);
+
+    DirectX::XMFLOAT3 currentPos = m_object.GetPos();
+
+    DirectX::XMFLOAT3 delta;
+    delta.x = currentPos.x - m_prevPos.x;
+    delta.y = currentPos.y - m_prevPos.y;
+    delta.z = currentPos.z - m_prevPos.z;
+
+    if (m_pBlock)
+    {
+        DirectX::XMFLOAT3 blockPos = m_pBlock->GetObject()->GetPos();
+        m_pBlock->GetObject()->SetPos(
+            blockPos.x + delta.x,
+            blockPos.y + delta.y,
+            blockPos.z + delta.z
+        );
+
+        m_prevPos = currentPos;
+    }
+
+
+    if (!m_pBlock)
+    {
+        return;
+    }
 }
 
 void BlockPin::Draw()

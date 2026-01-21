@@ -23,7 +23,7 @@ void DebugStage::Init()
 
 
     // 足場
-    Platform p1; p1.Init("asset/Field/block.png", 0, -600, 1800, 600);
+    Platform* p1 = new Platform(); p1->Init("asset/Field/block.png", 0, -600, 1800, 600);
 
     //敵
     {
@@ -35,8 +35,8 @@ void DebugStage::Init()
 
 
     for (auto& plat : m_platforms) {
-        m_collision->AddStatic(plat.GetObject());
-        m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
+        m_collision->AddStatic(plat->GetObject());
+        m_collision->SetTag(plat->GetObject(), ColliderTag::Platform);
     }
 
     for (auto& enemy : m_enemies) {
@@ -61,7 +61,9 @@ void DebugStage::Init()
     m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
 
     //足場一覧
-    m_platforms = { p1 };
+    //m_platforms = { p1 };
+
+    m_platforms.push_back(p1);
 
     ///////////////////////////////////////////////////////////びょうがじゅん～//////////////////////////////////////////////////////////
 
@@ -74,7 +76,7 @@ void DebugStage::Init()
 
     // 足場（ステージオブジェクト）
     for (size_t i = 0; i < m_platforms.size(); ++i) {
-        item.obj = m_platforms[i].GetObject();
+        item.obj = m_platforms[i]->GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
@@ -322,7 +324,7 @@ void DebugStage::Draw()
 
 void DebugStage::UnInit()
 {
-    for (auto& plat : m_platforms) plat.UnInit();
+    for (auto& plat : m_platforms) plat->UnInit();
     for (auto& enemy : m_enemies)
     {
         enemy->UnInit();

@@ -34,17 +34,17 @@ void Stage1::Init()
 
 
 
-    Platform plat1; plat1.Init("asset/Field/block.png", 0, -400, 100, 50);     //手前床
-    Platform plat2; plat2.Init("asset/Field/block.png", -200, -200, 1000, 50);   //主人公が乗っている床
-    Platform plat3; plat3.Init("asset/Field/block.png", 1000, -150, 1500, 50); //ナガ床
+    Platform* plat1 = new Platform(); plat1->Init("asset/Field/block.png", 0, -400, 100, 50);     //手前床
+    Platform* plat2 = new Platform(); plat2->Init("asset/Field/block.png", -200, -200, 1000, 50);   //主人公が乗っている床
+    Platform* plat3 = new Platform(); plat3->Init("asset/Field/block.png", 1000, -150, 1500, 50); //ナガ床
 
-    Platform plat4; plat4.Init("asset/Field/block.png", 400, -100, 100, 50); //左壁
-    Platform plat5; plat5.Init("asset/Field/block.png", 1000, -100, 100, 50);  //右壁
+    Platform* plat4 = new Platform(); plat4->Init("asset/Field/block.png", 400, -100, 100, 50); //左壁
+    Platform* plat5 = new Platform(); plat5->Init("asset/Field/block.png", 1000, -100, 100, 50);  //右壁
 
-    Platform plat6; plat6.Init("asset/Field/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
+    Platform* plat6 = new Platform(); plat6->Init("asset/Field/block.png", 1000, 100, 500, 50);  //リッパー崖判定の床
 
-    Platform plat7; plat7.Init("asset/Field/block.png", 1000, -800, 1500, 50);  //下ナガ床
-    Platform plat8; plat8.Init("asset/Field/block.png", -1000, 200, 100, 50);  //羽リッパーの壁反転用
+    Platform* plat7 = new Platform(); plat7->Init("asset/Field/block.png", 1000, -800, 1500, 50);  //下ナガ床
+    Platform* plat8 = new Platform(); plat8->Init("asset/Field/block.png", -1000, 200, 100, 50);  //羽リッパーの壁反転用
 
     //エネミー1 (壁反転)
     {
@@ -142,10 +142,14 @@ void Stage1::Init()
         pin->SetcanRollPin(false);
         pin->SetcanDecorate(false);
     }
+
+    m_BlockPinPos.x = 900.0f;
+    m_BlockPinPos.y = -700.0f;
+
+    Platform* plat9 = new Platform();
+    plat9->Init("asset/Field/block.png", m_BlockPinPos.x + 50, m_BlockPinPos.y, 50, 50);
     //ピン付きブロック (地面付近のやつ)
     {
-        m_BlockPinPos.x = 900.0f;
-        m_BlockPinPos.y = -700.0f;
 
         BlockPin* blockpin = new BlockPin();
         blockpin->Init("asset/Field/Pin.png", m_BlockPinPos.x, m_BlockPinPos.y, 35, 35); //画像でき次第パス名を変更
@@ -154,9 +158,13 @@ void Stage1::Init()
         blockpin->SetcanRollPin(true);
 
         // BlockPinのコリジョンを登録
-        //m_collision->AddStatic(blockpin->GetObject());
         m_collision->SetTag(blockpin->GetObject(), ColliderTag::Pin);
+
+        m_platforms.push_back(plat9);
+
+        blockpin->SetTargetBlock(plat9);
     }
+    
 
     {
         m_BlockPinPos.x = 0.0f;
@@ -173,15 +181,26 @@ void Stage1::Init()
         m_collision->SetTag(blockpin2->GetObject(), ColliderTag::Pin);
     }
 
-    m_platforms = {
+    /*m_platforms = {
         plat1, plat2, plat3, plat4,
-        plat5, plat6, plat7, plat8
-    };
+        plat5, plat6, plat7, plat8,
+        plat9
+    };*/
+
+    m_platforms.push_back(plat1);
+    m_platforms.push_back(plat2);
+    m_platforms.push_back(plat3);
+    m_platforms.push_back(plat4);
+    m_platforms.push_back(plat5);
+    m_platforms.push_back(plat6);
+    m_platforms.push_back(plat7);
+    m_platforms.push_back(plat8);
+    
 
     for (auto& plat : m_platforms)
     {
-        m_collision->AddStatic(plat.GetObject());
-        m_collision->SetTag(plat.GetObject(), ColliderTag::Platform);
+        m_collision->AddStatic(plat->GetObject());
+        m_collision->SetTag(plat->GetObject(), ColliderTag::Platform);
     }
 
     for (auto& enemy : m_enemies)
@@ -223,7 +242,7 @@ void Stage1::Init()
 
     for (size_t i = 0; i < m_platforms.size(); ++i)
     {
-        item.obj = m_platforms[i].GetObject();
+        item.obj = m_platforms[i]->GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
@@ -356,7 +375,6 @@ void Stage1::Update()
         BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
         if (blockPin)
         {
-
             m_collision->GetAABB(blockPin->GetObject());
         }
     }
@@ -398,6 +416,11 @@ void Stage1::Update()
         m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
         m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
         break;
+    }
+
+    for (auto* p : m_platforms)
+    {
+        p->Update(dt);
     }
 
     // コリジョン更新
@@ -452,7 +475,7 @@ void Stage1::Draw()
 }
 
 void Stage1::UnInit() {
-    for (auto& plat : m_platforms) plat.UnInit();
+    for (auto& plat : m_platforms) plat->UnInit();
     for (auto& enemy : m_enemies) enemy->UnInit();
     for (auto& pin : m_pins) pin->UnInit();
 
