@@ -119,6 +119,9 @@ private:
 	// CollisionManager用
 	CollisionManager* m_collisionMgr = nullptr;
 
+	//左スティックトリガー用
+	bool m_prevLeftStickUp = false;
+
 	// 右スティック回転検出用
 	float m_prevStickAngle = 0.0f;
 	float m_totalRotation = 0.0f;
