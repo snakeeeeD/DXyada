@@ -118,7 +118,7 @@ void Player::Init() {
     m_guideline.SetSize(m_baseGuidelineLength, 20, 0);
 
     m_Circle.Init();
-    m_Circle.AddTexture("asset/Player/circle.png");
+    m_Circle.AddTexture("asset/Player/Circle2.png");
     m_Circle.SetSize(100, 100, 0);
 
     m_ribbon.Init();
@@ -441,12 +441,12 @@ void Player::Update(
         m_moveLeft =
             input.GetKeyPress(VK_A) ||
             input.GetButtonPress(XINPUT_LEFT) ||
-            (leftStick.x < -moveThresholdR);
+            (leftStick.x < -moveThresholdL);
 
         m_moveRight =
             input.GetKeyPress(VK_D) ||
             input.GetButtonPress(XINPUT_RIGHT) ||
-            (leftStick.x > moveThresholdR);
+            (leftStick.x > moveThresholdL);
     }
 
     if (m_isPinJumping)
@@ -731,9 +731,6 @@ void Player::Update(
             float dy = pinPos.y - pos.y;
             float currentDist = sqrt(dx * dx + dy * dy);
 
-            PinKind = 1;
-
-
             // BlockPinかどうか（距離で完了判定したい時に使う）
 
 
@@ -753,8 +750,6 @@ void Player::Update(
                     {
                         m_isPulling = false;
                         m_isRolling = true;
-
-
 
                         float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
                         pullProgress = fmin(pullProgress, 1.0f);
@@ -808,6 +803,8 @@ void Player::Update(
                             m_isCanMove = false;
                             m_gravity = 0.0f;
 
+                            m_circleKind == 2;
+
                             if (currentDist > 50.0f)
                             {
                                 float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
@@ -845,7 +842,7 @@ void Player::Update(
                 //========================================
                 if (hitPin->GetcanDecorate())
                 {
-                    PinKind = 1;
+                    m_circleKind = 3;
 
                     if (isLTPressed)
                     {
@@ -872,6 +869,8 @@ void Player::Update(
             }
             else
             {
+                m_circleKind = 4;
+
                 //========================================
                 // RTを離した瞬間のPinジャンプ（既存仕様そのまま）
                 //========================================
@@ -1063,6 +1062,8 @@ void Player::Update(
             // 方向一致度（内積）
             float dot = (dirX * toX + dirY * toY) / dist;
 
+            m_circleKind = 0;
+
             // ±20度以内か
             if (dot > angleThreshold)
             {
@@ -1140,6 +1141,36 @@ void Player::Update(
 
             // 方向一致度（内積）
             float dot = (dirX * toX + dirY * toY) / dist;
+
+
+            switch(pin->GetPinKind())
+            {
+            case PinKind::Roll:
+                m_circleKind = 1;
+                break;
+
+            case PinKind::Pulled:
+                m_circleKind = 2;
+                break;
+
+            case  PinKind::Deco:
+                m_circleKind = 3;
+                break;
+
+            case  PinKind::Jump:
+                m_circleKind = 4;
+                break;
+
+            case  PinKind::RemoteDeco:
+                m_circleKind = 5;
+                break;
+
+            default:
+                m_circleKind = 0;
+                break;
+            }
+         
+         
 
             // ±20度以内か
             if (dot > angleThreshold)
@@ -1231,35 +1262,36 @@ void Player::Update(
             // ターゲット円表示
             m_Circle.SetPos(m_targetPosition.x, m_targetPosition.y, 0);
 
-            ////巻取り用
-            if (PinKind == 1)
+            //円の色の種類分け
+            switch (m_circleKind)
             {
+                //巻取り用
+            case 1:
                 m_Circle.SetColor(1.0f, 0.75f, 0.8f, 1.0f);
-            }
-            ////巻き取られ用
-            //else if (!remotewindPin && blockPin)
-            //{
-            //    m_Circle.SetColor(1.0f, 0.65f, 0.0f, 1.0f);
-            //}
-            //飾れるピン用
-            //if (hitPin->GetPinKind() == PinKind::Deco)
-            //{
-            //    m_Circle.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
-            //}
-            ////
-            //else if ((!blockPin && !remotewindPin) && !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
-            //{
-            //    m_Circle.SetColor(1.0f, 0.65f, 0.0f, 1.0f);
-            //}
-            //else if (remotewindPin)
-            //{
-            //    m_Circle.SetColor(0.0f, 1.0f, 1.0f, 1.0f);
-            //}
-            else
-            {
-                m_Circle.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-            }
+                break;
 
+                //巻き取られ用
+            case 2:
+                m_Circle.SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+                break;
+            
+            //飾れるピン用
+            case 3:
+                m_Circle.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
+                break;
+           
+            case 4:
+                m_Circle.SetColor(1.0f, 0.65f, 0.0f, 1.0f);
+                break;
+
+            case 5:
+                m_Circle.SetColor(0.0f, 1.0f, 1.0f, 1.0f);
+                break;
+
+            default:
+                m_Circle.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+                break;
+            }
         }
         else
         {

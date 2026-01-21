@@ -146,3 +146,46 @@ void Rippa::SetTurnRange(float min, float max)
     m_turnMaxX = max;
     m_useTurnRange = true;
 }
+
+void Rippa::CheckEnemyCollision(const std::vector<Enemy*>& enemies)
+{
+    if (m_type != Type::Normal)
+        return;
+
+    auto myPos = m_object.GetPos();
+    auto mySize = m_object.GetSize();
+
+    for (auto* enemy : enemies)
+    {
+        if (!enemy || enemy == this)  //自分自身はスキップ
+            continue;
+
+        auto enemyPos = enemy->GetObject()->GetPos();
+        auto enemySize = enemy->GetObject()->GetSize();
+
+        //AABBで衝突判定
+        float myLeft = myPos.x - mySize.x * 0.5f;
+        float myRight = myPos.x + mySize.x * 0.5f;
+        float myTop = myPos.y + mySize.y * 0.5f;
+        float myBottom = myPos.y - mySize.y * 0.5f;
+
+        float enemyLeft = enemyPos.x - enemySize.x * 0.5f;
+        float enemyRight = enemyPos.x + enemySize.x * 0.5f;
+        float enemyTop = enemyPos.y + enemySize.y * 0.5f;
+        float enemyBottom = enemyPos.y - enemySize.y * 0.5f;
+
+        //衝突チェック
+        if (myRight > enemyLeft && myLeft < enemyRight &&
+            myTop > enemyBottom && myBottom < enemyTop)
+        {
+            //衝突したら反転
+            m_direction *= -1;
+
+            float pushDistance = 5.0f;
+            myPos.x += m_direction * pushDistance;
+            m_object.SetPos(myPos.x, myPos.y, myPos.z);
+
+            break;  //衝突したら終了
+        }
+    }
+}
