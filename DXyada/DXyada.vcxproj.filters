@@ -105,6 +105,9 @@
     <ClCompile Include="Tutorial.cpp">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\20-Tutorial</Filter>
     </ClCompile>
+    <ClCompile Include="OldStage1.cpp">
+      <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="Tutorial.h">
       <Filter>ソースファイル\02-Object管理\05-Gimmick\20-Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="OldStage1.h">
+      <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

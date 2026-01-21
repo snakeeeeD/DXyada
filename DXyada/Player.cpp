@@ -300,6 +300,8 @@ void Player::Update(
     bool foundEnemy = false;
     bool foundPin = false;
 
+ 
+
     if (stickAiming)
     {
         m_aimDirection = rightStick;
@@ -729,6 +731,8 @@ else if (hitPin)
     float dy = pinPos.y - pos.y;
     float currentDist = sqrt(dx * dx + dy * dy);
 
+    PinKind = 1;
+
 
     // BlockPinかどうか（距離で完了判定したい時に使う）
 
@@ -749,6 +753,8 @@ else if (hitPin)
             {
                 m_isPulling = false;
                 m_isRolling = true;
+
+                
 
                 float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
                 pullProgress = fmin(pullProgress, 1.0f);
@@ -839,6 +845,8 @@ else if (hitPin)
         //========================================
         if (hitPin->GetcanDecorate())
         {
+            PinKind = 1;
+
             if (isLTPressed)
             {
                 m_holdLTTimer += deltaTime;
@@ -1222,7 +1230,36 @@ else if (hitPin)
 
             // ターゲット円表示
             m_Circle.SetPos(m_targetPosition.x, m_targetPosition.y, 0);
-            m_Circle.SetColor(1, 1, 1, 1);
+
+            ////巻取り用
+            if (PinKind == 1)
+            {
+                m_Circle.SetColor(1.0f, 0.75f, 0.8f, 1.0f);
+            }
+            ////巻き取られ用
+            //else if (!remotewindPin && blockPin)
+            //{
+            //    m_Circle.SetColor(1.0f, 0.65f, 0.0f, 1.0f);
+            //}
+            //飾れるピン用
+            //if (hitPin->GetPinKind() == PinKind::Deco)
+            //{
+            //    m_Circle.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
+            //}
+            ////
+            //else if ((!blockPin && !remotewindPin) && !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
+            //{
+            //    m_Circle.SetColor(1.0f, 0.65f, 0.0f, 1.0f);
+            //}
+            //else if (remotewindPin)
+            //{
+            //    m_Circle.SetColor(0.0f, 1.0f, 1.0f, 1.0f);
+            //}
+            else
+            {
+                m_Circle.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+         
         }
         else
         {

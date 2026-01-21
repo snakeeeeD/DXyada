@@ -29,12 +29,20 @@ private:
     //-1: ç∂
     // 1: âE
 
+    float m_turnMinX = 0.0f;
+    float m_turnMaxX = 0.0f;
+    bool  m_useTurnRange = false;
+
 public:
     Rippa(Type type = Type::Normal);
     //~Rippa() override;
 
     void SetType(Type type) { m_type = type; }
     void SetTurnInterval(float interval) { m_turnInterval = interval; }
+
+    void SetTurnPos(float min, float max);
+
+    void SetTurnRange(float min, float max);
 
     void Update(float deltaTime) override;
 

@@ -25,6 +25,8 @@ void TutorialStage::AddDecorPin(float x, float y, bool canDecorate)
     pin->SetcanRollPin(true);
     pin->SetcanDecorate(canDecorate);
 
+    pin->SetPinKind(PinKind::Deco);
+
     m_pins.push_back(pin);
 }
 

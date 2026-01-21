@@ -203,6 +203,21 @@ bool CollisionManager::CheckHitStatic(const AABB& box)
     return false; //何にも当たらなければ false
 }
 
+bool CollisionManager::CheckHitMoved(const AABB& box)
+{
+    //登録されている全ての動くオブジェクトと判定
+    for (auto* stObj : m_moved)
+    {
+        AABB b = GetAABB(stObj);
+
+        if (CheckOverlap(box, b))
+        {
+            return true;//どれか1つでも当たれば true
+        }
+    }
+    return false; //何にも当たらなければ false
+}
+
 void CollisionManager::Remove(Object* obj)
 {
     auto removeFrom = [&](std::vector<Object*>& list)

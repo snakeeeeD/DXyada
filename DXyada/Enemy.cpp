@@ -40,6 +40,7 @@ void Enemy::Update(float deltaTime)
     if (m_enemystate == EnemyState::YouDied)
         return;
 
+
     //LT‰Ÿ‚µ‚Ä‚é‚Æ‚«‚Í’x‚­
     if (m_isSlow)
     {

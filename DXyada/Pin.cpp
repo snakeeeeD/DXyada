@@ -120,3 +120,11 @@ void Pin::SetState(State state)
         }
     }
 }
+
+
+void Pin::SetPinKind(PinKind pinkind)
+{
+    if (m_kind == pinkind) return;
+
+    m_kind = pinkind;
+}

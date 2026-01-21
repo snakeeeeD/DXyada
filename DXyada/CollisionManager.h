@@ -130,6 +130,7 @@ public:
 
     //指定したAABB(矩形)がStaticオブジェクトと当たっているか調べる
     bool CheckHitStatic(const AABB& box);
+    bool CheckHitMoved(const AABB& box);
 
     void AddStaticAABB(const AABB& aabb) 
     {

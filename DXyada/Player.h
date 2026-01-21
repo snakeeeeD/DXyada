@@ -132,6 +132,7 @@ private:
 
 	//ÀŒ±—p
 	float t;
+	int PinKind = 0;
 public:
 	Tag tag = Tag::Player;
 

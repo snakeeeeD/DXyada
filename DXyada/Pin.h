@@ -2,6 +2,16 @@
 #include "Object.h"
 #include "CollisionManager.h"
 
+	enum class PinKind
+	{
+		Deco,
+		RemoteDeco,
+		Jump,
+		Pulled,
+		Roll,
+		Normal
+	};
+
 class Pin
 {
 public:
@@ -15,6 +25,7 @@ public:
 protected:
 	Object m_object;
 	State m_state = State::Normal;
+	PinKind m_kind = PinKind::Deco;
 	CollisionManager* m_pCollision = nullptr;
 
 	bool m_forceGround = false;
@@ -77,5 +88,8 @@ public:
 	{
 		m_forceGround = enable;
 	}
+
+	PinKind GetPinKind() const { return m_kind; }
+	void SetPinKind(PinKind pinkind);
 
 };

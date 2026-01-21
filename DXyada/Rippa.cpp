@@ -7,14 +7,22 @@ void Rippa::Update(float deltaTime)
     //LT押してるときは遅く
     if (m_isSlow)
     {
-        m_walkspeed = 30.0f;
+        m_walkspeed = 85.0f;
     }
     else
     {
-        m_walkspeed = 60.0f;
+        m_walkspeed = 175.0f;
     }
 
 	auto pos = m_object.GetPos();
+
+     if (m_useTurnRange)
+    {
+        if (pos.x < m_turnMinX)
+            m_direction = 1;
+        else if (pos.x > m_turnMaxX)
+            m_direction = -1;
+    }
 
 	// 1. 移動処理
 	pos.x += m_walkspeed * m_direction * deltaTime;
@@ -34,6 +42,16 @@ void Rippa::Update(float deltaTime)
     m_object.SetFlipX(m_direction > 0);
 
 	m_object.Update(deltaTime);
+
+    // 座標を即座に更新して、次のフレームの二重判定を防ぐ
+    if (m_direction > 0)
+    {
+        pos.x += 2.0f;
+    }
+    else
+    {
+        pos.x -= 2.0f;
+    }
 }
 
 void Rippa::CheckCollision()
@@ -83,15 +101,7 @@ void Rippa::CheckCollision()
     {
         m_direction *= -1;
 
-        // 座標を即座に更新して、次のフレームの二重判定を防ぐ
-		if (m_direction > 0)
-		{
-			pos.x += 2.0f;
-		}
-		else 
-		{ 
-		    pos.x -= 2.0f; 
-		}
+       
     }
 
 	// 移動反映
@@ -113,4 +123,26 @@ void Rippa::CheckWandering(float deltaTime)
         m_direction *= -1;
         m_turnTimer = 0.0f;
     }
+}
+
+void Rippa::SetTurnPos(float min, float max)
+{
+    auto pos = m_object.GetPos();
+
+    if (pos.x < min)
+    {
+        m_direction = 1;
+    }
+    if (pos.x > max)
+    {
+        m_direction = -1;
+    }
+
+}
+
+void Rippa::SetTurnRange(float min, float max)
+{
+    m_turnMinX = min;
+    m_turnMaxX = max;
+    m_useTurnRange = true;
 }

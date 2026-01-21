@@ -1,7 +1,13 @@
 #pragma once
 #include <vector>
 #include "Platform.h"
+
 #include "Enemy.h"
+#include "Rippa.h"
+#include "WingRippa.h"
+#include "Hariyama.h"
+#include "NeedleFloor.h"
+
 #include "Texture.h"
 #include "Player.h"
 #include "Camera2D.h"
