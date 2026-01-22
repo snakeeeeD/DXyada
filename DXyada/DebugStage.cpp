@@ -25,6 +25,7 @@ void DebugStage::Init()
     // ‘«ê
     Platform p1; p1.Init("asset/Field/block.png", 300, -600, 1800, 600);
 
+    m_platforms.push_back(p1);
     //“G
     {
         Rippa* rippa = new Rippa(Rippa::Type::Normal);
@@ -63,7 +64,6 @@ void DebugStage::Init()
     //‘«êˆê——
     //m_platforms = { p1 };
 
-    m_platforms.push_back(p1);
 
     ///////////////////////////////////////////////////////////‚Ñ‚å‚¤‚ª‚¶‚ã‚ñ`//////////////////////////////////////////////////////////
 
