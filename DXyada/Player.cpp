@@ -177,7 +177,6 @@ void Player::Update(
     std::vector<Pin*>& pins
 )
 {
-
     auto pos = m_player.GetPos();
     float prevY = pos.y;
 
@@ -272,11 +271,9 @@ void Player::Update(
     //        angle > DirectX::XM_PI * 30.0f / 180.0f &&   // 30°
     //        angle < DirectX::XM_PI * 150.0f / 180.0f;    // 150°
     //}
-
-
     //==========================================================
+  
     //左スティック立ち上がり判定
-
     bool leftStickUpTrigger = stickUpNow && !m_prevLeftStickUp;
 
     // 右スティック判定

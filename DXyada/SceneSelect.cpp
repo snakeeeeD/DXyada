@@ -35,13 +35,35 @@ void SceneSelect::Init() {
 
 void SceneSelect::Update(SceneManager& mgr)
 {
+
+    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
+    const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
+
+    if (leftStick.x > moveThreshold)
+    {
+        m_stickNow = 1;
+    }
+    else if (leftStick.x < -moveThreshold)
+    {
+        m_stickNow = 2;
+    }
+    else
+    {
+        m_stickNow = 0;
+    }
+
+    //左スティック判定
+    bool leftStickRTrigger = (m_stickNow ==1) && !m_prevLeftStick;
+    bool leftStickLTrigger = (m_stickNow ==2) && !m_prevLeftStick;
+
     m_stage1.SetSize(SizeMin, SizeMin, 0);
     m_stage2.SetSize(SizeMin, SizeMin, 0);
     int ButtonCount = 0;
 
     input.Update();
     if (input.GetKeyTrigger(VK_LEFT) ||
-        input.GetButtonTrigger(XINPUT_LEFT))
+        input.GetButtonTrigger(XINPUT_LEFT) ||
+        leftStickLTrigger)
     {
         switch (m_stage)
         {
@@ -66,7 +88,8 @@ void SceneSelect::Update(SceneManager& mgr)
     }
 
     if (input.GetKeyTrigger(VK_RIGHT) ||
-        input.GetButtonTrigger(XINPUT_RIGHT))
+        input.GetButtonTrigger(XINPUT_RIGHT) ||
+        leftStickRTrigger)
     {
         switch (m_stage)
         {
@@ -129,6 +152,8 @@ void SceneSelect::Update(SceneManager& mgr)
         mgr.SetSelectedStage(99);
         mgr.ChangeScene(SCENE_GAME);
     }
+
+    m_prevLeftStick = m_stickNow;
 }
 
 

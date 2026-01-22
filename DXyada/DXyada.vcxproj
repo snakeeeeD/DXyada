@@ -185,7 +185,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NeedleFloor.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="OldPlayer.cpp" />
     <ClCompile Include="OldStage1.cpp" />
     <ClCompile Include="Pin.cpp" />
     <ClCompile Include="Platform.cpp" />

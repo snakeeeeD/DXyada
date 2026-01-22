@@ -26,6 +26,11 @@ private:
 
     int MAX_STAGE = 3;
 
+    //左スティックトリガー用
+    bool m_prevLeftStick = false;
+
+    int m_stickNow = 0;
+
 public:
     void Init() override;
     void Update(SceneManager& mgr) override;

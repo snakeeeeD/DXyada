@@ -455,6 +455,14 @@ void TutorialStage::Update()
 
     m_camera.Update(m_player.GetObject()->GetPos());
 
+    m_cameraNowPos = m_player.GetObject()->GetPos();
+
+    if (m_cameraNowPos.y < -500) {
+        g_cameraPos = { g_cameraPos.x , -200, g_cameraPos.z };
+
+    }
+
+
     DirectX::XMFLOAT3 nowPos;
 
     nowPos = m_player.GetObject()->GetPos();
