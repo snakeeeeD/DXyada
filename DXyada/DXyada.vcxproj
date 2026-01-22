@@ -159,14 +159,17 @@
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="Stage1.h" />
-    <ClInclude Include="Stage2.h" />
+    <ClInclude Include="OldStage2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="StageBase.h" />
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tutorial.h" />
     <ClInclude Include="TutorialStage.h" />
-    <ClInclude Include="TutorialStage2.h" />
+    <ClInclude Include="Stage2.h" />
     <ClInclude Include="WingRippa.h" />
   </ItemGroup>
   <ItemGroup>
@@ -199,12 +202,15 @@
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="Stage1.cpp" />
-    <ClCompile Include="Stage2.cpp" />
+    <ClCompile Include="OldStage2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tutorial.cpp" />
     <ClCompile Include="TutorialStage.cpp" />
-    <ClCompile Include="TutorialStage2.cpp" />
+    <ClCompile Include="Stage2.cpp" />
     <ClCompile Include="WingRippa.cpp" />
   </ItemGroup>
   <ItemGroup>
