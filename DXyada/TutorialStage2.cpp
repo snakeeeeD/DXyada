@@ -10,7 +10,7 @@ extern DirectX::XMFLOAT3 g_cameraPos;
 
 void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, float h)
 {
-    Platform p= Platform();
+    Platform p = Platform();
     p.Init(tex, x, y, w, h);
     m_platforms.push_back(p);
 
@@ -104,7 +104,7 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(7000, 250, 0);
+    m_player.GetObject()->SetPos(11200, 250, 0);
 
     m_background.Init();
     m_background.AddTexture("asset/Field/aa.png");
@@ -215,7 +215,7 @@ void TutorialStage2::Init()
         JumpPin->SetcanDecorate(false);
 
         float w1 = TILE * 6.0f;
-        AddPlatform("asset/Field/block.png", x - 150 + w1 * 0.5f, HIGH_Y, w1, H);
+        AddPlatform("asset/Field/block.png", x - 0.5 + w1 * 0.5f, HIGH_Y, w1 * 1.5, H);
         x += w1;
     }
 
@@ -231,14 +231,14 @@ void TutorialStage2::Init()
             sectionW,
             H
         );
-        Rippa* rippa = new Rippa(Rippa::Type::Normal);
-        rippa->Init("asset/Field/rippa.png", x + w1 * 0.5f, HIGH_Y + 120, 150, 150);
+        Rippa* rippa = new Rippa(Rippa::Type::Wandering);
+        rippa->Init("asset/Field/rippa.png", x + w1 * 0.1f, HIGH_Y + 360, 140, 150);
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
 
         WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
-        wirippa->Init("asset/Field/rippa.png", x + w1, HIGH_Y + 550, 150, 150);
+        wirippa->Init("asset/Field/Wing_Rippa.png", x + w1 * 0.5, HIGH_Y + 550, 150, 150);
         wirippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(wirippa);
@@ -347,13 +347,20 @@ void TutorialStage2::Init()
             m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
         }
 
-        float w1 = TILE * 3.0f;
-        AddPlatform("asset/Field/block.png", x - 150 + w1 * 0.5f, -700, w1, H);
+        float w1 = TILE;
+        AddPlatform("asset/Field/block.png", x - 0.01 + w1 * 0.5f, -700, w1 + 450, H);
         x += w1;
     }
     //10
     {
+        //x += 500;
 
+
+
+
+        float w1 = TILE * 6.0f;
+        AddPlatform("asset/Field/block.png", x + w1 * 0.9f, -700, w1 * 1.9f, H);
+        x += w1;
     }
 
 
