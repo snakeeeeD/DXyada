@@ -11,11 +11,23 @@ enum class GameState
     GameOver
 };
 
+struct ResultCam
+{
+    bool active = false;
+    float t = 0.0f;          // åoâﬂ(ïb)
+    float duration = 8.0f;   // ââèoéûä‘(ïb)
+
+    DirectX::XMFLOAT3 start = { 0,0,0 };
+    DirectX::XMFLOAT3 goal = { 0,0,0 };
+};
+
 class SceneGame : public SceneBase {
 private:
     int m_stageNumber = 1;
     StageManager m_stageManager;
     GameState m_state = GameState::Playing;
+
+    ResultCam m_resultCam;
 
     Object Pouse_BackGround;
     Object GameOver_BackGround;
@@ -23,10 +35,18 @@ private:
     Object m_Buttonretry;
     Object m_Buttoncontinue;
     Object m_ButtonStageselect;
+    Object m_ResultUI;
+    Object m_Star1;
+    Object m_Star2;
+    Object m_Star3;
+
 
     int SizeMin = 190;
     int SizeMax = 210;
     int m_size = 190;
+
+    int Star = 0;
+    int m_prevStar = -1;
 
     int deltaTime = 0;
 
@@ -40,6 +60,8 @@ private:
 
     int m_stickNow = 0;
 
+    bool Result_Next = false;
+
 public:
     SceneGame(int stageNum = 1);
     virtual void Init() override;
@@ -50,4 +72,8 @@ public:
     void UpdateGameOver(SceneManager& mgr);
     virtual void Draw() override;
     virtual void UnInit() override;
+
+    DirectX::XMFLOAT3 GetResultStartCamPos(int stageNum) const;
+    DirectX::XMFLOAT3 GetResultGoalCamPos(int stageNum) const;
+    void BeginResult(SceneManager& mgr);
 };
