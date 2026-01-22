@@ -50,4 +50,6 @@ public:
 
     void CheckCollision(); //Normal—p
     void CheckWandering(float dt); // Wandering—p
+
+    void CheckEnemyCollision(const std::vector<Enemy*>& enemies);
 };

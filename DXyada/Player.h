@@ -132,7 +132,7 @@ private:
 
 	//ŽÀŒ±—p
 	float t;
-	int PinKind = 0;
+	int m_circleKind = 0;
 public:
 	Tag tag = Tag::Player;
 

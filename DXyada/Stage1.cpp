@@ -25,6 +25,8 @@ void Stage1::AddDecorPin(float x, float y, bool canDecorate)
     pin->SetcanRollPin(true);
     pin->SetcanDecorate(canDecorate);
 
+    pin->SetPinKind(PinKind::Deco); //ピンの種類のStateを"Deco(飾れる)"に
+
     m_pins.push_back(pin);
 }
 
@@ -36,6 +38,17 @@ BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
 
     pin->SetcanRollPin(canRollPin);
     pin->SetcanDecorate(false);
+
+    //巻取り(引き寄せ)の場合
+    if (canRollPin)
+    {
+        pin->SetPinKind(PinKind::Roll);
+    }
+    //巻き取られの場合
+    else if (!canRollPin)
+    {
+        pin->SetPinKind(PinKind::Pulled);
+    }
 
     m_pins.push_back(pin);
 
@@ -129,7 +142,7 @@ void Stage1::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(6000, 150, 0);
+    m_player.GetObject()->SetPos(0, 150, 0);
 
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
@@ -286,7 +299,7 @@ void Stage1::Init()
             (x - 500), -230, 200, 200,
             Tutorial::Type::Move,
             true,   //チュートリアル表示ON
-            false    //チェックポイントON
+            false    //チェックポイントOFF
         );
         tutorial1->InitTutorialImage(
             "asset/Ui/title.png",
@@ -299,86 +312,88 @@ void Stage1::Init()
         rippa->Init("asset/Field/rippa.png", x + w1 * 0.5f, LOW_Y + 350, 150, 150);
         rippa->SetCollisionManager(m_collision);
 
-        m_enemies.push_back(rippa);
-
-        //6
-        {
-            Rippa* rippa_2 = new Rippa(Rippa::Type::Wandering);
-            rippa_2->Init("asset/Field/rippa.png", x + w1 * 0.5f, LOW_Y + 350, 150, 150);
-            rippa_2->SetCollisionManager(m_collision);
-
-            rippa_2->SetTurnInterval(2.5f);
-
-            auto rippaPos = rippa_2->GetObject()->GetPos();
-
-            rippa->SetTurnRange(
-                x - 625.0,
-                rippaPos.x - 437.5
-            );
-
-            m_enemies.push_back(rippa_2);
-
-            x += w1;
-        }
+        m_enemies.push_back(rippa);   
+        x += w1;
     }
 
+
+    //6
+    {
+        float w1 = TILE * 5.0f;
+        Rippa* rippa_2 = new Rippa(Rippa::Type::Wandering);
+        rippa_2->Init("asset/Field/rippa.png", x , LOW_Y + 350, 150, 150);
+        rippa_2->SetCollisionManager(m_collision);
+
+        rippa_2->SetTurnInterval(2.5f);
+
+        m_enemies.push_back(rippa_2);
+
+       
+    }
     //7
     {
         float w1 = TILE * 1.0f;
         AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
-        // x += w1;
 
         AddDecorPin(x + w1 * 0.5 + 300, -317.0f, true);
 
-        x += 500;
-
-        float w2 = TILE * 8.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f, -900, w2, H);
-        x += w2;
+        x += w1 + 450;
     }
 
-    ////8
-    //{
-    //    x += 500;
+    //8
+    {
+        float w1 = TILE * 10.0f;
+        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
 
-    //    Pin* JumpPin = new Pin;
+        Rippa* rippa = new Rippa(Rippa::Type::Normal);
+        rippa->Init("asset/Field/rippa.png", x + w1 * 0.5f, LOW_Y + 350, 150, 150);
+        rippa->SetCollisionManager(m_collision);
 
-    //    JumpPin->Init("asset/Field/Pin.png", x - 250, -300, 35, 35);
-    //    JumpPin->SetCollisionManager(m_collision);
-    //    m_pins.push_back(JumpPin);
-    //    JumpPin->SetcanRollPin(false);
-    //    JumpPin->SetcanDecorate(false);
+        m_enemies.push_back(rippa);
 
-    //    float w1 = TILE * 6.0f;
-    //    AddPlatform("asset/Field/block.png", x - 150 + w1 * 0.5f, -900, w1, H);
-    //    x += w1;
-    //}
+        Rippa* rippa2 = new Rippa(Rippa::Type::Normal);
+        rippa2->Init("asset/Field/rippa.png", x + w1, LOW_Y + 350, 150, 150);
+        rippa2->SetCollisionManager(m_collision);
 
-    ////9
-    //{
-    //    x += 500;
+        m_enemies.push_back(rippa2);
 
-    //    Pin* JumpPin = new Pin;
+        x += w1;
+    }
 
-    //    JumpPin->Init("asset/Field/Pin.png", x - 500, -300, 35, 35);
-    //    JumpPin->SetCollisionManager(m_collision);
-    //    m_pins.push_back(JumpPin);
-    //    JumpPin->SetcanRollPin(false);
-    //    JumpPin->SetcanDecorate(false);
+    //9
+    {
+        float w1 = TILE * 6.0f;
 
-    //    BlockPin* m_targetPin;
-    //    m_targetPin = AddPullPin(x - 200, -600.0f, true);
+        Pin* JumpPin = new Pin;
 
-    //    m_collision->AddStatic(m_targetPin->GetObject());
-    //    m_targetPin->SetForceGround(true);
-    //    m_targetPin->SetLimitPos(x - 200, x - 300, -600.0f, -600.0f);
-    //    m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
-    //    m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
+        JumpPin->Init("asset/Field/Pin.png", x + w1 *0.5 - TILE * 0.5, LOW_Y +600, 35, 35);
+        JumpPin->SetCollisionManager(m_collision);
+        m_pins.push_back(JumpPin);
+        JumpPin->SetcanRollPin(false);
+        JumpPin->SetcanDecorate(false);
 
-    //    float w1 = TILE * 6.0f;
-    //    AddPlatform("asset/Field/block.png", x - 150 + w1 * 0.5f, -900, w1, H);
-    //    x += w1;
-    //}
+        //ピンの種類のStateを"Jump(飾れる)"に
+        JumpPin->SetPinKind(PinKind::Jump);
+
+        AddPlatform("asset/Field/block.png", x + w1, LOW_Y, w1, H);
+
+        Tutorial* tutorial1 = new Tutorial();
+        tutorial1->Init(
+            "asset/Field/Boad.png",
+            x - TILE * 2, -230, 200, 200,
+            Tutorial::Type::Move,
+            true,   //チュートリアル表示ON
+            true    //チェックポイントON
+        );
+        tutorial1->InitTutorialImage(
+            "asset/Ui/title.png",
+            1000, 750,   //表示サイズ
+            300, 450      //看板からのオフセット
+        );
+        tutorial1->SetRespawnPosition(x, -150, 0);
+        m_tutorials.push_back(tutorial1);
+        x += w1;
+    }
 
     ////10
     //{
@@ -453,6 +468,12 @@ void Stage1::Update()
     // 敵
     for (auto& enemy : m_enemies) {
         enemy->Update(dt);
+
+        //リッパー君の場合は敵同士の衝突をチェック
+        if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
+        {
+            rippa->CheckEnemyCollision(m_enemies);
+        }
 
         auto playerAABB = m_collision->GetAABB(m_player.GetObject());
         auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
