@@ -8,6 +8,8 @@ void NeedleFloor::Update(float deltaTime)
 
 void NeedleFloor::OnDecorated() 
 {
+    //OutputDebugStringA("aaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+
     // ‚·‚Å‚Éü‚ç‚ê‚Ä‚¢‚½‚ç‰½‚à‚µ‚È‚¢
     if (m_state == State::Decorated)
     {
