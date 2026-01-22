@@ -588,7 +588,6 @@ void Player::Update(
             // 必要時間に達したら撃破
             if (m_LT)
             {
-
                 hitEnemy->Disable(m_justDeco);
                 m_ribbon.Return();
                 m_isRibbonOut = false;
@@ -607,169 +606,6 @@ void Player::Update(
         }
 
         // Pinを掴んでいる場合の処理
-//        else if (hitPin)
-//        {
-//            auto pinPos = hitPin->GetObject()->GetPos();
-//            float dx = pinPos.x - pos.x;
-//            float dy = pinPos.y - pos.y;
-//            float currentDist = sqrt(dx * dx + dy * dy);
-//
-//            if (isRTPressed)
-//            {
-//                if (blockPin)
-//                {
-//
-//                    if (m_isPulling)
-//                    {
-//                        //引き寄せれるPinの場合
-//                        if (hitPin->GetcanRollPin())
-//                        {
-//                            m_isPulling = false;
-//                            m_isRolling = true;
-//                            float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-//                            pullProgress = fmin(pullProgress, 1.0f);
-//
-//                            m_pullSpeed = 500.0f * pullProgress;
-//
-//                            // BlockPinのOnWindUpを呼び出す
-//                            blockPin->OnWindUp({ pos.x, pos.y, pos.z }, deltaTime, m_pullSpeed);
-//
-//                            //BlockPinがプレイヤーに到達
-//                            if (currentDist < 80.0f)
-//                            {
-//                                // 完了処理
-//                                m_ribbon.Return();
-//                                m_isRibbonOut = false;
-//                                m_totalRotation = 0.0f;
-//                                m_isPulling = false;
-//                                m_isRolling = false;
-//                                m_isRotating = false;
-//                            }
-//
-//                        }
-//                        //プレイヤーが引き寄せられる
-//                        else
-//                        {
-//                            m_isPulling = true;
-//                            m_isRolling = false;
-//                            if (currentDist > 50.0f)
-//                            {
-//                                //m_gravity = 0.0f;
-//
-//                                float pullProgress = fabs(m_totalRotation) / (DirectX::XM_2PI * 2.0f);
-//                                pullProgress = fmin(pullProgress, 1.0f);
-//
-//                                m_pullSpeed = 800.0f * pullProgress;
-//
-//                                // プレイヤーがPinの方向へ移動
-//                                float dirX = dx / currentDist;
-//                                float dirY = dy / currentDist;
-//
-//                                pos.x += dirX * m_pullSpeed * deltaTime;
-//                                pos.y += dirY * m_pullSpeed * deltaTime;
-//                            }
-//                            // 2回転完了またはPinに到達
-//                            if (fabs(m_totalRotation) >= DirectX::XM_2PI * 2.0f || currentDist < 80.0f)
-//                            {
-//                                m_ribbon.Return();
-//                                m_isRibbonOut = false;
-//                                m_totalRotation = 0.0f;
-//                                m_isPulling = false;
-//                                m_isRolling = false;
-//                                m_isRotating = false;
-//                            }
-//                        }
-//
-//                    }
-//
-//                }
-//
-//                if (hitPin->GetcanDecorate())
-//                {
-//                    // LT長押しで敵を撃破
-//                    if (isLTPressed)
-//                    {
-//                        // タイマー加算
-//                        m_holdLTTimer += deltaTime;
-//
-//                        // 必要時間に達したら
-//                        if (m_holdLTTimer >= m_holdLTRequired)
-//                        {
-//                            m_ribbon.Return();
-//                            m_isRibbonOut = false;
-//                            m_totalRotation = 0.0f;
-//                            m_isPulling = false;
-//                            m_isRotating = false;
-//                            hitPin->SetState(Pin::State::Decorated);
-//
-//                            // リセット
-//                            m_holdLTTimer = 0.0f;
-//                        }
-//                    }
-//                    else
-//                    {
-//                        // LTを離したらタイマーリセット
-//                        m_holdLTTimer = 0.0f;
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                if (wasPinGrabbedLastFrame && !m_isOnGround &&!blockPin && !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
-//                {
-//                    auto pinPos = hitPin->GetObject()->GetPos();
-//
-//                    // プレイヤーからPinへの方向ベクトル
-//                    float dx = pinPos.x - pos.x;
-//                    float dy = pinPos.y - pos.y;
-//                    float dist = sqrt(dx * dx + dy * dy);
-//
-//                    if (dist > 0.0f)
-//                    {
-//                        // 正規化して、Pinの方向に大ジャンプ
-//                       // float jumpForce = 1000.0f;  // ジャンプ力
-//
-//                        float minJumpForce = 400.0f;   //下限
-//                        float maxJumpForce = 1200.0f;  //上限
-//                        float distanceScale = 3.0f;   //距離倍率
-//
-//                        float jumpForce = dist * distanceScale;
-//
-//                        if (jumpForce < minJumpForce)
-//                            jumpForce = minJumpForce;
-//                        else if (jumpForce > maxJumpForce)
-//                            jumpForce = maxJumpForce;
-//
-//                        float dirX = dx / dist;
-//                        float dirY = dy / dist;
-//
-//                        // Pinジャンプ開始
-//                        m_isPinJumping = true;
-//                        m_pinJumpVelocity.x = dirX * jumpForce;
-//
-//                        // Y方向の速度も設定
-//                        m_velY = -dirY * jumpForce * 2.5;
-//                        // 重力をリセット
-//                        m_gravity = 2000.0f;
-//                    }
-//                }
-//             
-//                m_ribbon.Return();
-//            }
-//            
-//            // 最大長を超えたら自動でリボンを外す
-//            if (currentDist > m_baseGuidelineLength)
-//            {
-//                m_ribbon.Return();
-//                m_isRibbonOut = false;
-//                m_totalRotation = 0.0f;
-//                m_isPulling = false;
-//                m_isRolling = false;
-//                m_isRotating = false;
-//            }
-//}
-
-// Pinを掴んでいる場合の処理
         else if (hitPin)
         {
             auto pinPos = hitPin->GetObject()->GetPos();
@@ -778,7 +614,6 @@ void Player::Update(
             float currentDist = sqrt(dx * dx + dy * dy);
 
             // BlockPinかどうか（距離で完了判定したい時に使う）
-
 
             if (isRTPressed)
             {
@@ -849,7 +684,6 @@ void Player::Update(
                             m_isCanMove = false;
                             m_gravity = 0.0f;
 
-                            m_circleKind == 2;
 
                             if (currentDist > 50.0f)
                             {
@@ -888,8 +722,7 @@ void Player::Update(
                 //========================================
                 if (hitPin->GetcanDecorate())
                 {
-                    m_circleKind = 3;
-
+             
                     if (isLTPressed)
                     {
                         m_holdLTTimer += deltaTime;
@@ -932,11 +765,11 @@ void Player::Update(
             }
             else
             {
-                m_circleKind = 4;
-
                 //========================================
                 // RTを離した瞬間のPinジャンプ（既存仕様そのまま）
                 //========================================
+
+             
                 if ((wasPinGrabbedLastFrame && (!m_isOnGround || leftStickUpTrigger) && !blockPin && !remotewindPin) &&
                     !hitPin->GetcanRollPin() && !hitPin->GetcanDecorate())
                 {
@@ -1011,6 +844,8 @@ void Player::Update(
             m_isPulling = false;
             m_isRolling = false;
             m_isRotating = false;
+            m_LT = false;
+            m_circleKind = 0;
             // 敵を掴んでいない時は凍結解除
             for (auto enemy : enemies)
             {
@@ -1110,6 +945,8 @@ void Player::Update(
         for (auto enemy : enemies)
         {
             if (!enemy) continue;
+            m_circleKind = 0;
+
 
             auto enemyPos = enemy->GetObject()->GetPos();
 
@@ -1125,7 +962,6 @@ void Player::Update(
             // 方向一致度（内積）
             float dot = (dirX * toX + dirY * toY) / dist;
 
-            m_circleKind = 0;
 
             // ±20度以内か
             if (dot > angleThreshold)
@@ -1189,8 +1025,12 @@ void Player::Update(
         //------------------------------------
         for (auto pin : pins)
         {
-            if (!pin) continue;
-            if ((pin->GetState() == Pin::State::Decorated)) continue;
+            if (!pin)
+            {
+                m_circleKind = 0;
+                continue;
+            }
+           if ((pin->GetState() == Pin::State::Decorated)) continue;
 
             auto pinPos = pin->GetObject()->GetPos();
 
@@ -1295,6 +1135,7 @@ void Player::Update(
                 }
             }
         }
+        
 
         //------------------------------------
         // 敵がいなければ地面まで伸ばす
@@ -1305,7 +1146,6 @@ void Player::Update(
         //------------------------------------
         // 見た目・ターゲット処理
         //------------------------------------
-        m_hasTarget = foundEnemy;
 
         if (foundEnemy || foundPin)
         {
@@ -1320,6 +1160,11 @@ void Player::Update(
                 angleRad = atan2(dirY, dirX);
             }
 
+            if (foundEnemy)
+            {
+                m_circleKind = 0;
+            }
+
             // ターゲットあり色
             m_guideline.SetColor(1, 0.5f, 0.5f, 0.8f);
 
@@ -1329,6 +1174,11 @@ void Player::Update(
             //円の色の種類分け
             switch (m_circleKind)
             {
+               
+            case 0:
+                m_Circle.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+                break;
+
                 //巻取り用
             case 1:
                 m_Circle.SetColor(1.0f, 0.75f, 0.8f, 1.0f);
@@ -1362,6 +1212,8 @@ void Player::Update(
             // 通常色
             m_guideline.SetColor(1, 1, 1, 0.5f);
             m_Circle.SetColor(1, 1, 1, 0);
+
+        
         }
 
         //------------------------------------

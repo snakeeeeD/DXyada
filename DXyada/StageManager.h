@@ -5,7 +5,6 @@
 #include "Stage1.h"
 #include "Stage2.h"
 #include "TutorialStage.h"
-#include "TutorialStage2.h"
 #include "DebugStage.h"
 
 class StageManager {
@@ -21,10 +20,10 @@ public:
             m_currentStage = std::make_unique<Stage1>();
             break;
         case 2:
-            m_currentStage = std::make_unique<TutorialStage>();
+            m_currentStage = std::make_unique<TutorialStage2>();
             break;
         case 3:
-            m_currentStage = std::make_unique<TutorialStage2>();
+            m_currentStage = std::make_unique<TutorialStage>();
             break;
         case 99:
             m_currentStage = std::make_unique<DebugStage>();

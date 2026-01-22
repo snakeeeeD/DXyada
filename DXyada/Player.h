@@ -76,8 +76,7 @@ private:
 	float m_ribbonAimLength = 0.0f;
 	Enemy* m_ribbonTargetEnemy = nullptr;
 
-	float m_baseGuidelineLength;		//元の指示線の長さ
-	bool m_hasTarget;					//ターゲットがあるか	
+	float m_baseGuidelineLength;		//元の指示線の長さ	
 	DirectX::XMFLOAT3 m_targetPosition;	//ターゲットの座標用
 	DirectX::XMFLOAT2 m_aimDirection;	//エイム方向を保存
 	float m_aimAssistAngle = 20.0f;     // エイムアシストの角度範囲（度）

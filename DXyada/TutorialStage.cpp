@@ -294,7 +294,7 @@ void TutorialStage::Init()
         m_targetPin = AddPullPin(x - 150.0, -200.0f, true);
 
         // 足場化（地面として衝突させたい）
-        m_collision->AddStatic(m_targetPin->GetObject());
+       // m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
         m_targetPin->SetLimitPos(x - 150.0, x - 300.0, -200.0, -200.0);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
@@ -324,7 +324,7 @@ void TutorialStage::Init()
             
 
             RemoteWindPin* m_hook = new RemoteWindPin;
-            m_hook->Init("asset/Field/Pin1.png", x - 100, 150, 35, 35);
+            m_hook->Init("asset/Field/Pin.png", x - 100, 150, 35, 35);
             m_hook->SetCollisionManager(m_collision);
             m_hook->SetcanRollPin(false);
             m_hook->SetTarget(m_targetPin2);
@@ -479,11 +479,10 @@ void TutorialStage::Update()
     if (p.y < m_fallDeadLineY)
     {
         DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
-        m_player.TakeDamage(999, dummyDir);
+        m_player.TakeDamage(1, dummyDir);
 
-        m_isPlayerDead = true;
+        Respawn();
     }
-
     // 敵（今回は基本空）
     for (auto& enemy : m_enemies) {
         enemy->Update(dt);
