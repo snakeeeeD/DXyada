@@ -14,7 +14,7 @@ void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, flo
     p.Init(tex, x, y, w, h);
     m_platforms.push_back(p);
 
-    Platform back = m_platforms.back();
+    Platform& back = m_platforms.back();
     m_collision->AddStatic(back.GetObject());
     m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
 }
@@ -104,7 +104,7 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 150, 0);
+    m_player.GetObject()->SetPos(7000, 250, 0);
 
     m_background.Init();
     m_background.AddTexture("asset/Field/aa.png");
@@ -230,29 +230,44 @@ void TutorialStage2::Init()
             sectionW,
             H
         );
-        // 羽リッパー反転用・左壁
-        Platform wallL;
-        wallL.Init(
-            "asset/Field/block.png",
+
+        // 左壁
+AddPlatform("asset/Field/block.png",
             x - 100.0f,
             HIGH_Y + 100.0f,
             -50.0f,
-            200.0f
-        );
-        m_collision->AddStatic(wallL.GetObject());
-        m_collision->SetTag(wallL.GetObject(), ColliderTag::Platform);
+            200.0f);
 
-        // 羽リッパー反転用・右壁
-        Platform wallR;
-        wallR.Init(
-            "asset/Field/block.png",
+// 右壁
+AddPlatform("asset/Field/block.png",
             x + sectionW + 50.0f,
             HIGH_Y + 100.0f,
             50.0f,
-            200.0f
-        );
-        m_collision->AddStatic(wallR.GetObject());
-        m_collision->SetTag(wallR.GetObject(), ColliderTag::Platform);
+            200.0f);
+
+        //// 羽リッパー反転用・左壁
+        //Platform wallL;
+        //wallL.Init(
+        //    "asset/Field/block.png",
+        //    x - 100.0f,
+        //    HIGH_Y + 100.0f,
+        //    50.0f,
+        //    200.0f
+        //);
+        //m_collision->AddStatic(wallL.GetObject());
+        //m_collision->SetTag(wallL.GetObject(), ColliderTag::Platform);
+
+        //// 羽リッパー反転用・右壁
+        //Platform wallR;
+        //wallR.Init(
+        //    "asset/Field/block.png",
+        //    x + sectionW + 50.0f,
+        //    HIGH_Y + 100.0f,
+        //    50.0f,
+        //    200.0f
+        //);
+        //m_collision->AddStatic(wallR.GetObject());
+        //m_collision->SetTag(wallR.GetObject(), ColliderTag::Platform);
 
 
         {
