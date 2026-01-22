@@ -375,65 +375,100 @@ void Player::Update(
 
     m_isOnGround = false;
 
-    // Platform上の着地判定
-    for (auto& plat : platforms)
+    //// Platform上の着地判定
+    //for (auto& plat : platforms)
+    //{
+    //    auto pPos = plat.GetObject()->GetPos();
+    //    auto pSize = plat.GetObject()->GetSize();
+
+    //    float platTop = pPos.y + pSize.y * 0.5f;
+    //    float platLeft = pPos.x - pSize.x * 0.5f;
+    //    float platRight = pPos.x + pSize.x * 0.5f;
+
+    //    float playerBottom = pos.y - m_height * 0.5f;
+    //    float playerLeft = pos.x - m_width * 0.5f;
+    //    float playerRight = pos.x + m_width * 0.5f;
+
+    //    if (playerRight > platLeft && playerLeft < platRight)
+    //    {
+    //        if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+    //        {
+    //            pos.y = platTop + m_height * 0.5f;
+    //            m_velY = 0.0f;
+    //            m_isOnGround = true;
+    //        }
+    //    }
+    //}
+
+    //// 飾ったピンを地面扱い
+    //for (auto* pin : pins)
+    //{
+    //    if (!pin) continue;
+
+    //    // ここで「地面になれるPin」だけ許可
+    //    if (!pin->CanBeGround())
+    //        continue;
+
+    //    // ★ Decorated限定をやめて、Pin側の判定に寄せる
+    //    if (!pin->IsGround())
+    //        continue;
+
+    //    auto pPos = pin->GetObject()->GetPos();
+    //    auto pSize = pin->GetObject()->GetSize();
+
+    //    float platTop = pPos.y + pSize.y * 0.5f;
+    //    float platLeft = pPos.x - pSize.x * 0.5f;
+    //    float platRight = pPos.x + pSize.x * 0.5f;
+
+    //    float playerBottom = pos.y - m_height * 0.5f;
+    //    float playerLeft = pos.x - m_width * 0.5f;
+    //    float playerRight = pos.x + m_width * 0.5f;
+
+    //    if (playerRight > platLeft && playerLeft < platRight)
+    //    {
+    //        if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+    //        {
+    //            pos.y = platTop + m_height * 0.5f;
+    //            m_velY = 0.0f;
+    //            m_isOnGround = true;
+    //        }
+    //    }
+    //}
+
+// 地面（Platformタグ）に対する着地判定
+    if (m_collisionMgr)
     {
-        auto pPos = plat.GetObject()->GetPos();
-        auto pSize = plat.GetObject()->GetSize();
+        const std::vector<Object*>& grounds =
+            m_collisionMgr->GetObjectsByTag(ColliderTag::Platform);
 
-        float platTop = pPos.y + pSize.y * 0.5f;
-        float platLeft = pPos.x - pSize.x * 0.5f;
-        float platRight = pPos.x + pSize.x * 0.5f;
-
-        float playerBottom = pos.y - m_height * 0.5f;
-        float playerLeft = pos.x - m_width * 0.5f;
-        float playerRight = pos.x + m_width * 0.5f;
-
-        if (playerRight > platLeft && playerLeft < platRight)
+        for (size_t i = 0; i < grounds.size(); ++i)
         {
-            if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+            Object* ground = grounds[i];
+            if (!ground) continue;
+
+            DirectX::XMFLOAT3 pPos = ground->GetPos();
+            DirectX::XMFLOAT3 pSize = ground->GetSize();
+
+            float platTop = pPos.y + pSize.y * 0.5f;
+            float platLeft = pPos.x - pSize.x * 0.5f;
+            float platRight = pPos.x + pSize.x * 0.5f;
+
+            float playerBottom = pos.y - m_height * 0.5f;
+            float playerLeft = pos.x - m_width * 0.5f;
+            float playerRight = pos.x + m_width * 0.5f;
+
+            if (playerRight > platLeft && playerLeft < platRight)
             {
-                pos.y = platTop + m_height * 0.5f;
-                m_velY = 0.0f;
-                m_isOnGround = true;
+                if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
+                {
+                    pos.y = platTop + m_height * 0.5f;
+                    m_velY = 0.0f;
+                    m_isOnGround = true;
+                }
             }
         }
     }
 
-    // 飾ったピンを地面扱い
-    for (auto* pin : pins)
-    {
-        if (!pin) continue;
-
-        // ここで「地面になれるPin」だけ許可
-        if (!pin->CanBeGround())
-            continue;
-
-        // ★ Decorated限定をやめて、Pin側の判定に寄せる
-        if (!pin->IsGround())
-            continue;
-
-        auto pPos = pin->GetObject()->GetPos();
-        auto pSize = pin->GetObject()->GetSize();
-
-        float platTop = pPos.y + pSize.y * 0.5f;
-        float platLeft = pPos.x - pSize.x * 0.5f;
-        float platRight = pPos.x + pSize.x * 0.5f;
-
-        float playerBottom = pos.y - m_height * 0.5f;
-        float playerLeft = pos.x - m_width * 0.5f;
-        float playerRight = pos.x + m_width * 0.5f;
-
-        if (playerRight > platLeft && playerLeft < platRight)
-        {
-            if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
-            {
-                pos.y = platTop + m_height * 0.5f;
-                m_velY = 0.0f;
-                m_isOnGround = true;
-            }
-        }
-    }
 
     if (m_isCanMove == true)
     {
