@@ -23,7 +23,7 @@ void DebugStage::Init()
 
 
     // ‘«ê
-    Platform p1; p1.Init("asset/Field/block.png", 0, -600, 1800, 600);
+    Platform p1; p1.Init("asset/Field/block.png", 300, -600, 1800, 600);
 
     //“G
     {
