@@ -34,7 +34,7 @@ BlockPin* TutorialStage::AddPullPin(float x, float y, bool canRollPin)
 {
     BlockPin* pin = new BlockPin();
     pin->Init("asset/Field/Pin.png", x, y, 35, 35);
-    pin->SetCollisionManager(m_collision);
+    pin->SetCollisionManager(nullptr);
 
     pin->SetcanRollPin(canRollPin);
     pin->SetcanDecorate(false);
@@ -287,7 +287,14 @@ void TutorialStage::Init()
     //6
     {
         float w1 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, HIGH_Y, w1, H);
+        AddPlatform(
+            "asset/Field/block.png", 
+            x + w1 * 0.5f,  //床の中心X座標
+            HIGH_Y,         //中心Y座標
+            w1,             //横幅
+            H               //タテサイズ
+        );
+
         x += w1;
 
         BlockPin* m_targetPin;
