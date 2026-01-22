@@ -69,9 +69,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>ソースファイル\02-Object管理\02-Player\00-Player</Filter>
     </ClCompile>
-    <ClCompile Include="OldPlayer.cpp">
-      <Filter>ソースファイル\02-Object管理\02-Player\999-OldPlayer</Filter>
-    </ClCompile>
     <ClCompile Include="NeedleFloor.cpp">
       <Filter>ソースファイル\02-Object管理\03-Enemy\03-NeedleFloor</Filter>
     </ClCompile>
@@ -108,6 +105,7 @@
     <ClCompile Include="OldStage1.cpp">
       <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialStage2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -221,6 +219,7 @@
     <ClInclude Include="OldStage1.h">
       <Filter>ソースファイル\20-Stage管理\01-Stage1</Filter>
     </ClInclude>
+    <ClInclude Include="TutorialStage2.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="リソースファイル">
@@ -333,9 +332,6 @@
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\02-Player\00-Player">
       <UniqueIdentifier>{6cc1e70e-4534-421b-97b7-76b0841327e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソースファイル\02-Object管理\02-Player\999-OldPlayer">
-      <UniqueIdentifier>{02226424-4e56-45d5-98ec-2768f6140eb8}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソースファイル\02-Object管理\04-Ribbon">
       <UniqueIdentifier>{fd131e57-3358-4d2d-9f9f-4f049795b7e6}</UniqueIdentifier>

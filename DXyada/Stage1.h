@@ -7,6 +7,8 @@ private:
     Object m_background;
     Player m_player;
     Camera m_camera;
+    DirectX::XMFLOAT3 m_cameraNowPos;
+
     CollisionManager* m_collision = nullptr;
 
     Object m_HP_UI1;
@@ -25,7 +27,8 @@ private:
     int maxHP = 0;
     int currentHP = 0;
 
-    float m_fallDeadLineY = -2000.0f;
+    //óéâ∫Ç∑ÇÈÇ‹Ç≈ÇÃçÇÇ≥
+    float m_fallDeadLineY = -800.0f;
 
     void AddPlatform(const char* tex, float x, float y, float w, float h);
     void AddDecorPin(float x, float y, bool canDecorate);

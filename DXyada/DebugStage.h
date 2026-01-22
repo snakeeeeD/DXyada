@@ -7,6 +7,8 @@ private:
     Object m_background;
     Player m_player;
     Camera m_camera;
+    DirectX::XMFLOAT3 m_cameraNowPos;
+
     CollisionManager* m_collision;
 
     Object m_HP_UI1;

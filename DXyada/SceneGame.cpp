@@ -119,6 +119,27 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
         }
 }
 void SceneGame::UpdatePouse(SceneManager& mgr) {
+
+    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
+    const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
+
+    if (leftStick.y > moveThreshold)
+    {
+        m_stickNow = 1;
+    }
+    else if (leftStick.y < -moveThreshold)
+    {
+        m_stickNow = 2;
+    }
+    else
+    {
+        m_stickNow = 0;
+    }
+
+    //左スティック判定
+    bool leftStickUpTrigger = (m_stickNow == 1) && !m_prevLeftStick;
+    bool leftStickDownTrigger = (m_stickNow == 2) && !m_prevLeftStick;
+
     Pouse_BackGround.SetSize(1920, 1080, 0);
     Pouse_BackGround.SetColor(1, 1, 1, 1);
     Pouse_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
@@ -138,13 +159,23 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
    
     m_cursor.SetSize(m_size, m_size, 0);
 
-    if (input.GetKeyTrigger(VK_UP) || input.GetButtonTrigger(XINPUT_UP)) {
+    if (input.GetButtonTrigger(XINPUT_START) || input.GetButtonTrigger(XINPUT_B))
+    {
+        m_state = GameState::Playing;
+    }
+
+    if (input.GetKeyTrigger(VK_UP) ||
+        input.GetButtonTrigger(XINPUT_UP) ||
+        leftStickUpTrigger
+        ) {
         if (m_cursorNum > 0)
         {
             m_cursorNum-=1;
         }
     }
-    if (input.GetKeyTrigger(VK_DOWN) || input.GetButtonTrigger(XINPUT_DOWN)) {
+    if (input.GetKeyTrigger(VK_DOWN) ||
+        input.GetButtonTrigger(XINPUT_DOWN) ||
+        leftStickDownTrigger) {
         if (m_cursorNum < 2)
         {
             m_cursorNum+=1;
@@ -209,6 +240,8 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         }
         deltaTime++;
     }
+
+    m_prevLeftStick = m_stickNow;
 
 }
 void SceneGame::UpdateResult(SceneManager& mgr) {

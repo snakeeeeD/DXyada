@@ -451,6 +451,13 @@ void Stage1::Update()
 
     m_camera.Update(m_player.GetObject()->GetPos());
 
+    m_cameraNowPos = m_player.GetObject()->GetPos();
+
+    if (m_cameraNowPos.y < -500) {
+        g_cameraPos = { g_cameraPos.x , -200, g_cameraPos.z };
+
+    }
+
     // プレイヤー更新
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
@@ -461,8 +468,6 @@ void Stage1::Update()
         m_player.TakeDamage(1, dummyDir);
 
         Respawn();
-
-        //m_isPlayerDead = true;
     }
 
     // 敵

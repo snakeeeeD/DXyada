@@ -35,6 +35,11 @@ private:
 
     int m_cursorNum = 0;
 
+    //左スティックトリガー用
+    bool m_prevLeftStick = false;
+
+    int m_stickNow = 0;
+
 public:
     SceneGame(int stageNum = 1);
     virtual void Init() override;
