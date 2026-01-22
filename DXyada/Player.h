@@ -91,6 +91,10 @@ private:
 	float m_holdLTRequired;        //Œ‚”j‚É•K—v‚È’·‰Ÿ‚µŠÔ
 	Enemy* m_targetEnemy;          //Œ‚”j‘ÎÛ‚Ì“G
 
+	bool m_LT = false;
+
+	bool m_justDeco = false;
+
 	//ŒŸo”ÍˆÍ‚Ìİ’è
 	float m_detectionRangeSquare = m_height * 3.5;  //lŠp‚Ì”ÍˆÍi”¼Œaj
 	float m_detectionRangeCircle = m_height * 3.5;  //‰~‚Ì”ÍˆÍi”¼Œaj

@@ -97,6 +97,8 @@ void Ribbon::Return()
     if (m_state == State::Throwing || m_state == State::Holding)
     {
         m_state = State::Returning;
+        m_lockEnemy = nullptr;
+        m_lockPin = nullptr;
     }
 }
 
@@ -110,10 +112,10 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
     DirectX::XMFLOAT2 targetPos{};
     bool hasTarget = false;
 
-    //====================================================
+    //----------------------------------
     // êLÇ—ÇÈ
-    //====================================================
-    if (m_state == State::Throwing)
+    //----------------------------------
+   /* if (m_state == State::Throwing)
     {
         if (!m_hasHit)
         {
@@ -148,6 +150,83 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
                             m_state = State::Returning;
                         }
                         break; //Ç±ÇÍà»è„êLÇŒÇ≥Ç»Ç¢
+                    }
+                }
+            }*/
+
+    if (m_state == State::Throwing)
+    {
+        if (!m_hasHit)
+        {
+            m_currentLength += m_speed * deltaTime;
+
+            // êÊí[ç¿ïW
+            float tipX = m_playerPos.x + m_direction.x * m_currentLength;
+            float tipY = m_playerPos.y + m_direction.y * m_currentLength;
+
+            if (m_lockEnemy)
+            {
+                auto enemyPos = m_lockEnemy->GetObject()->GetPos();
+
+                float dx = enemyPos.x - m_playerPos.x;
+                float dy = enemyPos.y - m_playerPos.y;
+
+                float dist = sqrt(dx * dx + dy * dy);
+
+                if (dist > 0.001f)
+                {
+                    float targetDirX = dx / dist;
+                    float targetDirY = dy / dist;
+
+                    const float homing = 0.4f;
+
+                    // èôÅXÇ…ï˚å¸Çï‚ê≥Ç∑ÇÈ
+                    m_direction.x += (targetDirX - m_direction.x) * homing;
+                    m_direction.y += (targetDirY - m_direction.y) * homing;
+
+                    // ê≥ãKâª
+                    float len = sqrt(
+                        m_direction.x * m_direction.x +
+                        m_direction.y * m_direction.y
+                    );
+
+                    if (len > 0.001f)
+                    {
+                        m_direction.x /= len;
+                        m_direction.y /= len;
+                    }
+                }
+            }
+            if (m_lockPin)
+            {
+                auto pinPos = m_lockPin->GetObject()->GetPos();
+
+                float dx = pinPos.x - m_playerPos.x;
+                float dy = pinPos.y - m_playerPos.y;
+
+                float dist = sqrt(dx * dx + dy * dy);
+
+                if (dist > 0.001f)
+                {
+                    float targetDirX = dx / dist;
+                    float targetDirY = dy / dist;
+
+                    const float homing = 0.4f;
+
+                    // èôÅXÇ…ï˚å¸Çï‚ê≥Ç∑ÇÈ
+                    m_direction.x += (targetDirX - m_direction.x) * homing;
+                    m_direction.y += (targetDirY - m_direction.y) * homing;
+
+                    // ê≥ãKâª
+                    float len = sqrt(
+                        m_direction.x * m_direction.x +
+                        m_direction.y * m_direction.y
+                    );
+
+                    if (len > 0.001f)
+                    {
+                        m_direction.x /= len;
+                        m_direction.y /= len;
                     }
                 }
             }
@@ -240,9 +319,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         }
 
     }
-    //====================================================
+    //----------------------------------
     // RTí∑âüÇµíÜ
-    //====================================================
+    //----------------------------------
     else if (m_state == State::Holding)
     {
         DirectX::XMFLOAT2 targetPos{};
@@ -294,9 +373,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
             m_state = State::Returning;
         }
     }
-    //====================================================
+    //----------------------------------
     // ñﬂÇÈ
-    //====================================================
+    //----------------------------------
     else if (m_state == State::Returning)
     {
         m_currentLength -= m_speed * deltaTime;
@@ -308,9 +387,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         }
     }
     CheckBodyHitWall();
-    //====================================================
+    //----------------------------------
     // ï`âÊçXêVÅiã§í Åj
-    //====================================================
+    //----------------------------------
     float px = m_playerPos.x;
     float py = m_playerPos.y;
 
@@ -340,6 +419,8 @@ void Ribbon::Reset()
     m_hasHit = false;
     m_hitEnemy = nullptr;
     m_hitPin = nullptr;
+    m_lockEnemy = nullptr;
+    m_lockPin = nullptr;
 
     for (auto& seg : m_segments)
     {
@@ -386,9 +467,9 @@ void Ribbon::UnInit()
 }
 
 
-//====================================================
+//==============================
 //è∞Ç…ìñÇΩÇÈÇ‹Ç≈ÇÃç≈ëÂìûíBãóó£ÇåvéZ
-//====================================================
+//==============================
 float Ribbon::CalcMaxReachByWall() const
 {
     if (!m_collisionMgr)

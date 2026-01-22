@@ -95,7 +95,7 @@ void Pin::SetPos(float Pos_X, float Pos_Y) {
 //    }
 //}
 
-void Pin::SetState(State state)
+void Pin::SetState(State state, bool justdeco)
 {
     if (m_state == state) return;
 
@@ -108,7 +108,6 @@ void Pin::SetState(State state)
     {
         if (m_pCollision)
         {
-
             m_pCollision->SetTag(&m_object, ColliderTag::Platform);
             m_pCollision->AddStatic(&m_object);
             m_isPlatformRegistered = true;
@@ -117,6 +116,15 @@ void Pin::SetState(State state)
             m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
 
             m_object.AddTexture("asset/Field/block.png");
+
+            if (justdeco)
+            {
+                m_object.AddTexture("asset/Field/Needle_Floor_Decoretad.png");
+            }
+            else
+            {
+                m_object.SetColor(1.0, 1.0, 1.0, 1.0); 
+            }
         }
     }
 }

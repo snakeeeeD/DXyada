@@ -222,6 +222,7 @@ void TutorialStage2::Init()
     //6
     {
         float sectionW = 600.0f;
+        float w1 = TILE * 10.0f;
 
         AddPlatform(
             "asset/Field/block.png",
@@ -230,65 +231,20 @@ void TutorialStage2::Init()
             sectionW,
             H
         );
+        Rippa* rippa = new Rippa(Rippa::Type::Normal);
+        rippa->Init("asset/Field/rippa.png", x + w1 * 0.5f, HIGH_Y + 120, 150, 150);
+        rippa->SetCollisionManager(m_collision);
 
-        // 左壁
-AddPlatform("asset/Field/block.png",
-            x - 100.0f,
-            HIGH_Y + 100.0f,
-            -50.0f,
-            200.0f);
+        m_enemies.push_back(rippa);
 
-// 右壁
-AddPlatform("asset/Field/block.png",
-            x + sectionW + 50.0f,
-            HIGH_Y + 100.0f,
-            50.0f,
-            200.0f);
+        WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
+        wirippa->Init("asset/Field/rippa.png", x + w1, HIGH_Y + 550, 150, 150);
+        wirippa->SetCollisionManager(m_collision);
 
-        //// 羽リッパー反転用・左壁
-        //Platform wallL;
-        //wallL.Init(
-        //    "asset/Field/block.png",
-        //    x - 100.0f,
-        //    HIGH_Y + 100.0f,
-        //    50.0f,
-        //    200.0f
-        //);
-        //m_collision->AddStatic(wallL.GetObject());
-        //m_collision->SetTag(wallL.GetObject(), ColliderTag::Platform);
-
-        //// 羽リッパー反転用・右壁
-        //Platform wallR;
-        //wallR.Init(
-        //    "asset/Field/block.png",
-        //    x + sectionW + 50.0f,
-        //    HIGH_Y + 100.0f,
-        //    50.0f,
-        //    200.0f
-        //);
-        //m_collision->AddStatic(wallR.GetObject());
-        //m_collision->SetTag(wallR.GetObject(), ColliderTag::Platform);
-
-
-        {
-            WingRippa* rippa = new WingRippa(WingRippa::Type::ZigZag);
-            rippa->Init(
-                "asset/Field/Wing_Rippa.png",
-                x + sectionW * 0.5f,
-                HIGH_Y + 550.0f,      // 床の少し上
-                150.0f,
-                150.0f
-            );
-            rippa->SetCollisionManager(m_collision);
-
-            m_enemies.push_back(rippa);
-            m_collision->AddMoved(rippa->GetObject());
-            m_collision->SetTag(rippa->GetObject(), ColliderTag::Enemy);
-        }
+        m_enemies.push_back(wirippa);
 
         x += sectionW;
     }
-
     //7
     {
         float section7StartX = 7000.0f;
@@ -461,7 +417,11 @@ void TutorialStage2::Update()
     // 敵
     for (auto& enemy : m_enemies) {
         enemy->Update(dt);
-
+        //リッパー君の場合は敵同士の衝突をチェック
+        if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
+        {
+            rippa->CheckEnemyCollision(m_enemies);
+        }
         auto playerAABB = m_collision->GetAABB(m_player.GetObject());
         auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
 

@@ -122,8 +122,16 @@ void Tutorial::Update(float deltaTime, const DirectX::XMFLOAT3& playerPos)
 {
     auto pos = m_object.GetPos();
 
+    float dx = playerPos.x - pos.x;
     //プレイヤーとの距離を計算
-    float dx = playerPos.x - pos.x - 300;
+    if (m_isCheckpoint)
+    {
+        dx -= 150;
+    }
+    else
+    {
+        dx += 80;
+    }
     float dy = playerPos.y - pos.y;
     float distance = sqrt(dx * dx + dy * dy);
 
