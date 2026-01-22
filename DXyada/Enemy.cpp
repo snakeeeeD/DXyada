@@ -22,7 +22,7 @@ void Enemy::Init(const char* texture, float x, float y, float width, float heigh
 
 }
 
-void Enemy::Disable()
+void Enemy::Disable(bool justdeco)
 {
     if (!m_enableCollision)
         return;
@@ -30,8 +30,16 @@ void Enemy::Disable()
     m_enableCollision = false;
     m_enemystate = EnemyState::YouDied;
 
-    // ”¼“§–¾‚É‚·‚é
-    m_object.SetColor(1, 1, 1, 0.3f);
+    if (justdeco)
+    {
+        m_object.SetColor(1, 0, 0, 0.3f);
+    }
+    else
+    {
+        // ”¼“§–¾‚É‚·‚é
+        m_object.SetColor(1, 1, 1, 0.3f);
+    }
+
 }
 
 

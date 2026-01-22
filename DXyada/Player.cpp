@@ -516,6 +516,7 @@ void Player::Update(
 
             if (isRTPressed)
             {
+
                 if (m_isPulling)
                 {
                     // 最大長を超えたら自動でリボンを外す
@@ -560,36 +561,49 @@ void Player::Update(
                 // タイマー加算
                 m_holdLTTimer += deltaTime;
 
-                // 必要時間に達したら撃破
-                if (m_holdLTTimer >= m_holdLTRequired)
+                if ((m_holdLTTimer >= m_holdLTRequired))
                 {
-                    if (1.0f < m_holdRTTimer < 2.0f)
-                    {
-                        Log("aaa");
-                    }
-                    hitEnemy->Disable();
-                    m_ribbon.Return();
-                    m_isRibbonOut = false;
-                    hitEnemy->SetSlow(false);
-                    m_totalRotation = 0.0f;
-                    m_isPulling = false;
-                    m_isRotating = false;
-
-                    // リセット
-                    m_holdLTTimer = 0.0f;
-                    m_holdRTTimer = 0.0f;
-                    m_targetEnemy = nullptr;
+                    m_justDeco = false;
+                    m_LT = true;
                 }
             }
             else
             {
+              
+                if (0.2f < m_holdLTTimer && m_holdLTTimer < 0.4f)
+                {
+                    Log("aaa");
+                    m_justDeco = true;
+                    m_LT = true;
+                }
+
                 // LTを離したらタイマーリセット
                 m_holdLTTimer = 0.0f;
                 m_holdRTTimer = 0.0f;
                 m_targetEnemy = nullptr;
                 hitEnemy->SetSlow(false);
+                
             }
 
+            // 必要時間に達したら撃破
+            if (m_LT)
+            {
+
+                hitEnemy->Disable(m_justDeco);
+                m_ribbon.Return();
+                m_isRibbonOut = false;
+                hitEnemy->SetSlow(false);
+                m_totalRotation = 0.0f;
+                m_isPulling = false;
+                m_isRotating = false;
+
+                // リセット
+                m_holdLTTimer = 0.0f;
+                m_holdRTTimer = 0.0f;
+                m_targetEnemy = nullptr;
+                m_LT = false;
+            }
+        
         }
 
         // Pinを掴んでいる場合の処理
@@ -880,22 +894,39 @@ void Player::Update(
                     {
                         m_holdLTTimer += deltaTime;
 
-                        if (m_holdLTTimer >= m_holdLTRequired)
+                        if ((m_holdLTTimer >= m_holdLTRequired))
                         {
-                            m_ribbon.Return();
-                            m_isRibbonOut = false;
-                            m_totalRotation = 0.0f;
-                            m_isPulling = false;
-                            m_isRotating = false;
-
-                            hitPin->SetState(Pin::State::Decorated);
-
-                            m_holdLTTimer = 0.0f;
-                        }
+                            m_justDeco = false;
+                            m_LT = true;
+                        }     
                     }
                     else
                     {
+                        if (0.2f < m_holdLTTimer && m_holdLTTimer < 0.4f)
+                        {
+                            Log("aaa");
+                            m_justDeco = true;
+                            m_LT = true;
+                        }
+
                         m_holdLTTimer = 0.0f;
+                    }
+
+                    // 必要時間に達したら撃破
+                    if (m_LT)
+                    {
+                        m_ribbon.Return();
+                        m_isRibbonOut = false;
+                        m_totalRotation = 0.0f;
+                        m_isPulling = false;
+                        m_isRotating = false;
+
+                        hitPin->SetState(Pin::State::Decorated, m_justDeco);
+
+                        // リセット
+                        m_holdLTTimer = 0.0f;
+                        m_holdRTTimer = 0.0f;
+                        m_LT = false;
                     }
                 }
             }
@@ -1159,6 +1190,7 @@ void Player::Update(
         for (auto pin : pins)
         {
             if (!pin) continue;
+            if ((pin->GetState() == Pin::State::Decorated)) continue;
 
             auto pinPos = pin->GetObject()->GetPos();
 
@@ -1468,9 +1500,6 @@ void Player::Update(
             }
 
             m_isRibbonOut = true;
-
-
-
         }
 
         // 戻し処理
@@ -1526,7 +1555,7 @@ void Player::Update(
 
     if (m_isKnockback)            m_animState = Damage;
     else if (m_isPinJumping)      m_animState = RibbonJump;
-    else if (m_isPulling && blockPin && !m_isCanMove)         m_animState = Pulled;
+    else if ((m_isPulling || !m_isOnGround)&&  !m_isCanMove)         m_animState = Pulled;
     else if (m_isRolling && (blockPin || remotewindPin))         m_animState = Roll;
     else if (!m_isOnGround && (!m_isRolling || !m_isPulling) && m_isCanMove)       m_animState = Jump;
     else if (m_inputDir != 0)     m_animState = Run;

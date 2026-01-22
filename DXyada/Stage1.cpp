@@ -19,7 +19,7 @@ void Stage1::AddPlatform(const char* tex, float x, float y, float w, float h)
 void Stage1::AddDecorPin(float x, float y, bool canDecorate)
 {
     Pin* pin = new Pin();
-    pin->Init("asset/Field/Pin.png", x, y, 35, 35);
+    pin->Init("asset/Field/PinDeco.png", x, y, 35, 35);
     pin->SetCollisionManager(m_collision);
 
     pin->SetcanRollPin(true);
@@ -33,7 +33,6 @@ void Stage1::AddDecorPin(float x, float y, bool canDecorate)
 BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
 {
     BlockPin* pin = new BlockPin();
-    pin->Init("asset/Field/Pin.png", x, y, 35, 35);
     pin->SetCollisionManager(m_collision);
 
     pin->SetcanRollPin(canRollPin);
@@ -42,11 +41,13 @@ BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
     //巻取り(引き寄せ)の場合
     if (canRollPin)
     {
+        pin->Init("asset/Field/PinRoll.png", x, y, 35, 35);
         pin->SetPinKind(PinKind::Roll);
     }
     //巻き取られの場合
     else if (!canRollPin)
     {
+        pin->Init("asset/Field/PinPulled.png", x, y, 35, 35);
         pin->SetPinKind(PinKind::Pulled);
     }
 
@@ -142,7 +143,7 @@ void Stage1::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 150, 0);
+    m_player.GetObject()->SetPos(7000, 150, 0);
 
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
@@ -201,7 +202,7 @@ void Stage1::Init()
 
     //2
     {
-        float w1 = TILE * 8.0f;
+        float w1 = TILE * 6.0f;
         AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
@@ -220,7 +221,7 @@ void Stage1::Init()
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
             "asset/Field/Boad.png",
-            2500, -230, 200, 200,
+            2200, -230, 200, 200,
             Tutorial::Type::Move,
             true,   //チュートリアル表示ON
             true    //チェックポイントON
@@ -366,7 +367,7 @@ void Stage1::Init()
 
         Pin* JumpPin = new Pin;
 
-        JumpPin->Init("asset/Field/Pin.png", x + w1 *0.5 - TILE * 0.5, LOW_Y +600, 35, 35);
+        JumpPin->Init("asset/Field/PinJump.png", x + w1 *0.5 - TILE * 0.5, LOW_Y +600, 35, 35);
         JumpPin->SetCollisionManager(m_collision);
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);

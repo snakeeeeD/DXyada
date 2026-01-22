@@ -55,7 +55,7 @@ public:
 
 	//ゲッター
 	State GetState() const { return m_state; }
-	void SetState(State state);
+	void SetState(State state , bool justdeco);
 	Object* GetObject() { return &m_object; }
 
 	//引き寄せ、巻き取り判別用
