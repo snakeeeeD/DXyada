@@ -27,7 +27,7 @@ void Stage1::AddDecorPin(float x, float y, bool canDecorate)
 
     pin->SetPinKind(PinKind::Deco); //ピンの種類のStateを"Deco(飾れる)"に
 
-    m_pins.push_back(pin);
+   m_pins.push_back(pin);
 }
 
 BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
@@ -51,7 +51,7 @@ BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
         pin->SetPinKind(PinKind::Pulled);
     }
 
-    m_pins.push_back(pin);
+   m_pins.push_back(pin);
 
     // 掴む用のタグは Pin のまま推奨
     m_collision->SetTag(pin->GetObject(), ColliderTag::Pin);
@@ -98,6 +98,13 @@ void Stage1::BuildDrawList()
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
     }
+
+    for (size_t i = 0; i < m_pins.size(); ++i) {
+        item.obj = m_pins[i]->GetObject();
+        item.layer = DrawLayer::StageObject;
+        m_drawList.push_back(item);
+    }
+
 
     for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetObject();
@@ -562,15 +569,6 @@ void Stage1::Draw()
             g_pPixelShader,
             g_pConstantBuffer
         );
-    }
-    // ピンは DebugStage と同様に別途描画
-    for (auto* pin : m_pins)
-    {
-        pin->Draw();
-        if (auto* r = dynamic_cast<RemoteWindPin*>(pin))
-        {
-            r->DrawGuides();
-        }
     }
 
 }

@@ -17,6 +17,7 @@ void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, flo
     Platform& back = m_platforms.back();
     m_collision->AddStatic(back.GetObject());
     m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
+
 }
 
 void TutorialStage2::AddDecorPin(float x, float y, bool canDecorate)
@@ -29,6 +30,8 @@ void TutorialStage2::AddDecorPin(float x, float y, bool canDecorate)
     pin->SetcanDecorate(canDecorate);
 
     m_pins.push_back(pin);
+
+    pin->SetPinKind(PinKind::Deco); //ピンの種類のStateを"Deco(飾れる)"に
 }
 
 BlockPin* TutorialStage2::AddPullPin(float x, float y, bool canRollPin)
@@ -39,6 +42,19 @@ BlockPin* TutorialStage2::AddPullPin(float x, float y, bool canRollPin)
 
     pin->SetcanRollPin(canRollPin);
     pin->SetcanDecorate(false);
+
+    //巻取り(引き寄せ)の場合
+    if (canRollPin)
+    {
+        pin->Init("asset/Field/PinRoll.png", x, y, 35, 35);
+        pin->SetPinKind(PinKind::Roll);
+    }
+    //巻き取られの場合
+    else if (!canRollPin)
+    {
+        pin->Init("asset/Field/PinPulled.png", x, y, 35, 35);
+        pin->SetPinKind(PinKind::Pulled);
+    }
 
     m_pins.push_back(pin);
 
@@ -65,12 +81,23 @@ void TutorialStage2::BuildDrawList()
         m_drawList.push_back(item);
     }
 
+    item.obj = m_player.GetDecoratingEffectBack();
+    item.layer = DrawLayer::Enemy;
+    m_drawList.push_back(item);
+
     for (size_t i = 0; i < m_enemies.size(); ++i) {
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
     }
 
+    for (size_t i = 0; i < m_pins.size(); ++i) {
+        item.obj = m_pins[i]->GetObject();
+        item.layer = DrawLayer::StageObject;
+        m_drawList.push_back(item);
+    }
+
+ 
     for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetObject();
         item.layer = DrawLayer::Background;
@@ -84,6 +111,10 @@ void TutorialStage2::BuildDrawList()
     }
 
     item.obj = m_player.GetObject();
+    item.layer = DrawLayer::Player;
+    m_drawList.push_back(item);
+
+    item.obj = m_player.GetDecoratingEffectFront();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
@@ -247,9 +278,9 @@ void TutorialStage2::Init()
 
 
         float holeW = 400.0f;
-        BlockPin* m_targetPin = AddPullPin(x + holeW * 1.0f, -200.0f, true);
-
-        m_collision->AddStatic(m_targetPin->GetObject());
+        BlockPin* m_targetPin = AddPullPin(x + holeW * 1.0f - 20, -200.0f, true);
+        
+        //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
         m_targetPin->SetLimitPos(x + holeW * 1.0f, x + holeW * 0.5f, -200.0f, -200.0f);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
@@ -293,7 +324,7 @@ void TutorialStage2::Init()
             m_targetPin1->SetcanRollPin(true);
             m_targetPin1->SetcanDecorate(false);
             m_pins.push_back(m_targetPin1);
-            m_collision->AddStatic(m_targetPin1->GetObject());
+            //m_collision->AddStatic(m_targetPin1->GetObject());
             m_targetPin1->SetForceGround(true);
             m_collision->SetTag(m_targetPin1->GetObject(), ColliderTag::Platform);
 
@@ -302,6 +333,9 @@ void TutorialStage2::Init()
             m_hook->SetCollisionManager(m_collision);
             m_hook->SetcanRollPin(false);
             m_hook->SetTarget(m_targetPin1);
+
+            //ピンの種類のStateを"RemoteDeco(飾れる)"に
+            m_hook->SetPinKind(PinKind::RemoteDeco);
 
             // ガイド
             m_hook->AddGuide({ x + 300, HIGH_Y, 0 });
@@ -373,7 +407,7 @@ void TutorialStage2::Init()
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
             m_pins.push_back(m_targetPin2);
-            m_collision->AddStatic(m_targetPin2->GetObject());
+           // m_collision->AddStatic(m_targetPin2->GetObject());
             m_targetPin2->SetForceGround(true);
             m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
 
@@ -382,6 +416,9 @@ void TutorialStage2::Init()
             m_hook->SetCollisionManager(m_collision);
             m_hook->SetcanRollPin(false);
             m_hook->SetTarget(m_targetPin2);
+
+            //ピンの種類のStateを"RemoteDeco(飾れる)"に
+            m_hook->SetPinKind(PinKind::RemoteDeco);
 
             // ガイド
             m_hook->AddGuide({ x + 170, -433.0, 0 });
@@ -409,10 +446,13 @@ void TutorialStage2::Init()
         JumpPin->SetcanRollPin(false);
         JumpPin->SetcanDecorate(false);
 
+        //ピンの種類のStateを"Jump(飾れる)"に
+        JumpPin->SetPinKind(PinKind::Jump);
+
         BlockPin* m_targetPin;
         m_targetPin = AddPullPin(x - 70, -418.0f, true);
 
-        m_collision->AddStatic(m_targetPin->GetObject());
+        //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
         m_targetPin->SetLimitPos(x, x - 110, -0.0f, -600.0f);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
@@ -435,6 +475,9 @@ void TutorialStage2::Init()
         JumpPin->SetcanRollPin(false);
         JumpPin->SetcanDecorate(false);
 
+        //ピンの種類のStateを"Jump(飾れる)"に
+        JumpPin->SetPinKind(PinKind::Jump);
+
         {
             BlockPin* m_targetPin2 = new BlockPin;
             m_targetPin2->Init("asset/Field/block.png", x + 00.0, -433.0f, 650, 65);
@@ -442,7 +485,7 @@ void TutorialStage2::Init()
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
             m_pins.push_back(m_targetPin2);
-            m_collision->AddStatic(m_targetPin2->GetObject());
+           // m_collision->AddStatic(m_targetPin2->GetObject());
             m_targetPin2->SetForceGround(true);
             m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
 
@@ -451,6 +494,9 @@ void TutorialStage2::Init()
             m_hook->SetCollisionManager(m_collision);
             m_hook->SetcanRollPin(false);
             m_hook->SetTarget(m_targetPin2);
+
+            //ピンの種類のStateを"RemoteDeco(飾れる)"に
+            m_hook->SetPinKind(PinKind::RemoteDeco);
 
             // ガイド
             m_hook->AddGuide({ x - 300, -433.0, 0 });
@@ -687,16 +733,6 @@ void TutorialStage2::Draw()
             g_pConstantBuffer
         );
     }
-    // ピンは DebugStage と同様に別途描画
-    for (auto* pin : m_pins)
-    {
-        pin->Draw();
-        if (auto* r = dynamic_cast<RemoteWindPin*>(pin))
-        {
-            r->DrawGuides();
-        }
-    }
-
 }
 
 void TutorialStage2::UnInit()

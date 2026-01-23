@@ -89,9 +89,20 @@ void TutorialStage::BuildDrawList()
         m_drawList.push_back(item);
     }
 
+    item.obj = m_player.GetDecoratingEffectBack();
+    item.layer = DrawLayer::Enemy;
+    m_drawList.push_back(item);
+
+
     for (size_t i = 0; i < m_enemies.size(); ++i) {
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);
+    }
+
+    for (size_t i = 0; i < m_pins.size(); ++i) {
+        item.obj = m_pins[i]->GetObject();
+        item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
 
@@ -110,6 +121,11 @@ void TutorialStage::BuildDrawList()
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
+
+    item.obj = m_player.GetDecoratingEffectFront();
+    item.layer = DrawLayer::Player;
+    m_drawList.push_back(item);
+
 
     item.obj = m_player.GetGuideLineObject();
     item.layer = DrawLayer::Player;
