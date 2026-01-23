@@ -12,6 +12,8 @@ Tutorial::Tutorial()
     , m_hasAnimation(false)
     , m_displayAlpha(0.0f)
     , m_fadeSpeed(3.0f)
+    , m_hasChangedTexture(false)
+    , m_checkpointTexturePath("asset/Field/Boad_Decorated.png")
 {
 }
 
@@ -33,7 +35,18 @@ void Tutorial::Init(
 {
     // 看板の初期化
     m_object.Init();
-    m_object.AddTexture(signTexturePath.c_str());
+
+    //通常の看板テクスチャ
+    m_object.AddAnimation("Normal",signTexturePath.c_str(),
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
+
+    if (isCheckpoint)
+    {
+        m_object.AddAnimation("Activated", m_checkpointTexturePath.c_str(), 
+            1, 1, 0, 0, 0, 0.0f, false, false, 1);
+    }
+
+    m_object.PlayAnimation("Normal");
     m_object.SetPos(posX, posY, 0);
     m_object.SetSize(width, height, 0);
 
@@ -46,6 +59,7 @@ void Tutorial::Init(
 
     m_isActivated = false;
     m_wasPlayerNear = false;
+    m_hasChangedTexture = false;
 }
 void Tutorial::InitTutorialImage(
     const std::string& imagePath,
@@ -84,6 +98,7 @@ void Tutorial::InitTutorialAnimation(
     int endRow,
     int endCol,
     bool loop,
+    bool wrap,
     int animSpeed,
     float displayWidth,
     float displayHeight,
@@ -103,6 +118,7 @@ void Tutorial::InitTutorialAnimation(
             startRow, startCol,
             endRow, endCol,
             loop,
+            wrap,
             animSpeed
         );
     }
@@ -175,19 +191,13 @@ void Tutorial::Update(float deltaTime, const DirectX::XMFLOAT3& playerPos)
 
     m_wasPlayerNear = isPlayerNear;
 
-    //仮で色を変える
-    if (m_isActivated)
+    //テクスチャ切り替え
+    if (m_isActivated && !m_hasChangedTexture)
     {
-       m_object.SetColor(0.5f, 1.0f, 0.5f, 1.0f);  //緑
+        m_object.PlayAnimation("Activated");
+        m_hasChangedTexture = true;
     }
-    else if (isPlayerNear)
-    {
-        m_object.SetColor(1.0f, 1.0f, 0.5f, 1.0f);  //黄
-    }
-    else
-    {
-        m_object.SetColor(1.0f, 1.0f, 1.0f, 1.0f);  //白
-    }
+ 
 
     m_object.Update(deltaTime);
 }

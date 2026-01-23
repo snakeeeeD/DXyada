@@ -733,3 +733,26 @@ void TutorialStage2::UnInit()
     delete m_collision;
     m_collision = nullptr;
 }
+void TutorialStage2::Respawn()
+{
+    if (!m_hasCheckpoint)
+        return;
+
+    m_player.SetInvincible(false);
+
+    //チェックポイント位置にプレイヤーを配置
+    m_player.GetObject()->SetPos(
+        m_currentCheckpoint.x,
+        m_currentCheckpoint.y,
+        m_currentCheckpoint.z
+    );
+
+    //死亡フラグをリセット
+    m_isPlayerDead = false;
+
+}
+
+void TutorialStage2::SetResoawnPos(DirectX::XMFLOAT3 respawnpos)
+{
+    m_currentCheckpoint = respawnpos;
+}

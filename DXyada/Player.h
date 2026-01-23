@@ -89,6 +89,13 @@ private:
 	float m_holdLTTimer;           //LT長押し時間
 	float m_holdLTRequired;        //撃破に必要な長押し時間
 	Enemy* m_targetEnemy;          //撃破対象の敵
+	Pin* m_targetPin;          //撃破対象の敵
+
+	Object m_decoratingEffectBack;   // 後ろレイヤー
+	Object m_decoratingEffectFront;  // 前レイヤー
+	bool m_showDecoratingEffect;
+	float m_mindecoX;
+	float m_mindecoY;
 
 	bool m_LT = false;
 
@@ -159,6 +166,7 @@ public:
 	bool isDead() const { return m_hp <= 0; }
 	bool IsInvincible() const { return m_isInvincible; }
 	bool IsLastDirection() const { return m_isLastRightDirection; }	//最終向いてた方向を取得
+	void SetInvincible(bool isinvisible);
 
 	//範囲内の敵を取得
 	bool IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) const;
@@ -170,5 +178,8 @@ public:
 
 	// CollisionManager設定用
 	void SetCollisionManager(CollisionManager* mgr);
+
+	Object* GetDecoratingEffectBack() { return &m_decoratingEffectBack; }   
+	Object* GetDecoratingEffectFront() { return &m_decoratingEffectFront; } 
 };
 

@@ -39,7 +39,9 @@ void Object::Update(float deltaTime)
         if (m_currentFrame > anim.endFrame)
         {
             if (anim.loop)
+            {
                 m_currentFrame = anim.startFrame;
+            }   
             else
                 m_currentFrame = anim.endFrame;
         }
@@ -114,24 +116,32 @@ void Object::Draw(
     float sx = 1.0f / anim.splitX;
     float sy = 1.0f / anim.splitY;
 
-    float u = frame * sx;
-    float v = anim.row * sy;
+    int currentRow = anim.row;
+    int currentCol = frame;
 
-    // ★ ここが重要
+    if (anim.wrap)
+    {
+        currentRow = frame / anim.splitX;  //行番号
+        currentCol = frame % anim.splitX;  //列番号
+    }
+
+    float u = currentCol * sx;
+    float v = currentRow * sy;
+
     XMMATRIX matTex;
 
     if (!m_flipX)
     {
-        // 通常
+        //通常
         matTex =
             XMMatrixScaling(sx, sy, 1.0f) *
             XMMatrixTranslation(u, v, 0.0f);
     }
     else
     {
-        // 左右反転
+        //左右反転
         matTex =
-            XMMatrixScaling(-sx, sy, 1.0f) *   // ← Xをマイナス
+            XMMatrixScaling(-sx, sy, 1.0f) *
             XMMatrixTranslation(u + sx, v, 0.0f);
     }
 
@@ -159,6 +169,7 @@ void Object::AddTexture(const char* texturePath)
         0, 0,   
         0.0f,
         false,
+        false,
         -100   
     );
 
@@ -176,6 +187,7 @@ void Object::AddTexture(const char* texturePath)
 * @param    endFrame :  終了フレーム
 * @param    fps : フレームレート
 * @param    loop : ループするかどうか
+* @param    wrap : 横列が最後まで行ったとき改行するかどうか
 * @param    priority : 優先度(数字が高いほど優先度高)
 */
 void Object::AddAnimation(
@@ -186,6 +198,7 @@ void Object::AddAnimation(
     int startFrame, int endFrame,
     float fps,
     bool loop,
+    bool wrap,
     int priority
 )
 {
@@ -198,6 +211,7 @@ void Object::AddAnimation(
     anim.endFrame = endFrame;
     anim.fps = fps;
     anim.loop = loop;
+    anim.wrap = wrap,
     anim.priority = priority;
 
     Texture* tex = new Texture();
@@ -211,8 +225,6 @@ void Object::AddAnimation(
 
 void Object::PlayAnimation(const std::string& name)
 {
-    if (m_currentAnim == name) return; 
-
     auto it = m_animations.find(name);
     if (it == m_animations.end()) return;
 
@@ -220,7 +232,6 @@ void Object::PlayAnimation(const std::string& name)
     m_currentFrame = it->second.startFrame;
     m_animTime = 0.0f;
 
-    m_currentAnim = name;
 }
 
 //左右反転時、名前のみ返す

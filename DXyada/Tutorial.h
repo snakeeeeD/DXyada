@@ -42,6 +42,9 @@ private:
     float m_displayAlpha;               // 表示の透明度（フェードイン/アウト用）
     float m_fadeSpeed;                  // フェード速度
 
+    bool m_hasChangedTexture;
+    std::string m_checkpointTexturePath;
+
 public:
     Tutorial();
     ~Tutorial();
@@ -77,6 +80,7 @@ public:
         int endRow,
         int endCol,
         bool loop,
+        bool wrap,
         int animSpeed,
         float displayWidth,
         float displayHeight,

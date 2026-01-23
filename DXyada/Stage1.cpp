@@ -73,7 +73,6 @@ BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
 //    m_collision->SetTag(blockpin->GetObject(), ColliderTag::Pin);
 //}
 
-
 void Stage1::BuildDrawList()
 {
     m_drawList.clear();
@@ -89,6 +88,10 @@ void Stage1::BuildDrawList()
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
+
+    item.obj = m_player.GetDecoratingEffectBack();
+    item.layer = DrawLayer::Enemy;
+    m_drawList.push_back(item);
 
     for (size_t i = 0; i < m_enemies.size(); ++i) {
         item.obj = m_enemies[i]->GetObject();
@@ -108,7 +111,12 @@ void Stage1::BuildDrawList()
         m_drawList.push_back(item);
     }
 
+
     item.obj = m_player.GetObject();
+    item.layer = DrawLayer::Player;
+    m_drawList.push_back(item);
+
+    item.obj = m_player.GetDecoratingEffectFront();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
@@ -128,13 +136,10 @@ void Stage1::BuildDrawList()
         m_drawList.push_back(it);
     }
 
-
-
     item.obj = &m_HP_UI1; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI2; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI3; item.layer = DrawLayer::UI; m_drawList.push_back(item);
 }
-
 void Stage1::Init()
 {
     g_cameraPos = { 0, 0, 0 };
@@ -187,9 +192,9 @@ void Stage1::Init()
             true    //チェックポイントON
         );
         tutorial1->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 750,   //表示サイズ
-            300, 450      //看板からのオフセット
+            "asset/Field/Tutorial_PinDeco.png",
+            1000, 500,   //表示サイズ
+            300, 350      //看板からのオフセット
         );
         tutorial1->SetRespawnPosition(1000, -150, 0);
         m_tutorials.push_back(tutorial1);
@@ -228,10 +233,10 @@ void Stage1::Init()
         );
         tutorial1->InitTutorialImage(
             "asset/Ui/title.png",
-            1000, 750,   //表示サイズ
+            1000, 500,   //表示サイズ
             300, 450      //看板からのオフセット
         );
-        tutorial1->SetRespawnPosition(2500, -150, 0);
+        tutorial1->SetRespawnPosition(2200, -150, 0);
         m_tutorials.push_back(tutorial1);
 
         x += w2;
@@ -270,8 +275,8 @@ void Stage1::Init()
             true    //チェックポイントON
         );
         tutorial1->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 750,   //表示サイズ
+            "asset/Field/Tutorial_NeedleFloor.png",
+            1000, 500,   //表示サイズ
             300, 450      //看板からのオフセット
         );
         tutorial1->SetRespawnPosition((x + w1 * 0.5f) - 500, -150, 0);
@@ -303,8 +308,8 @@ void Stage1::Init()
             false    //チェックポイントOFF
         );
         tutorial1->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 750,   //表示サイズ
+            "asset/Field/Tutorial_Rippa.png",
+            1000, 500,   //表示サイズ
             300, 450      //看板からのオフセット
         );
         m_tutorials.push_back(tutorial1);
@@ -388,56 +393,13 @@ void Stage1::Init()
         );
         tutorial1->InitTutorialImage(
             "asset/Ui/title.png",
-            1000, 750,   //表示サイズ
+            1000, 500,   //表示サイズ
             300, 450      //看板からのオフセット
         );
-        tutorial1->SetRespawnPosition(x, -150, 0);
+        tutorial1->SetRespawnPosition(x - TILE * 2, -150, 0);
         m_tutorials.push_back(tutorial1);
         x += w1;
     }
-
-    ////10
-    //{
-    //    x += 1000;
-
-    //    Pin* JumpPin = new Pin;
-
-    //    JumpPin->Init("asset/Field/Pin.png", x - 900, -300, 35, 35);
-    //    JumpPin->SetCollisionManager(m_collision);
-    //    m_pins.push_back(JumpPin);
-    //    JumpPin->SetcanRollPin(false);
-    //    JumpPin->SetcanDecorate(false);
-
-    //    {
-    //        BlockPin* m_targetPin2 = new BlockPin;
-    //        m_targetPin2->Init("asset/Field/Pin.png", x + 100.0, -600.0f, 350, 35);
-    //        m_targetPin2->SetCollisionManager(m_collision);
-    //        m_targetPin2->SetcanRollPin(true);
-    //        m_targetPin2->SetcanDecorate(false);
-    //        m_pins.push_back(m_targetPin2);
-    //        m_collision->AddStatic(m_targetPin2->GetObject());
-    //        m_targetPin2->SetForceGround(true);
-    //        m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
-
-    //        RemoteWindPin* m_hook = new RemoteWindPin;
-    //        m_hook->Init("asset/Field/Pin1.png", x - 1300, -400, 35, 35);
-    //        m_hook->SetCollisionManager(m_collision);
-    //        m_hook->SetcanRollPin(false);
-    //        m_hook->SetTarget(m_targetPin2);
-
-    //        // ガイド
-    //        m_hook->AddGuide({ x - 500, -600, 0 });
-
-    //        m_pins.push_back(m_hook);
-    //        m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
-    //    }
-
-    //    float w1 = TILE * 3.0f;
-    //    AddPlatform("asset/Field/block.png", x - 150 + w1 * 0.5f, -900, w1, H);
-    //    x += w1;
-    //}
-
-
 
     BuildDrawList();
 
@@ -651,6 +613,8 @@ void Stage1::Respawn()
 {
     if (!m_hasCheckpoint)
         return;
+
+    m_player.SetInvincible(false);
 
     //チェックポイント位置にプレイヤーを配置
     m_player.GetObject()->SetPos(

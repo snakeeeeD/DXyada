@@ -22,6 +22,8 @@ struct Animation
 
     float fps = 0.0f;
     bool loop = true;
+    bool wrap = true;
+
     int priority = 0;
 };
 
@@ -48,6 +50,7 @@ public:
         int startFrame, int endFrame,
         float fps,
         bool loop,
+        bool wrap,
         int priority
     );
 

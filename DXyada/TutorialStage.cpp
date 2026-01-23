@@ -655,6 +655,8 @@ void TutorialStage::Respawn()
     if (!m_hasCheckpoint)
         return;
 
+    m_player.SetInvincible(false);
+
     //チェックポイント位置にプレイヤーを配置
     m_player.GetObject()->SetPos(
         m_currentCheckpoint.x,
