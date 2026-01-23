@@ -7,7 +7,6 @@ private:
     Object m_background;
     Player m_player;
     Camera m_camera;
-    DirectX::XMFLOAT3 m_cameraNowPos;
     CollisionManager* m_collision = nullptr;
 
     Object m_HP_UI1;
@@ -17,8 +16,9 @@ private:
     std::vector<Platform> m_platforms;
     std::vector<Enemy*>   m_enemies;
     std::vector<Pin*>     m_pins;
-
+    std::vector<Enemy*>   m_spawnQueue;
     std::vector<DrawItem> m_drawList;
+    std::vector<Tutorial*>     m_tutorials;
 
     bool m_isPlayerDead = false;
 
@@ -34,7 +34,6 @@ private:
 
     DirectX::XMFLOAT3 m_currentCheckpoint;
     bool m_hasCheckpoint;
-
 private:
     void AddPlatform(const char* tex, float x, float y, float w, float h);
     void AddDecorPin(float x, float y, bool canDecorate);
