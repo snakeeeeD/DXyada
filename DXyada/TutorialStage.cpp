@@ -5,7 +5,7 @@
 // 既存と同様に外部にある想定
 extern DirectX::XMFLOAT3 g_cameraPos;
 
-void TutorialStage::AddPlatform(const char* tex, float x, float y, float w, float h)
+Platform* TutorialStage::AddPlatform(const char* tex, float x, float y, float w, float h)
 {
     Platform p;
     p.Init(tex, x, y, w, h);
@@ -14,6 +14,8 @@ void TutorialStage::AddPlatform(const char* tex, float x, float y, float w, floa
     Platform& back = m_platforms.back();
     m_collision->AddStatic(back.GetObject());
     m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
+
+    return &back;
 }
 
 void TutorialStage::AddDecorPin(float x, float y, bool canDecorate)
@@ -134,6 +136,7 @@ void TutorialStage::BuildDrawList()
 
 void TutorialStage::Init()
 {
+
     g_cameraPos = { 0, 0, 0 };
 
     m_collision = new CollisionManager();
@@ -166,7 +169,7 @@ void TutorialStage::Init()
     float x = -300.0f;
 
     m_platforms.clear();
-    m_platforms.reserve(32);
+    m_platforms.reserve(500);
 
     //1
     {
@@ -276,8 +279,7 @@ void TutorialStage::Init()
         AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
-
-        AddPullPin(x + 120.0f, 40.0f, false);
+        AddPullPin(x + 120.0f , 40.0f, false);
 
         float w2 = TILE * 10.0f;
         AddPlatform("asset/Field/block.png", x + w2 * 0.5f, HIGH_Y, w2, H);
@@ -286,30 +288,35 @@ void TutorialStage::Init()
 
     //6
     {
-        float w1 = TILE * 1.0f;
-        AddPlatform(
-            "asset/Field/block.png", 
-            x + w1 * 0.5f,  //床の中心X座標
-            HIGH_Y,         //中心Y座標
-            w1,             //横幅
-            H               //タテサイズ
+        // 1. 配置したい中心座標を決定
+        float pinX = 100.0f;
+        float pinY = -200.0f;
+
+        // 2. ピンを生成（この時点ではまだ当たり判定のみ）
+        // AddPullPinの中で Pin::Init が呼ばれ、m_object に座標がセットされます
+        BlockPin* m_targetPin = AddPullPin(pinX, pinY, true);
+
+        // 3. ブロック（足場）をピンと同じ位置に生成
+        // AddPlatformが Platform* を返すように実装されている必要があります
+        Platform* pBlock = AddPlatform(
+            "asset/Field/block.png",
+            pinX + 50.0f,   // ピンと同じ中心X
+            pinY,   // ピンと同じ中心Y
+            50.0f,  // 横幅
+            50.0f   // 縦幅（既存の変数 H）
         );
 
-        x += w1;
+        // 4. ピンとブロックを紐付ける
+        // これにより BlockPin::Update 内で delta 分だけブロックが動くようになります
+        m_targetPin->SetTargetBlock(pBlock);
 
-        BlockPin* m_targetPin;
-        m_targetPin = AddPullPin(x - 150.0, -200.0f, true);
-
-        // 足場化（地面として衝突させたい）
-       // m_collision->AddStatic(m_targetPin->GetObject());
-        m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x - 150.0, x - 300.0, -200.0, -200.0);
+        // 5. ピンの設定（当たり判定の除外と可動範囲）
+        // ピン自体の物理衝突を消したい場合は AddStatic を呼ばないようにします
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
-        m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
+        m_targetPin->SetLimitPos(pinX + 200.0f, pinX - 200.0f, pinY, pinY);
 
-        float w2 = TILE * 4.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f, HIGH_Y, w2, H);
-        x += w2;
+        // 次の地形のために x を進める
+        x += TILE * 1.0f;
     }
 
     //7

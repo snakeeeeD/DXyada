@@ -180,6 +180,10 @@ void Player::Update(
     auto pos = m_player.GetPos();
     float prevY = pos.y;
 
+    /*char Player_xPos[256];
+    sprintf_s(Player_xPos, "Player X Pos: x = %.2f\n", pos.x);
+    OutputDebugStringA(Player_xPos);*/
+
     //Hpが0以下なら更新しない
     if (m_hp <= 0)
         return;

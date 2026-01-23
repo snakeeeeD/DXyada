@@ -20,11 +20,7 @@ public:
     void Update(float dt) override;
     void Draw();
 
-    void SetTargetBlock(Platform* block)
-    {
-        m_pBlock = block;
-        OutputDebugStringA("BlockPin: TargetBlock set\n");
-    }
+    void SetTargetBlock(Platform* block);
 
     // Šª‚«æ‚èFƒsƒ“©g‚ª“®‚­
     virtual void OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float playerSpeed);

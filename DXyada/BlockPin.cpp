@@ -13,6 +13,7 @@ BlockPin::~BlockPin() {}
 
 void BlockPin::Init(const char* texture, float x, float y, float width, float height)
 {
+
     Pin::Init(texture, x, y, width, height);
 
     // ”O‚Ì‚½‚ß Pin::Init ‚ª m_object ‚ğG‚éİŒv‚Å‚à”j’]‚µ‚È‚¢‚æ‚¤‚É–¾¦
@@ -24,6 +25,7 @@ void BlockPin::Init(const char* texture, float x, float y, float width, float he
 
 void BlockPin::Update(float dt)
 {
+
     Pin::Update(dt);
 
     DirectX::XMFLOAT3 currentPos = m_object.GetPos();
@@ -44,7 +46,6 @@ void BlockPin::Update(float dt)
 
         m_prevPos = currentPos;
     }
-
 
     if (!m_pBlock)
     {
@@ -132,4 +133,11 @@ void BlockPin::SetLimitPos(float right, float left, float top, float down)
     m_LimitLeft = left;
     m_LimitTop = top;
     m_LimitDown = down;
+}
+
+void BlockPin::SetTargetBlock(Platform* block)
+{
+    m_pBlock = block;
+    // •R•t‚¯‚½uŠÔ‚ÌÀ•W‚ğ•Û‘¶‚µAdelta‚ğ0‚©‚çŒvZ‚³‚¹‚é
+    m_prevPos = m_object.GetPos();
 }

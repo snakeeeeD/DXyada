@@ -30,7 +30,7 @@ private:
 
     float m_fallDeadLineY = -800.0f;
 
-    void AddPlatform(const char* tex, float x, float y, float w, float h);
+    Platform* AddPlatform(const char* tex, float x, float y, float w, float h);
     void AddDecorPin(float x, float y, bool canDecorate);
     BlockPin* AddPullPin(float x, float y, bool canRollPin);
     void BuildDrawList();
