@@ -113,7 +113,7 @@ void Player::Init() {
     //指示線用
     m_baseGuidelineLength = m_height * 3.5;//身長の3.5倍の長さ
     m_guideline.Init();
-    m_guideline.AddTexture("asset/Field/block.png");
+    m_guideline.AddTexture("asset/Player/GuideLine.png");
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
     m_guideline.SetSize(m_baseGuidelineLength, 20, 0);
 
@@ -145,7 +145,7 @@ void Player::Init() {
         5, 3,
         0,
         0, 14,
-        20.0f,
+        30.0f,
         false,
         true,
         3
@@ -159,7 +159,7 @@ void Player::Init() {
         5, 3,
         0,
         0, 14,
-        20.0f,
+        30.0f,
         false,
         true,
         3
@@ -616,29 +616,7 @@ void Player::Update(
                 m_decoratingEffectFront.SetSize(enemySize.x, enemySize.y, 0);
                 m_decoratingEffectFront.SetColor(1, 1, 1, 1);
 
-
-                // 必要時間に達したら撃破
-                if (m_LT)
-                {
-                    hitEnemy->Disable(m_justDeco);
-                    m_ribbon.Return();
-                    m_isRibbonOut = false;
-                    hitEnemy->SetSlow(false);
-                    m_totalRotation = 0.0f;
-                    m_isPulling = false;
-                    m_isRotating = false;
-
-                    // リセット
-    
-                    m_holdRTTimer = 0.0f;
-                    m_targetEnemy = nullptr;
-                    m_LT = false;
-
-                    m_decoratingEffectBack.SetColor(1, 1, 1, 0);
-                    m_decoratingEffectFront.SetColor(1, 1, 1, 0);
-                    m_showDecoratingEffect = false;
-                }
-
+                m_holdLTTimer += deltaTime;
                 if (m_holdLTTimer >= m_holdLTRequired)
                 {
                     m_justDeco = false;
@@ -647,7 +625,7 @@ void Player::Update(
                 }
                 else
                 {
-                    m_holdLTTimer += deltaTime;
+                    //m_holdLTTimer += deltaTime;
                 }
             }
             else
@@ -670,6 +648,29 @@ void Player::Update(
                 
             }
 
+
+            // 必要時間に達したら撃破
+            if (m_LT)
+            {
+                hitEnemy->OnDecorated();
+                hitEnemy->Disable(m_justDeco);
+                m_ribbon.Return();
+                m_isRibbonOut = false;
+                hitEnemy->SetSlow(false);
+                m_totalRotation = 0.0f;
+                m_isPulling = false;
+                m_isRotating = false;
+
+                // リセット
+
+                m_holdRTTimer = 0.0f;
+                m_targetEnemy = nullptr;
+                m_LT = false;
+
+                m_decoratingEffectBack.SetColor(1, 1, 1, 0);
+                m_decoratingEffectFront.SetColor(1, 1, 1, 0);
+                m_showDecoratingEffect = false;
+            }
         
         }
 
@@ -845,7 +846,7 @@ void Player::Update(
                         m_showDecoratingEffect = false;
                         m_decoratingEffectBack.SetColor(1, 1, 1, 0);
                         m_decoratingEffectFront.SetColor(1, 1, 1, 0);
-                        m_holdLTTimer = 0.0f;
+        
 
                         if (0.2f < m_holdLTTimer && m_holdLTTimer < 0.4f)
                         {
@@ -1394,6 +1395,26 @@ void Player::Update(
         m_guideline.SetColor(1, 1, 1, 0);
         m_Circle.SetColor(1, 1, 1, 0);
         m_ribbonTargetEnemy = nullptr;
+    }
+
+    if (m_ribbon.GetState() == Ribbon::State::Returning)
+    {
+        m_isRibbonOut = false;
+        m_totalRotation = 0.0f;
+        m_isPulling = false;
+        m_isRotating = false;
+
+        // リセット
+
+        m_holdRTTimer = 0.0f;
+        m_holdLTTimer = 0.0f;
+        m_targetEnemy = nullptr;
+        m_targetPin = nullptr;
+        m_LT = false;
+
+        m_decoratingEffectBack.SetColor(1, 1, 1, 0);
+        m_decoratingEffectFront.SetColor(1, 1, 1, 0);
+        m_showDecoratingEffect = false;
     }
 
     //========================================

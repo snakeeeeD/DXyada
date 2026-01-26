@@ -20,6 +20,16 @@ void Enemy::Init(const char* texture, float x, float y, float width, float heigh
 
     deltaTime = 1.0f / 240.0f;
 
+    m_object.AddAnimation("Normal", texture,
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
+
+    if (!m_decoratedTexturePath.empty() && !m_hasChangedTexture)
+    {
+        m_object.AddAnimation("Deco", m_decoratedTexturePath.c_str(),
+            1, 1, 0, 0, 0, 0.0f, false, false, 0);
+
+        m_hasChangedTexture = true;
+    }
 }
 
 void Enemy::Disable(bool justdeco)
@@ -29,6 +39,13 @@ void Enemy::Disable(bool justdeco)
 
     m_enableCollision = false;
     m_enemystate = EnemyState::YouDied;
+
+    if (!m_decoratedTexturePath.empty() && !m_hasChangedTexture)
+    {
+        m_object.PlayAnimation("Deco");
+
+        m_hasChangedTexture = true;
+    }
 
     if (justdeco)
     {
@@ -48,39 +65,7 @@ void Enemy::Update(float deltaTime)
     if (m_enemystate == EnemyState::YouDied)
         return;
 
-
-    //LT‰Ÿ‚µ‚Ä‚é‚Æ‚«‚Í’x‚­
-    if (m_isSlow)
-    {
-        //m_object.Update(deltaTime);
-        //return;
-    }
-
     auto pos = m_object.GetPos();
-
-    //if (move==false) {
-    //    pos.x += 1;
-    //}
-    //if (pos.x >= 600) {
-    //    move = true;
-    //}
-    //if (move == true) {
-    //    pos.x -= 1;
-    //}
-    //if (pos.x <= 300) {
-    //    move = false;
-    //}
-
-    //‹­’²•\Ž¦i‰¼j
-    if (m_isHighlighted)
-    {
-        //‚¢‚Á‚½‚ñÔ‚­
-        m_object.SetColor(1.0f, 0.0f, 0.0f, 0.5f);
-    }
-    else
-    {
-        m_object.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-    }
 
     m_object.SetPos(pos.x, pos.y, pos.z);
 
@@ -106,4 +91,15 @@ void Enemy::Draw()
 void Enemy::UnInit()
 {
     m_object.UnInit();
+}
+
+void Enemy::OnDecorated()
+{
+    m_isDecorated = true;
+
+    if (!m_decoratedTexturePath.empty() && !m_hasChangedTexture)
+    {
+        m_object.PlayAnimation("Deco");
+        m_hasChangedTexture = true;
+    }
 }

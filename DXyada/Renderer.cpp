@@ -42,7 +42,8 @@ ID3D11InputLayout* g_pInputLayout = nullptr;
 ID3D11VertexShader* g_pVertexShader = nullptr;
 ID3D11PixelShader* g_pPixelShader = nullptr;
 //サンプラー用変数
-ID3D11SamplerState* g_pSampler;
+ID3D11SamplerState* g_pSamplerClamp = nullptr;
+ID3D11SamplerState* g_pSamplerWrap = nullptr;
 //定数バッファ用変数
 ID3D11Buffer* g_pConstantBuffer;
 
@@ -53,6 +54,9 @@ ID3D11BlendState* g_pBlendState;
 HRESULT ResizeWindow(int width, int height)
 {
 	if (!g_pSwapChain) return S_FALSE;
+
+	ID3D11RenderTargetView* nullRTV = nullptr;
+	g_pDeviceContext->OMSetRenderTargets(1, &nullRTV, nullptr);
 
 	SAFE_RELEASE(g_pRenderTargetView);
 	SAFE_RELEASE(g_pDepthStencilView);
@@ -244,8 +248,15 @@ HRESULT RendererInit(HWND hwnd)
 	smpDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	smpDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	smpDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	hr = g_pDevice->CreateSamplerState(&smpDesc, &g_pSampler);
+	hr = g_pDevice->CreateSamplerState(&smpDesc, &g_pSamplerClamp);
 	if (FAILED(hr))return hr;
+
+	//WRAP用サンプラー
+	smpDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	smpDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	smpDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	hr = g_pDevice->CreateSamplerState(&smpDesc, &g_pSamplerWrap);
+	if (FAILED(hr)) return hr;
 
 	//定数バッファ生成
 	D3D11_BUFFER_DESC cbDesc;
@@ -309,7 +320,7 @@ void RendererDrawStart()
 
 	
 
-	g_pDeviceContext->PSSetSamplers(0, 1, &g_pSampler);
+	g_pDeviceContext->PSSetSamplers(0, 1, &g_pSamplerClamp);
 
 
 	//定数バッファを頂点シェーダーにセットする
@@ -333,7 +344,8 @@ void RendererUninit()
 	// ※DirectXの各機能は作成した後、アプリ終了時に必ず解放しなければならない
 	if (g_pDeviceContext) g_pDeviceContext->ClearState();
 	SAFE_RELEASE(g_pBlendState);
-	SAFE_RELEASE(g_pSampler);
+	SAFE_RELEASE(g_pSamplerClamp);
+	SAFE_RELEASE(g_pSamplerWrap);
 	SAFE_RELEASE(g_pConstantBuffer);
 	SAFE_RELEASE(g_pPixelShader);
 	SAFE_RELEASE(g_pVertexShader);

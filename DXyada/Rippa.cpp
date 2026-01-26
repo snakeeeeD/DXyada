@@ -2,6 +2,16 @@
 
 Rippa::Rippa(Type type) : m_type(type) {}
 
+void Rippa::Init(const char* tex, float x, float y, float w, float h)
+{
+    m_object.Init();
+    m_object.AddTexture(tex);
+    m_object.SetPos(x, y, 0);
+    m_object.SetSize(w, h, 0);
+
+    m_decoratedTexturePath = "asset/Field/rippa_Deco.png";
+}
+
 void Rippa::Update(float deltaTime)
 {
     //LT‰Ÿ‚µ‚Ä‚é‚Æ‚«‚Í’x‚­
