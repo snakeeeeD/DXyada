@@ -100,6 +100,10 @@ void Stage1::BuildDrawList()
     }
 
     for (size_t i = 0; i < m_pins.size(); ++i) {
+        item.obj = m_pins[i]->GetMarkObject();
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+
         item.obj = m_pins[i]->GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);

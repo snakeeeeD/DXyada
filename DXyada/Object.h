@@ -65,6 +65,7 @@ public:
     void SetFlipX(bool flip) { m_flipX = flip; }
 
 
+
     DirectX::XMFLOAT3 GetPos() const { return m_pos; }
     DirectX::XMFLOAT3 GetSize() const { return m_size; }
 

@@ -38,6 +38,15 @@ private:
 	bool m_enablePlatformRegisterOnDecorated = true;
 	bool m_canBeGround = true;
 	bool m_canBeHookedByRibbon = true;
+
+	Object m_mark;
+	bool   m_markVisible = true;
+
+	float  m_markOffsetX = 0.0f;
+	float  m_markOffsetY = 20.0f;
+	float  m_markW = 320.0f;
+	float  m_markH = 320.0f;
+
 public:
 	Pin() = default;
 	~Pin() = default;
@@ -57,6 +66,8 @@ public:
 	State GetState() const { return m_state; }
 	void SetState(State state , bool justdeco);
 	Object* GetObject() { return &m_object; }
+	//まーかー
+	Object* GetMarkObject() { return &m_mark; }
 
 	//引き寄せ、巻き取り判別用
 	bool GetcanRollPin() const { return m_canRollPin; }

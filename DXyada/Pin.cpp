@@ -12,11 +12,29 @@ void Pin::Init(const char* texture, float x, float y, float width, float height)
     m_object.SetPos(x, y, 0);
     m_object.SetSize(width, height, 0);
     m_state = State::Normal;
+
+    m_mark.Init();
+    m_mark.AddTexture("asset/Field/back.png");
+    m_mark.SetSize(0, 0, 0);
+    int angle = (rand() % 61) - 30;
+    m_mark.SetAngle(angle);
+
+    auto pos = m_object.GetPos();
+    auto sz = m_object.GetSize();
+    m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
 }
 
 void Pin::Update(float dt)
 {
     m_object.Update(dt);
+
+    if (m_markVisible)
+    {
+        auto pos = m_object.GetPos();
+        auto sz = m_object.GetSize();
+        m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
+        m_mark.Update(dt);
+    }
 
     if (GetState() == State::Decorated)
     {
@@ -26,6 +44,11 @@ void Pin::Update(float dt)
 
 void Pin::Draw()
 {
+    if (m_markVisible)
+    {
+        m_mark.Draw(g_pDeviceContext, g_pInputLayout, g_pVertexShader, g_pPixelShader, g_pConstantBuffer);
+    }
+
     m_object.Draw
     (
         g_pDeviceContext,
@@ -63,6 +86,7 @@ void Pin::OnHit()
 void Pin::UnInit()
 {
     m_object.UnInit();
+    m_mark.UnInit();
 }
 
 void Pin::SetPos(float Pos_X, float Pos_Y) {
@@ -106,6 +130,7 @@ void Pin::SetState(State state, bool justdeco)
         m_enablePlatformRegisterOnDecorated &&
         !m_isPlatformRegistered)
     {
+        m_mark.SetSize(200, 150, 0);
         if (m_pCollision)
         {
             m_pCollision->SetTag(&m_object, ColliderTag::Platform);
