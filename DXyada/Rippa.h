@@ -37,6 +37,8 @@ public:
     Rippa(Type type = Type::Normal);
     //~Rippa() override;
 
+    void Init(const char* tex, float x, float y, float w, float h);
+
     void SetType(Type type) { m_type = type; }
     void SetTurnInterval(float interval) { m_turnInterval = interval; }
 
@@ -54,5 +56,6 @@ public:
     void CheckWandering(float dt); // Wandering—p
 
     void CheckEnemyCollision(const std::vector<Enemy*>& enemies);
+
     void Disable(bool justdeco);
 };

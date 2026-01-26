@@ -37,6 +37,10 @@ protected:
 
     bool m_isSlow = false;
 
+    bool m_isDecorated = false;          //飾られたかどうか
+    bool m_hasChangedTexture = false;    //テクスチャ変更済みフラグ
+    std::string m_decoratedTexturePath;  //飾られた時のテクスチャパス
+
 public:
     Tag tag = Tag::Enemy;
 
@@ -74,4 +78,6 @@ public:
     void SetSlow(bool slow) { m_isSlow = slow; }
     bool IsSlow() const { return m_isSlow; }
 
+    virtual void OnDecorated();  //飾られた時の処理
+    bool IsDecorated() const { return m_isDecorated; }
 };

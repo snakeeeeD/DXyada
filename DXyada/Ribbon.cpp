@@ -32,13 +32,16 @@ void Ribbon::Init()
 
     // 細長い板ポリとして初期化
     seg.obj->Init();
-    seg.obj->AddTexture("asset/Field/block.png"); // 仮テクスチャ
-    seg.obj->SetSize(m_segmentLength, 6.0f, 0); // 細いリボン
+    seg.obj->AddTexture("asset/Player/Ribbon.png"); // 仮テクスチャ
+    seg.obj->SetSize(m_segmentLength, 20.0f, 0); // 細いリボン
     seg.obj->SetColor(1.0f, 0.2f, 0.7f, 0.0f);
     seg.obj->SetPos(0, 0, 0);
 
+     seg.obj->SetUVLoop(0.5f, 0.0f);
+
     seg.pos = { 0.0f, 0.0f };
     m_segments.push_back(seg);
+
 
     m_state = State::Idle;
     m_time = 0.0f;
@@ -108,7 +111,14 @@ void Ribbon::Return()
 void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::vector<Pin*>& pins)
 {
     if (m_state == State::Idle)
+    {
+        for (auto& seg : m_segments)
+        {
+            seg.obj->SetUVSprite();
+        }
         return;
+    }
+
     DirectX::XMFLOAT2 targetPos{};
     bool hasTarget = false;
 
@@ -386,6 +396,54 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
             return;
         }
     }
+
+    //リボンが伸びている・保持している時
+    if (m_state == State::Throwing || m_state == State::Holding)
+    {
+        //最大長に達していない場合のみスクロール
+        if (m_currentLength < m_maxLength && !m_hasHit)
+        {
+            m_time += deltaTime;
+        }
+
+        for (size_t i = 0; i < m_segments.size(); ++i)
+        {
+            auto& seg = m_segments[i];
+
+            //リボンの長さに応じたUV長
+            float length = m_currentLength / (m_segmentLength * 5) ;
+
+            //最大長に達したら、または当たったらスクロール停止
+            float scroll = 0.0f;
+            if (m_currentLength < m_maxLength && !m_hasHit)
+            {
+                scroll = m_time * m_speed * 0.0002f;
+            }
+            else
+            {
+                //最大長または当たった時点でのスクロール値を保持
+                scroll = m_time * m_speed * 0.0002f;
+            }
+
+            //UVループモードに設定
+            seg.obj->SetUVLoop(length, scroll);
+        }
+    }
+    else if (m_state == State::Returning)
+    {
+        //戻る時は逆スクロール
+        m_time += deltaTime;
+
+        for (size_t i = 0; i < m_segments.size(); ++i)
+        {
+            auto& seg = m_segments[i];
+
+            float length = m_currentLength / (m_segmentLength * 5);
+            float scroll = m_time * m_speed * 0.0002f * -1.0f;  //逆方向
+
+            seg.obj->SetUVLoop(length, scroll);
+        }
+    }
     CheckBodyHitWall();
     //----------------------------------
     // 描画更新（共通）
@@ -401,10 +459,12 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
 
     auto& ribbon = m_segments[0];
     ribbon.obj->SetPos(centerX, centerY, 0);
-    ribbon.obj->SetSize(m_currentLength, 6.0f, 0);
+    ribbon.obj->SetSize(m_currentLength, 100.0f, 0);
     ribbon.obj->SetPivot(0, 0, 0);
     ribbon.obj->SetAngle(angleDeg);
     ribbon.obj->SetColor(1, 1, 1, 1);
+
+
 }
 
 

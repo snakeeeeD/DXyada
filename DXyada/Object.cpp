@@ -73,6 +73,15 @@ void Object::Draw(
     context->PSSetShader(ps, nullptr, 0);
     context->PSSetShaderResources(0, 1, &anim.srv);
 
+    if (m_uvMode == UVMode::Loop)
+    {
+        context->PSSetSamplers(0, 1, &g_pSamplerWrap);
+    }
+    else
+    {
+        context->PSSetSamplers(0, 1, &g_pSamplerClamp);
+    }
+
     // ===== ワールド行列 =====
     XMMATRIX matScale = XMMatrixScaling(m_size.x, m_size.y, m_size.z);
     XMMATRIX matRot = XMMatrixRotationZ(XMConvertToRadians(m_angle));
@@ -130,19 +139,28 @@ void Object::Draw(
 
     XMMATRIX matTex;
 
-    if (!m_flipX)
+    if (m_uvMode == UVMode::Sprite)
     {
-        //通常
-        matTex =
-            XMMatrixScaling(sx, sy, 1.0f) *
-            XMMatrixTranslation(u, v, 0.0f);
+        if (!m_flipX)
+        {
+            //通常
+            matTex =
+                XMMatrixScaling(sx, sy, 1.0f) *
+                XMMatrixTranslation(u, v, 0.0f);
+        }
+        else
+        {
+            //左右反転
+            matTex =
+                XMMatrixScaling(-sx, sy, 1.0f) *
+                XMMatrixTranslation(u + sx, v, 0.0f);
+        }
     }
-    else
+    else if (m_uvMode == UVMode::Loop)
     {
-        //左右反転
         matTex =
-            XMMatrixScaling(-sx, sy, 1.0f) *
-            XMMatrixTranslation(u + sx, v, 0.0f);
+                XMMatrixScaling(m_uvLength, 1.0f, 1.0f) *
+                XMMatrixTranslation(m_uvScroll, 0.0f, 0.0f);
     }
 
     // ===== 定数バッファ =====

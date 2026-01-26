@@ -2,6 +2,7 @@
 
 Rippa::Rippa(Type type) : m_type(type) {}
 
+
 void Rippa::Init(const char* texture, float x, float y, float width, float height)
 {
     Enemy::Init(texture, x, y, width, height);
@@ -9,6 +10,17 @@ void Rippa::Init(const char* texture, float x, float y, float width, float heigh
     // 【事前ロード】飾り用の画像を "Decoration" という名前のアニメーションとして登録
     // これで画像がメモリに乗り、後で PlayAnimation("Decoration") するだけで切り替わります
     m_object.AddAnimation("Decoration", "asset/Field/Rippa_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+}
+
+void Rippa::Init(const char* tex, float x, float y, float w, float h)
+{
+    m_object.Init();
+    m_object.AddTexture(tex);
+    m_object.SetPos(x, y, 0);
+    m_object.SetSize(w, h, 0);
+
+    m_decoratedTexturePath = "asset/Field/rippa_Deco.png";
+
 }
 
 void Rippa::Update(float deltaTime)

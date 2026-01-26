@@ -50,3 +50,6 @@ extern ID3D11Buffer* g_pConstantBuffer;
 extern IDXGISwapChain* g_pSwapChain;
 // Direct3D‰ð•ú‚ÌŠÈ—ª‰»ƒ}ƒNƒ
 #define SAFE_RELEASE(p) { if( NULL != p ) { p->Release(); p = NULL; } }
+
+extern ID3D11SamplerState* g_pSamplerClamp;
+extern ID3D11SamplerState* g_pSamplerWrap;
