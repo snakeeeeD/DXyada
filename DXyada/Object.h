@@ -63,6 +63,7 @@ public:
     void SetPivot(float x, float y, float z);
     void SetColor(float r, float g, float b, float a);
     void SetFlipX(bool flip) { m_flipX = flip; }
+    void ChangeTexture(const char* texturePath);
 
 
 

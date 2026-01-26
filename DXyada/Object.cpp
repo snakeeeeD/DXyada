@@ -260,3 +260,10 @@ void Object::SetSize(float x, float y, float z) { m_size = { x,y,z }; }
 void Object::SetAngle(float a) { m_angle = a; }
 void Object::SetPivot(float x, float y, float z) { m_pivot = { x,y,z }; }
 void Object::SetColor(float r, float g, float b, float a) { m_color = { r,g,b,a }; }
+
+void Object::ChangeTexture(const char* texturePath)
+{
+    AddAnimation("Decoration", texturePath, 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+
+    PlayAnimation("Decoration");
+}

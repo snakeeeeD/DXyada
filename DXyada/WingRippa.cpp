@@ -3,6 +3,13 @@
 
 WingRippa::WingRippa(Type type) : m_type(type) {}
 
+void WingRippa::Init(const char* texture, float x, float y, float width, float height)
+{
+    Enemy::Init(texture, x, y, width, height);
+
+    m_object.AddAnimation("Decoration", "asset/Field/Wing_Rippa_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+}
+
 void WingRippa::Update(float deltaTime)
 {
     if (IsDead()) return;
@@ -141,5 +148,17 @@ void WingRippa::CheckWallCollision()
         // 3. ñÑÇ‹ÇËñhé~ÅFîΩì]ÇµÇΩï˚å¸Ç…è≠ÇµñﬂÇ∑
         pos.x += m_direction * 2.0f;
         m_object.SetPos(pos.x, pos.y, pos.z);
+    }
+}
+
+void WingRippa::Disable(bool justdeco)
+{
+
+    Enemy::Disable(justdeco);
+
+    if (justdeco)
+    {
+
+        m_object.PlayAnimation("Decoration");
     }
 }

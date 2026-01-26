@@ -37,10 +37,14 @@ public:
 
 	void SetType(Type type) { m_type = type; }
 
+	void Init(const char* texture, float x, float y, float width, float height);
+
 	void Update(float deltaTime) override;
 
 	void UpdateZigZag(float dt); //Normal用
 	void UpdateCircle(float dt); // Wandering用
 	void CheckWallCollision(); // 壁衝突チェック
+
+	void Disable(bool justdeco);
 
 };

@@ -1,5 +1,14 @@
 #include "NeedleFloor.h"
 
+void NeedleFloor::Init(const char* texture, float x, float y, float width, float height)
+{
+    Enemy::Init(texture, x, y, width, height);
+
+    // 【事前ロード】飾り用の画像を "Decoration" という名前のアニメーションとして登録
+    // これで画像がメモリに乗り、後で PlayAnimation("Decoration") するだけで切り替わります
+    m_object.AddAnimation("Decoration", "asset/Field/Needle_Floor_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+}
+
 void NeedleFloor::Update(float deltaTime) 
 {
     // ハリ床は移動しないので座標更新のみ
@@ -8,7 +17,6 @@ void NeedleFloor::Update(float deltaTime)
 
 void NeedleFloor::OnDecorated() 
 {
-    //OutputDebugStringA("aaaaaaaaaaaaaaaaaaaaaaaaaa\n");
 
     // すでに飾られていたら何もしない
     if (m_state == State::Decorated)
@@ -37,5 +45,18 @@ void NeedleFloor::OnDecorated()
 
         // 作成した AABB を CollisionManager に登録
         m_pCollision->AddStaticAABB(myAABB);
+    }
+}
+
+void NeedleFloor::Disable(bool justdeco)
+{
+
+    Enemy::Disable(justdeco);
+
+    if (justdeco)
+    {
+        m_object.PlayAnimation("Decoration");
+
+        OnDecorated();
     }
 }

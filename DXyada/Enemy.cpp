@@ -32,7 +32,7 @@ void Enemy::Disable(bool justdeco)
 
     if (justdeco)
     {
-        m_object.SetColor(1, 0, 0, 0.3f);
+        //m_object.SetColor(1, 0, 0, 0.3f);
     }
     else
     {
@@ -75,7 +75,7 @@ void Enemy::Update(float deltaTime)
     if (m_isHighlighted)
     {
         //Ç¢Ç¡ÇΩÇÒê‘Ç≠
-        m_object.SetColor(1.0f, 0.0f, 0.0f, 0.5f);
+        //m_object.SetColor(1.0f, 0.0f, 0.0f, 0.5f);
     }
     else
     {

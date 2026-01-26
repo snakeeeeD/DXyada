@@ -60,7 +60,7 @@ public:
     virtual void Draw();
     void UnInit();
 
-    void Disable(bool justdeco);
+    virtual void Disable(bool justdeco);
     bool IsCollisionEnabled() const { return m_enableCollision; }
     bool IsDead() const { return m_enemystate == EnemyState::YouDied; }
 

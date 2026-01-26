@@ -620,7 +620,7 @@ void Player::Update(
                 // 必要時間に達したら撃破
                 if (m_LT)
                 {
-                    hitEnemy->Disable(m_justDeco);
+                    hitEnemy->Disable(true);
                     m_ribbon.Return();
                     m_isRibbonOut = false;
                     hitEnemy->SetSlow(false);

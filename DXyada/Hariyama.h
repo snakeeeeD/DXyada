@@ -7,9 +7,13 @@ public:
     Hariyama() = default;
     ~Hariyama() = default;
 
+    void Init(const char* texture, float x, float y, float width, float height);
+
     void Update(float dt) override;
 
     void SetEnemyList(std::vector<Enemy*>* list) { m_pEnemyList = list; }
+
+    void Disable(bool justdeco);
 
 private:
 

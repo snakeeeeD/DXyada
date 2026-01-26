@@ -1,6 +1,15 @@
 #include "Hariyama.h"
 #include "Player.h"
 
+void Hariyama::Init(const char* texture, float x, float y, float width, float height)
+{
+    Enemy::Init(texture, x, y, width, height);
+
+    // 【事前ロード】飾り用の画像を "Decoration" という名前のアニメーションとして登録
+    // これで画像がメモリに乗り、後で PlayAnimation("Decoration") するだけで切り替わります
+    m_object.AddAnimation("Decoration", "asset/Field/Hariyama_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+}
+
 void Hariyama::Update(float dt)
 {
 
@@ -116,4 +125,16 @@ void HariyamaNeedle::Update(float dt)
     }
 
     m_object.Update(dt);
+}
+
+void Hariyama::Disable(bool justdeco)
+{
+
+    Enemy::Disable(justdeco);
+
+    if (justdeco)
+    {
+
+        m_object.PlayAnimation("Decoration");
+    }
 }

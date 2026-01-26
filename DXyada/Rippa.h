@@ -44,6 +44,8 @@ public:
 
     void SetTurnRange(float min, float max);
 
+    void Init(const char* texture, float x, float y, float width, float height);
+
     void Update(float deltaTime) override;
 
     //void Draw();
@@ -52,4 +54,5 @@ public:
     void CheckWandering(float dt); // Wandering—p
 
     void CheckEnemyCollision(const std::vector<Enemy*>& enemies);
+    void Disable(bool justdeco);
 };

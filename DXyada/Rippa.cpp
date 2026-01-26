@@ -2,6 +2,15 @@
 
 Rippa::Rippa(Type type) : m_type(type) {}
 
+void Rippa::Init(const char* texture, float x, float y, float width, float height)
+{
+    Enemy::Init(texture, x, y, width, height);
+
+    // 【事前ロード】飾り用の画像を "Decoration" という名前のアニメーションとして登録
+    // これで画像がメモリに乗り、後で PlayAnimation("Decoration") するだけで切り替わります
+    m_object.AddAnimation("Decoration", "asset/Field/Rippa_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+}
+
 void Rippa::Update(float deltaTime)
 {
     //LT押してるときは遅く
@@ -187,5 +196,17 @@ void Rippa::CheckEnemyCollision(const std::vector<Enemy*>& enemies)
 
             break;  //衝突したら終了
         }
+    }
+}
+
+void Rippa::Disable(bool justdeco)
+{
+
+    Enemy::Disable(justdeco);
+
+    if (justdeco)
+    {
+
+        m_object.PlayAnimation("Decoration");
     }
 }

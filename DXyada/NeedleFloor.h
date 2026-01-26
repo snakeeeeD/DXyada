@@ -17,6 +17,9 @@ public:
 	NeedleFloor() = default;
 	~NeedleFloor() override = default;
 
+	void Init(const char* texture, float x, float y, float width, float height);
+
+
 	void Update(float deltaTime) override;
 
 	//ƒŠƒ{ƒ“‚ª“–‚½‚Á‚½‚Æ‚«‚ÌŠÖ”(‰¼)
@@ -24,5 +27,7 @@ public:
 
 	//Œ»İ‚Ìó‘Ô
 	State GetState() const { return m_state; }
+
+	void Disable(bool justdeco);
 
 };
