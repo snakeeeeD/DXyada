@@ -324,7 +324,7 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     m_Star2.SetSize(200, 200, 0);
     m_Star3.SetSize(200, 200, 0);
 
-    if (Star != m_prevStar)
+   // if (Star != m_prevStar)
     {
         switch (Star) {
         case 0:

@@ -131,6 +131,7 @@ void Pin::SetState(State state, bool justdeco)
         !m_isPlatformRegistered)
     {
         m_mark.SetSize(200, 150, 0);
+
         if (m_pCollision)
         {
             m_pCollision->SetTag(&m_object, ColliderTag::Platform);
