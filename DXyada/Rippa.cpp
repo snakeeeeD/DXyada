@@ -10,6 +10,16 @@ void Rippa::Init(const char* texture, float x, float y, float width, float heigh
     // 【事前ロード】飾り用の画像を "Decoration" という名前のアニメーションとして登録
     // これで画像がメモリに乗り、後で PlayAnimation("Decoration") するだけで切り替わります
     m_object.AddAnimation("Decoration", "asset/Field/Rippa_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+
+    m_mark.Init();
+    m_mark.AddTexture("asset/Field/back.png");
+    m_mark.SetSize(0, 0, 0);
+    int angle = (rand() % 61) - 30;
+    m_mark.SetAngle(angle);
+
+    auto pos = m_object.GetPos();
+    auto sz = m_object.GetSize();
+    m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
 }
 
 //void Rippa::Init(const char* tex, float x, float y, float w, float h)
@@ -63,6 +73,14 @@ void Rippa::Update(float deltaTime)
     m_object.SetFlipX(m_direction > 0);
 
     m_object.Update(deltaTime);
+
+    if (m_markVisible)
+    {
+        auto pos = m_object.GetPos();
+        auto sz = m_object.GetSize();
+        m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
+        m_mark.Update(deltaTime);
+    }
 
     // 座標を即座に更新して、次のフレームの二重判定を防ぐ
     if (m_direction > 0)

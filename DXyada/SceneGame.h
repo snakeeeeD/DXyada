@@ -41,9 +41,9 @@ private:
     Object m_Star3;
 
 
-    int SizeMin = 190;
-    int SizeMax = 210;
-    int m_size = 190;
+    int SizeMin = 730;
+    int SizeMax = 790;
+    int m_size = 730;
 
     int Star = 0;
     int m_prevStar = -1;
