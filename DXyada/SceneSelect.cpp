@@ -64,6 +64,7 @@ void SceneSelect::Init() {
     tm.Enqueue("asset/Field/needle_floor.png");
     tm.Enqueue("asset/Field/rippa.png");
     tm.Enqueue("asset/Field/PinJump.png");
+    tm.Enqueue("asset/Field/°ƒuƒƒbƒN.png");
 }
 
 void SceneSelect::Update(SceneManager& mgr)

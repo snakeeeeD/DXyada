@@ -165,9 +165,19 @@ void Stage1::Init()
     m_hasCheckpoint = true;
 
     m_background.Init();
-    m_background.AddTexture("asset/Field/aa.png");
-    m_background.SetPos(0, 0, 0);
-    m_background.SetSize(192000, 108000, 0);
+    m_background.AddTexture("asset/Field/ステージ背景.png");
+    m_background.SetPos(7200.0f, 0.0f, 0.0f);      // 横14400の中心に置くなら 7200
+    m_background.SetSize(23000.0f, 2100.0f, 0.0f);
+
+    // ★ここがUV繰り返し
+    m_background.SetUVMode(Object::UVMode::Loop);
+
+    // 横だけ10回繰り返したいなら「U方向の長さ」を10にする
+    m_background.SetUVLength(5.0f);
+
+    // スクロールしないなら0で固定
+    m_background.SetUVScroll(0.0f);
+
 
     m_HP_UI1.Init(); m_HP_UI1.AddTexture("asset/UI/cursor.png"); m_HP_UI1.SetSize(200, 200, 0);
     m_HP_UI2.Init(); m_HP_UI2.AddTexture("asset/UI/cursor.png"); m_HP_UI2.SetSize(200, 200, 0);
@@ -190,7 +200,7 @@ void Stage1::Init()
     //1
     {
         float w = TILE * 10.0f;
-        AddPlatform("asset/Field/block.png", x + w * 0.5f, LOW_Y, w, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w * 0.5f, LOW_Y, w, H);
 
         AddDecorPin(x + TILE * 10.0f + 0.85f * TILE, -317.0f, true);
 
@@ -219,7 +229,7 @@ void Stage1::Init()
     //2
     {
         float w1 = TILE * 6.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
         float gap = TILE * 3.0f;
@@ -232,7 +242,7 @@ void Stage1::Init()
         x += gap;
 
         float w2 = TILE * 5.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f, LOW_Y, w2, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f, LOW_Y, w2, H);
 
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
@@ -256,7 +266,7 @@ void Stage1::Init()
     //3
     {
         float w1 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
         float gap = TILE * 5.0f;
@@ -268,14 +278,14 @@ void Stage1::Init()
         x += gap;
 
         float w2 = TILE * 6.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f + 125, LOW_Y, w2, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f + 125, LOW_Y, w2, H);
         x += w2;
     }
 
     //4
     {
         float w1 = TILE * 10.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
 
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
@@ -308,7 +318,7 @@ void Stage1::Init()
     //5
     {
         float w1 = TILE * 5.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
 
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
@@ -350,7 +360,7 @@ void Stage1::Init()
     //7
     {
         float w1 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
 
         AddDecorPin(x + w1 * 0.5 + 300, -317.0f, true);
 
@@ -360,7 +370,7 @@ void Stage1::Init()
     //8
     {
         float w1 = TILE * 10.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
 
         Rippa* rippa = new Rippa(Rippa::Type::Normal);
         rippa->Init("asset/Field/rippa.png", x + w1 * 0.5f, LOW_Y + 350, 150, 150);
@@ -392,7 +402,7 @@ void Stage1::Init()
         //ピンの種類のStateを"Jump(飾れる)"に
         JumpPin->SetPinKind(PinKind::Jump);
 
-        AddPlatform("asset/Field/block.png", x + w1, LOW_Y, w1, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w1, LOW_Y, w1, H);
 
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
