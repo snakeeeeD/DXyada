@@ -76,7 +76,7 @@ void BlockPin::OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float play
     float dx = playerPos.x - currentPos.x;
     float dy = playerPos.y - currentPos.y;
 
-    //Ž²§ŒÀF‰¡‚Ì‚Ý / c‚Ì‚Ý
+    // šŽ²§ŒÀF‰¡‚Ì‚Ý / c‚Ì‚Ý
     if (m_moveAxis == MoveAxis::Horizontal) dy = 0.0f;
     if (m_moveAxis == MoveAxis::Vertical)   dx = 0.0f;
 
@@ -95,7 +95,7 @@ void BlockPin::OnWindUp(const DirectX::XMFLOAT3& playerPos, float dt, float play
     currentPos.y += dirY * m_moveSpeed * dt;
 
 
-    if (m_LimitRight != 0 && m_LimitLeft != 0 && m_LimitTop != 0 && m_LimitDown != 0)
+    if (!m_LimitRight == 0 && !m_LimitLeft == 0 && !m_LimitTop == 0 && !m_LimitDown == 0)
     {
         if (currentPos.x > m_LimitRight) currentPos.x = m_LimitRight;
         if (currentPos.x < m_LimitLeft) currentPos.x = m_LimitLeft;

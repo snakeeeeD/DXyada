@@ -18,17 +18,6 @@ void Enemy::Init(const char* texture, float x, float y, float width, float heigh
     m_object.SetPos(x, y, 0);
     m_object.SetSize(width, height, 0);
 
-    m_mark.Init();
-    m_mark.AddTexture("asset/Field/back.png");
-    m_mark.SetSize(0, 0, 0);
-    int angle = (rand() % 61) - 30;
-    m_mark.SetAngle(angle);
-
-    auto pos = m_object.GetPos();
-    auto sz = m_object.GetSize();
-    m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
-
-
     deltaTime = 1.0f / 240.0f;
 
     m_object.AddAnimation("Normal", texture,
@@ -78,29 +67,40 @@ void Enemy::Update(float deltaTime)
 
     auto pos = m_object.GetPos();
 
+    //if (move==false) {
+    //    pos.x += 1;
+    //}
+    //if (pos.x >= 600) {
+    //    move = true;
+    //}
+    //if (move == true) {
+    //    pos.x -= 1;
+    //}
+    //if (pos.x <= 300) {
+    //    move = false;
+    //}
+
+    //強調表示（仮）
+    if (m_isHighlighted)
+    {
+        //いったん赤く
+        //m_object.SetColor(1.0f, 0.0f, 0.0f, 0.5f);
+    }
+    else
+    {
+        m_object.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
     m_object.SetPos(pos.x, pos.y, pos.z);
 
     // Objectのアニメーション更新
     m_object.Update(1 / 240.0f);
-
-    if (m_markVisible)
-    {
-        auto pos = m_object.GetPos();
-        auto sz = m_object.GetSize();
-        m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
-        m_mark.Update(deltaTime);
-    }
 }
 
 void Enemy::Draw()
 {
 
     OutputDebugStringA("Enemy Draw\n");
-
-    if (m_markVisible)
-    {
-        m_mark.Draw(g_pDeviceContext, g_pInputLayout, g_pVertexShader, g_pPixelShader, g_pConstantBuffer);
-    }
 
     m_object.Draw
     (
@@ -115,7 +115,6 @@ void Enemy::Draw()
 void Enemy::UnInit()
 {
     m_object.UnInit();
-    m_mark.UnInit();
 }
 
 void Enemy::OnDecorated()

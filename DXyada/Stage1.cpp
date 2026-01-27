@@ -94,10 +94,6 @@ void Stage1::BuildDrawList()
     m_drawList.push_back(item);
 
     for (size_t i = 0; i < m_enemies.size(); ++i) {
-        item.obj = m_enemies[i]->GetMarkObject();
-        item.layer = DrawLayer::BackObject;
-        m_drawList.push_back(item);
-
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
@@ -498,6 +494,7 @@ void Stage1::Update()
                 playerPos.y - enemyPos.y
             };
 
+            //リッパー君の場合は敵同士の衝突をチェック
             if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
             {
                 m_player.TakeDamage(1, knockbackDir);

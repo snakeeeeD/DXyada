@@ -41,14 +41,6 @@ protected:
     bool m_hasChangedTexture = false;    //テクスチャ変更済みフラグ
     std::string m_decoratedTexturePath;  //飾られた時のテクスチャパス
 
-    Object m_mark;
-    bool   m_markVisible = true;
-
-    float  m_markOffsetX = 0.0f;
-    float  m_markOffsetY = 20.0f;
-    float  m_markW = 320.0f;
-    float  m_markH = 320.0f;
-
 public:
     Tag tag = Tag::Enemy;
 
@@ -63,8 +55,6 @@ public:
 
     Object* GetObject() { return &m_object; }
     const Object* GetObject() const { return &m_object; }
-
-    Object* GetMarkObject() { return &m_mark; }
 
     //強調表示用
     void SetHighlight(bool highlight) { m_isHighlighted = highlight; }
