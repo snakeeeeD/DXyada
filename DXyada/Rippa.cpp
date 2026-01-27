@@ -12,16 +12,16 @@ void Rippa::Init(const char* texture, float x, float y, float width, float heigh
     m_object.AddAnimation("Decoration", "asset/Field/Rippa_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
 }
 
-void Rippa::Init(const char* tex, float x, float y, float w, float h)
-{
-    m_object.Init();
-    m_object.AddTexture(tex);
-    m_object.SetPos(x, y, 0);
-    m_object.SetSize(w, h, 0);
-
-    m_decoratedTexturePath = "asset/Field/rippa_Deco.png";
-
-}
+//void Rippa::Init(const char* tex, float x, float y, float w, float h)
+//{
+//    m_object.Init();
+//    m_object.AddTexture(tex);
+//    m_object.SetPos(x, y, 0);
+//    m_object.SetSize(w, h, 0);
+//
+//    m_decoratedTexturePath = "asset/Field/rippa_Deco.png";
+//
+//}
 
 void Rippa::Update(float deltaTime)
 {
@@ -126,12 +126,12 @@ void Rippa::CheckCollision()
     }
 
     // 移動反映
-    pos.x += m_walkspeed * m_direction * deltaTime;
+    pos.x += m_walkspeed * m_direction * 1/60.0f;
 
     // 座標セット
     m_object.SetPos(pos.x, pos.y, pos.z);
 
-    m_object.Update(deltaTime);
+    m_object.Update(1/60.0f);
 }
 
 void Rippa::CheckWandering(float deltaTime)

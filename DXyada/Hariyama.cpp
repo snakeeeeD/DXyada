@@ -16,7 +16,7 @@ void Hariyama::Update(float dt)
     // “€Œ‹’†‚Í‰½‚à‚µ‚È‚¢
     if (m_isFrozen)
     {
-        m_object.Update(deltaTime);
+        m_object.Update(dt);
         return;
     }
 

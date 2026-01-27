@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AssetList.h" />
     <ClInclude Include="BlockPin.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="CollisionManager.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneID.h" />
+    <ClInclude Include="SceneLoad.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneSelect.h" />
     <ClInclude Include="SceneTitle.h" />
@@ -167,12 +169,14 @@
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Tutorial.h" />
     <ClInclude Include="TutorialStage.h" />
     <ClInclude Include="Stage2.h" />
     <ClInclude Include="WingRippa.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetList.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="BlockPin.cpp" />
     <ClCompile Include="Camera2D.cpp" />
@@ -197,6 +201,7 @@
     <ClCompile Include="Ribbon.cpp" />
     <ClCompile Include="Rippa.cpp" />
     <ClCompile Include="SceneGame.cpp" />
+    <ClCompile Include="SceneLoad.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
@@ -208,6 +213,7 @@
     </ClCompile>
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Tutorial.cpp" />
     <ClCompile Include="TutorialStage.cpp" />
     <ClCompile Include="Stage2.cpp" />

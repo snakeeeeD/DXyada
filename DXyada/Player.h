@@ -143,6 +143,8 @@ private:
 	//実験用
 	float t;
 	int m_circleKind = 0;
+
+	bool m_inLoadPreview = false;
 public:
 	Tag tag = Tag::Player;
 
@@ -181,5 +183,18 @@ public:
 
 	Object* GetDecoratingEffectBack() { return &m_decoratingEffectBack; }   
 	Object* GetDecoratingEffectFront() { return &m_decoratingEffectFront; } 
+
+	void InitForLoadPreview();   // ロード画面用（軽量）
+	void UpdateForLoadPreview(float dt);
+	void DrawForLoadPreview();
+	void SetLoadPreviewAnim(bool walking);
+
+	void PlayDamagePreview();
+	bool m_damagePreviewStarted = false;
+
+	void PlayJumpPreview();
+	void SetMiniScale(float s);
+
+	void PlayWalkPreview();
 };
 

@@ -8,33 +8,72 @@ void SceneSelect::Init() {
     g_cameraPos = { 0, 0, 0 };
 
     m_select.Init();
-    m_select.AddTexture("asset/Field/back.png");
+    m_select.AddTexture("asset/UI/ステージ選択_背景.png");
     m_select.SetPos(0, 0, 0);
     m_select.SetSize(1920, 1080, 0);
 
     m_stage1.Init();
-    m_stage1.AddTexture("asset/UI/stage1.png");
-    m_stage1.SetPos(-200, 0, 0);
-    m_stage1.SetSize(100, 100, 0);
+    m_stage1.AddTexture("asset/UI/ステージ1_バナー.png");
+    m_stage1.SetPos(-400, -250, 0);
+    m_stage1.SetSize(700, 500, 0);
 
     m_stage2.Init();
-    m_stage2.AddTexture("asset/UI/stage2.png");
-    m_stage2.SetPos(0, 0, 0);
-    m_stage2.SetSize(100, 100, 0);
-
-    m_stage3.Init();
-    m_stage3.AddTexture("asset/UI/stage3.png");
-    m_stage3.SetPos(200, 0, 0);
-    m_stage3.SetSize(100, 100, 0);
+    m_stage2.AddTexture("asset/UI/ステージ2_バナー.png");
+    m_stage2.SetPos(400, -250, 0);
+    m_stage2.SetSize(700, 500, 0);
 
     m_cursor.Init();
     m_cursor.AddTexture("asset/UI/cursor.png");
-    m_cursor.SetPos(-240, 40, 0);
-    m_cursor.SetSize(50, 50, 0);
+    m_cursor.SetPos(-650, -50, 0);
+    m_cursor.SetSize(200, 200, 0);
+
+    TextureManager& tm = TextureManager::Instance();
+
+    tm.Enqueue("asset/Player/Player_Idle.png");
+    tm.Enqueue("asset/Player/Player_Walk.png");
+    tm.Enqueue("asset/Player/Player_SmallJump.png");
+    tm.Enqueue("asset/Player/Player_Damage.png");
+    tm.Enqueue("asset/Player/Player_Ribbon.png");
+    tm.Enqueue("asset/Player/Player_RibbonJump.png");
+    tm.Enqueue("asset/Player/Player_Pulled.png");
+    tm.Enqueue("asset/Player/Player_Roll.png");
+    tm.Enqueue("asset/Player/GuideLine.png");
+    tm.Enqueue("asset/Player/Circle2.png");
+    tm.Enqueue("asset/Player/back.png");
+    tm.Enqueue("asset/Player/front.png");
+
+    tm.Enqueue("asset/UI/cursor.png");
+    tm.Enqueue("asset/UI/Pouse_Back.png");
+    tm.Enqueue("asset/UI/GameOver.png");
+    tm.Enqueue("asset/UI/GrayStar.png");
+    tm.Enqueue("asset/UI/Star.png");
+    tm.Enqueue("asset/UI/Button_Retry.png");
+    tm.Enqueue("asset/UI/Button_Continue.png");
+    tm.Enqueue("asset/UI/Button_StageSelect.png");
+    tm.Enqueue("asset/UI/クリア画面.png");
+    tm.Enqueue("asset/UI/ステージ1_バナー.png");
+    tm.Enqueue("asset/UI/ステージ2_バナー.png");
+    tm.Enqueue("asset/UI/ステージ選択_背景.png");
+
+    tm.Enqueue("asset/Field/aa.png");
+    tm.Enqueue("asset/Field/block.png");
+    tm.Enqueue("asset/Field/Boad.png");
+    tm.Enqueue("asset/Field/Tutorial_PinDeco.png");
+    tm.Enqueue("asset/Field/Tutorial_NeedleFloor.png");
+    tm.Enqueue("asset/Field/Tutorial_Rippa.png");
+    tm.Enqueue("asset/Field/needle_floor.png");
+    tm.Enqueue("asset/Field/rippa.png");
+    tm.Enqueue("asset/Field/PinJump.png");
 }
 
 void SceneSelect::Update(SceneManager& mgr)
 {
+    if (Loadtime == 2) {
+        TextureManager::Instance().ProcessQueue(g_pDevice, 0.5);
+        Loadtime = 0;
+    }
+        
+    Loadtime++;
 
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
     const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
@@ -56,8 +95,7 @@ void SceneSelect::Update(SceneManager& mgr)
     bool leftStickRTrigger = (m_stickNow ==1) && !m_prevLeftStick;
     bool leftStickLTrigger = (m_stickNow ==2) && !m_prevLeftStick;
 
-    m_stage1.SetSize(SizeMin, SizeMin, 0);
-    m_stage2.SetSize(SizeMin, SizeMin, 0);
+    
     int ButtonCount = 0;
 
     input.Update();
@@ -65,87 +103,22 @@ void SceneSelect::Update(SceneManager& mgr)
         input.GetButtonTrigger(XINPUT_LEFT) ||
         leftStickLTrigger)
     {
-        switch (m_stage)
-        {
-        case 1://ステージ1
-            m_stage = 1;
-            m_cursor.SetPos(-240, 40, 0);
-            break;
-
-        case 2://ステージ1
-            m_stage = 1;
-            m_cursor.SetPos(-240, 40, 0);
-            break;
-
-        case 3://チュートリアルステージ1
-            m_stage = 2;
-            m_cursor.SetPos(-40, 40, 0);
-            break;
-
-        default://デバックステージ
-            mgr.SetSelectedStage(99);
-        }
+        m_stage = 1;
+        m_cursor.SetPos(-700, -50, 0);
     }
 
     if (input.GetKeyTrigger(VK_RIGHT) ||
         input.GetButtonTrigger(XINPUT_RIGHT) ||
         leftStickRTrigger)
     {
-        switch (m_stage)
-        {
-        case 1://チュートリアルステージ1
-            m_stage = 2;
-            m_cursor.SetPos(-40, 40, 0);
-            break;
-
-        case 2://チュートリアルステージ1
-            m_stage = 3;
-            m_cursor.SetPos(160, 40, 0);
-            break;
-
-        case 3://チュートリアルステージ2
-            m_stage = 3;
-            m_cursor.SetPos(160, 40, 0);
-            break;
-
-        default://デバックステージ
-            mgr.SetSelectedStage(99);
-        }
-    }
-
-    if (m_stage == 1) m_stage1.SetSize(m_size, m_size, 0);
-    if (m_stage == 2) m_stage2.SetSize(m_size, m_size, 0);
-    if (m_stage == 3) m_stage3.SetSize(m_size, m_size, 0);
-
-
-    if (m_size == SizeMin) {
-        Big = true;
-        Small = false;
-    }
-    if (m_size == SizeMax) {
-        Big = false;
-        Small = true;
-    }
-
-    if (Big == true) {
-        if (deltaTime == 5) {
-            m_size += 1;
-            deltaTime = 0;
-        }
-        deltaTime++;
-    }
-    if (Small == true) {
-        if (deltaTime == 5) {
-            m_size -= 1;
-            deltaTime = 0;
-        }
-        deltaTime++;
+        m_stage = 2;
+        m_cursor.SetPos(100, -50, 0);
     }
 
 
     if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A)) {
         mgr.SetSelectedStage(m_stage);
-        mgr.ChangeScene(SCENE_GAME);
+        mgr.ChangeScene(SCENE_LOAD);
     }
 
     if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
@@ -154,6 +127,7 @@ void SceneSelect::Update(SceneManager& mgr)
     }
 
     m_prevLeftStick = m_stickNow;
+
 }
 
 

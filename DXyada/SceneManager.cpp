@@ -4,32 +4,32 @@ void SceneManager::Init(SceneID id)
 {
     m_currentID = id;
 
-    switch (id) {
-    case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
-    case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
-    case SCENE_GAME: m_currentScene = new SceneGame(); break;
+    switch (id)
+    {
+    case SCENE_TITLE:  m_currentScene = new SceneTitle(); break;
+    case SCENE_LOAD:   m_currentScene = new SceneLoad(SCENE_GAME); break; // 例：ロード後にSelectへ
+    case SCENE_SELECT: m_currentScene = new SceneSelect(); break;
+    case SCENE_GAME:   m_currentScene = new SceneGame(m_selectedStage); break;
+    default:           m_currentScene = new SceneTitle(); break;
     }
 
-    if (m_currentScene)
-        m_currentScene->Init();
+    if (m_currentScene) m_currentScene->Init();
 }
 
 void SceneManager::Update()
 {
-    if (m_currentScene)
-        m_currentScene->Update(*this);
-
+    if (m_currentScene) m_currentScene->Update(*this);
 }
 
 void SceneManager::Draw()
 {
-    if (m_currentScene)
-        m_currentScene->Draw();
+    if (m_currentScene) m_currentScene->Draw();
 }
 
 void SceneManager::UnInit()
 {
-    if (m_currentScene) {
+    if (m_currentScene)
+    {
         m_currentScene->UnInit();
         delete m_currentScene;
         m_currentScene = nullptr;
@@ -38,22 +38,23 @@ void SceneManager::UnInit()
 
 void SceneManager::ChangeScene(SceneID id)
 {
-    // まず安全に古いシーンを削除
-    if (m_currentScene) {
+    if (m_currentScene)
+    {
         m_currentScene->UnInit();
         delete m_currentScene;
         m_currentScene = nullptr;
     }
 
-    // 新しいシーンを作成
     m_currentID = id;
-    int stage = m_selectedStage;
-    switch (id) {
-    case SCENE_TITLE: m_currentScene = new SceneTitle(); break;
-    case SCENE_SELECT:m_currentScene = new SceneSelect(); break;
-    case SCENE_GAME:m_currentScene = new SceneGame(m_selectedStage);break;
+
+    switch (id)
+    {
+    case SCENE_TITLE:  m_currentScene = new SceneTitle(); break;
+    case SCENE_LOAD:   m_currentScene = new SceneLoad(SCENE_GAME); break;
+    case SCENE_SELECT: m_currentScene = new SceneSelect(); break;
+    case SCENE_GAME:   m_currentScene = new SceneGame(m_selectedStage); break;
+    default:           m_currentScene = new SceneTitle(); break;
     }
 
-    if (m_currentScene)
-        m_currentScene->Init();
+    if (m_currentScene) m_currentScene->Init();
 }

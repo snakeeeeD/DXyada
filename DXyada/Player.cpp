@@ -200,6 +200,7 @@ void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
     {
         m_knockbackVelocity.y = -400.0f;
     }
+
 }
 
 void Player::SetPos(float Pos_X, float Pos_Y) {
@@ -1801,4 +1802,97 @@ void Player::SetCollisionManager(CollisionManager* mgr)
 void Player::SetInvincible(bool isinvicible)
 {
     m_isInvincible = isinvicible;
+}
+
+void Player::InitForLoadPreview()
+{
+    m_inLoadPreview = true;
+
+    m_player.Init();
+    m_player.SetPos(0, -200, 0);
+    m_player.SetSize(220, 330, 0);
+
+    m_player.AddAnimation("RightIdle", "asset/Player/Player_Idle.png", 4, 2, 0, 0, 3, 5, true, false, 1);
+    m_player.AddAnimation("RightWalk", "asset/Player/Player_Walk.png", 4, 2, 0, 0, 3, 10, true, false, 1);
+    m_player.AddAnimation("Damage", "asset/Player/Player_Damage.png", 5, 2, 0, 0, 4, 9, false, false, 3);
+    m_player.AddAnimation("Jump", "asset/Player/Player_SmallJump.png", 5, 2, 0, 0, 4, 9, false, false, 2);
+
+
+    m_isLastRightDirection = true;
+    m_player.PlayAnimation("RightIdle");
+
+    m_damagePreviewStarted = false;
+}
+
+void Player::UpdateForLoadPreview(float dt)
+{
+    if (!m_inLoadPreview) return;
+
+    m_player.Update(dt);
+}
+
+void Player::DrawForLoadPreview()
+{
+    if (!m_inLoadPreview) return;
+
+    m_player.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
+}
+void Player::SetLoadPreviewAnim(bool walking)
+{
+    if (!m_inLoadPreview) return;
+
+    if (walking)
+    {
+        
+        {
+            m_player.AddAnimation("Right", "asset/Player/Player_Walk.png", 4, 2, 0, 0, 3, 10, true, false, 1);
+            m_player.AddAnimation("Left", "asset/Player/Player_Walk.png", 4, 2, 1, 0, 3, 10, true, false, 1);
+        }
+        m_player.PlayAnimation("Right");
+    }
+    else
+    {
+        m_player.PlayAnimation("RightIdle");
+    }
+    m_damagePreviewStarted = false;
+
+}
+
+void Player::PlayWalkPreview()
+{
+    if (!m_inLoadPreview) return;
+    m_player.PlayAnimation("RightWalk");
+}
+
+void Player::PlayDamagePreview()
+{
+    if (!m_inLoadPreview) return;
+
+    if (!m_damagePreviewStarted)
+    {
+        m_player.PlayAnimation("Damage");
+        m_damagePreviewStarted = true;
+    }
+}
+
+void Player::PlayJumpPreview()
+{
+    if (!m_inLoadPreview) return;
+    m_player.PlayAnimation("Jump");
+}
+
+void Player::SetMiniScale(float s)
+{
+    if (!m_inLoadPreview) return;
+
+    DirectX::XMFLOAT3 sz = m_player.GetSize();
+    float baseW = 220.0f;
+    float baseH = 330.0f;
+    m_player.SetSize(baseW * s, baseH * s, 0);
 }

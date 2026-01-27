@@ -1,9 +1,14 @@
-﻿#include "Object.h"
-#include "Camera2D.h"
+﻿// Object.cpp
+#include "Object.h"
+#include "Camera2D.h" // g_cameraPos をここから参照している想定（なければ extern を別へ）
+
 using namespace DirectX;
 
 HRESULT Object::Init()
 {
+    // すでに作っていたら再生成しない
+    if (m_pVertexBuffer) return S_OK;
+
     Vertex vertices[4] =
     {
         { -0.5f,  0.5f, 0.5f, 1,1,1,1, 0,0 },
@@ -28,9 +33,13 @@ void Object::Update(float deltaTime)
     if (m_currentAnim.empty()) return;
 
     Animation& anim = m_animations[m_currentAnim];
+
+    // fps=0（静止画）対策：Updateで0除算しない
+    if (anim.fps <= 0.0f) return;
+
     m_animTime += deltaTime;
 
-    float frameTime = 1.0f / anim.fps;
+    const float frameTime = 1.0f / anim.fps;
     while (m_animTime >= frameTime)
     {
         m_animTime -= frameTime;
@@ -39,9 +48,7 @@ void Object::Update(float deltaTime)
         if (m_currentFrame > anim.endFrame)
         {
             if (anim.loop)
-            {
                 m_currentFrame = anim.startFrame;
-            }   
             else
                 m_currentFrame = anim.endFrame;
         }
@@ -58,9 +65,13 @@ void Object::Draw(
 {
     if (m_currentAnim.empty()) return;
 
-    Animation& anim = m_animations[m_currentAnim];
+    auto it = m_animations.find(m_currentAnim);
+    if (it == m_animations.end()) return;
+
+    Animation& anim = it->second;
     if (!anim.srv) return;
     if (anim.splitX <= 0 || anim.splitY <= 0) return;
+    if (!m_pVertexBuffer) return;
 
     UINT stride = sizeof(Vertex);
     UINT offset = 0;
@@ -74,13 +85,9 @@ void Object::Draw(
     context->PSSetShaderResources(0, 1, &anim.srv);
 
     if (m_uvMode == UVMode::Loop)
-    {
         context->PSSetSamplers(0, 1, &g_pSamplerWrap);
-    }
     else
-    {
         context->PSSetSamplers(0, 1, &g_pSamplerClamp);
-    }
 
     // ===== ワールド行列 =====
     XMMATRIX matScale = XMMatrixScaling(m_size.x, m_size.y, m_size.z);
@@ -101,56 +108,40 @@ void Object::Draw(
         XMMatrixTranslation(-g_cameraPos.x, -g_cameraPos.y, 0.0f);
 
     XMMATRIX matProj =
-        XMMatrixOrthographicLH(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 3.0f);
+        XMMatrixOrthographicLH((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f, 3.0f);
 
-    // ===== UV 行列（ここが最重要）=====
-    //int frame = m_currentFrame;
-    //if (frame < anim.startFrame) frame = anim.startFrame;
-    //if (frame > anim.endFrame)   frame = anim.endFrame;
-
-    //float sx = 1.0f / anim.splitX;
-    //float sy = 1.0f / anim.splitY;
-
-    //float u = frame * sx;
-    //float v = anim.row * sy;
-
-    //XMMATRIX matTex =
-    //    XMMatrixScaling(sx, sy, 1.0f) *
-    //    XMMatrixTranslation(u, v, 0.0f);
-
+    // ===== UV 行列 =====
     int frame = m_currentFrame;
     if (frame < anim.startFrame) frame = anim.startFrame;
     if (frame > anim.endFrame)   frame = anim.endFrame;
 
-    float sx = 1.0f / anim.splitX;
-    float sy = 1.0f / anim.splitY;
+    const float sx = 1.0f / (float)anim.splitX;
+    const float sy = 1.0f / (float)anim.splitY;
 
     int currentRow = anim.row;
     int currentCol = frame;
 
     if (anim.wrap)
     {
-        currentRow = frame / anim.splitX;  //行番号
-        currentCol = frame % anim.splitX;  //列番号
+        currentRow = frame / anim.splitX;
+        currentCol = frame % anim.splitX;
     }
 
-    float u = currentCol * sx;
-    float v = currentRow * sy;
+    const float u = currentCol * sx;
+    const float v = currentRow * sy;
 
-    XMMATRIX matTex;
+    XMMATRIX matTex = XMMatrixIdentity();
 
     if (m_uvMode == UVMode::Sprite)
     {
         if (!m_flipX)
         {
-            //通常
             matTex =
                 XMMatrixScaling(sx, sy, 1.0f) *
                 XMMatrixTranslation(u, v, 0.0f);
         }
         else
         {
-            //左右反転
             matTex =
                 XMMatrixScaling(-sx, sy, 1.0f) *
                 XMMatrixTranslation(u + sx, v, 0.0f);
@@ -159,8 +150,15 @@ void Object::Draw(
     else if (m_uvMode == UVMode::Loop)
     {
         matTex =
-                XMMatrixScaling(m_uvLength, 1.0f, 1.0f) *
-                XMMatrixTranslation(m_uvScroll, 0.0f, 0.0f);
+            XMMatrixScaling(m_uvLength, 1.0f, 1.0f) *
+            XMMatrixTranslation(m_uvScroll, 0.0f, 0.0f);
+    }
+    else // UVMode::Gauge
+    {
+        // 左端固定、右端だけ 0..m_uvCrop の範囲だけ表示
+        // ＝ 横方向を m_uvCrop 倍にスケール（u=0起点）
+        matTex =
+            XMMatrixScaling(m_uvCrop, 1.0f, 1.0f);
     }
 
     // ===== 定数バッファ =====
@@ -175,39 +173,24 @@ void Object::Draw(
     context->Draw(4, 0);
 }
 
-
-
 void Object::AddTexture(const char* texturePath)
 {
     AddAnimation(
-        "DefaultTexture", 
+        "DefaultTexture",
         texturePath,
-        1, 1,   
+        1, 1,
         0,
-        0, 0,   
-        0.0f,
+        0, 0,
+        0.0f,   // 静止画なので fps=0 でOK（Update側で0除算回避済み）
         false,
         false,
-        -100   
+        -100
     );
 
     if (m_currentAnim.empty())
-    {
         PlayAnimation("DefaultTexture");
-    }
 }
 
-/*
-* @param    splitX : 横の分割数 
-* @param    splitY : 縦の分割数
-* @param    row : 使用する行
-* @param    startFrame : 開始フレーム
-* @param    endFrame :  終了フレーム
-* @param    fps : フレームレート
-* @param    loop : ループするかどうか
-* @param    wrap : 横列が最後まで行ったとき改行するかどうか
-* @param    priority : 優先度(数字が高いほど優先度高)
-*/
 void Object::AddAnimation(
     const std::string& name,
     const char* texturePath,
@@ -220,6 +203,13 @@ void Object::AddAnimation(
     int priority
 )
 {
+    // 同名上書き時の SRV リーク防止
+    auto it = m_animations.find(name);
+    if (it != m_animations.end())
+    {
+        SAFE_RELEASE(it->second.srv);
+    }
+
     Animation anim{};
     anim.name = name;
     anim.splitX = splitX;
@@ -229,17 +219,14 @@ void Object::AddAnimation(
     anim.endFrame = endFrame;
     anim.fps = fps;
     anim.loop = loop;
-    anim.wrap = wrap,
+    anim.wrap = wrap;
     anim.priority = priority;
 
-    Texture* tex = new Texture();
-    tex->SetSpriteSheet(splitX, splitY);
-    tex->Load(g_pDevice, texturePath);
-    anim.srv = tex->GetSRV();
+    // TextureManager 側でキャッシュ（AddRef含む設計が前提）
+    anim.srv = TextureManager::Instance().GetSRV(g_pDevice, texturePath);
 
     m_animations[name] = anim;
 }
-
 
 void Object::PlayAnimation(const std::string& name)
 {
@@ -249,15 +236,12 @@ void Object::PlayAnimation(const std::string& name)
     m_currentAnim = name;
     m_currentFrame = it->second.startFrame;
     m_animTime = 0.0f;
-
 }
 
-//左右反転時、名前のみ返す
 void Object::SetCurrentAnimationName(const std::string& name)
 {
     auto it = m_animations.find(name);
     if (it == m_animations.end()) return;
-
 
     m_currentAnim = name;
 }
@@ -271,17 +255,31 @@ void Object::UnInit()
         SAFE_RELEASE(kv.second.srv);
     }
     m_animations.clear();
+
+    m_currentAnim.clear();
+    m_currentFrame = 0;
+    m_animTime = 0.0f;
 }
 
-void Object::SetPos(float x, float y, float z) { m_pos = { x,y,z }; }
-void Object::SetSize(float x, float y, float z) { m_size = { x,y,z }; }
+void Object::SetPos(float x, float y, float z) { m_pos = { x, y, z }; }
+void Object::SetSize(float x, float y, float z) { m_size = { x, y, z }; }
 void Object::SetAngle(float a) { m_angle = a; }
-void Object::SetPivot(float x, float y, float z) { m_pivot = { x,y,z }; }
-void Object::SetColor(float r, float g, float b, float a) { m_color = { r,g,b,a }; }
+void Object::SetPivot(float x, float y, float z) { m_pivot = { x, y, z }; }
+void Object::SetColor(float r, float g, float b, float a) { m_color = { r, g, b, a }; }
 
 void Object::ChangeTexture(const char* texturePath)
 {
-    AddAnimation("Decoration", texturePath, 1, 1, 0, 0, 0, 1.0f, false, false, 999);
-
+    AddAnimation("Decoration", texturePath, 1, 1, 0, 0, 0, 0.0f, false, false, 999);
     PlayAnimation("Decoration");
+}
+
+void Object::SetUVMode(UVMode m) { m_uvMode = m; }
+void Object::SetUVLength(float len) { m_uvLength = len; }
+void Object::SetUVScroll(float scroll) { m_uvScroll = scroll; }
+
+void Object::SetUVCrop(float uMax01)
+{
+    if (uMax01 < 0.0f) uMax01 = 0.0f;
+    if (uMax01 > 1.0f) uMax01 = 1.0f;
+    m_uvCrop = uMax01;
 }

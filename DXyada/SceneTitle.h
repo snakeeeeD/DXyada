@@ -6,7 +6,9 @@
 class SceneTitle : public SceneBase {
 private:
     int m_stage = 1;
-    Object m_DebugStage;
+    float m_loadDelay = 0.0f;
+
+    int Loadtime=0;
 public:
     void Init() override;
     void Update(SceneManager& mgr) override;

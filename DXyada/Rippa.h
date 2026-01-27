@@ -46,7 +46,7 @@ public:
 
     void SetTurnRange(float min, float max);
 
-    void Init(const char* texture, float x, float y, float width, float height);
+    //void Init(const char* texture, float x, float y, float width, float height);
 
     void Update(float deltaTime) override;
 

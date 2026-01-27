@@ -21,6 +21,8 @@ private:
 
     int deltaTime = 0;
 
+    int Loadtime = 0;
+
     bool Big = false;
     bool Small = false;
 
