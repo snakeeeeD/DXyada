@@ -114,6 +114,12 @@ void TutorialStage2::BuildDrawList()
         m_drawList.push_back(item);
     }
 
+    for (size_t i = 0; i < m_goal.size(); ++i) {
+        item.obj = m_goal[i]->GetObject();
+        item.layer = DrawLayer::Background;
+        m_drawList.push_back(item);
+    }
+
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
@@ -516,7 +522,7 @@ void TutorialStage2::Init()
     //10
     {
         //x += 500;
-
+/*
         {
             Hariyama* hariyama = new Hariyama();
             hariyama->Init("asset/Field/hariyama.png", x + 1100, -250, 500, 500);
@@ -526,13 +532,30 @@ void TutorialStage2::Init()
 
             m_enemies.push_back(hariyama);
 
-        }
+        }*/
 
         float w1 = TILE * 6.0f;
         AddPlatform("asset/Field/block.png", x + w1 * 0.9f, -700, w1 * 1.9f, H);
         x += w1;
     }
+    //11
+    {
+        GoalPin* goalPin = new GoalPin;
+        goalPin->Init(
+            "asset/Field/Goal.png",
+            x + 500,
+            -230.0f,
+            0,
+            0
+        );
+        goalPin->SetCollisionManager(m_collision);
 
+        m_pins.push_back(goalPin);
+        m_collision->AddStatic(goalPin->GetObject());
+        m_collision->SetTag(goalPin->GetObject(), ColliderTag::Pin);
+
+        m_goal.push_back(goalPin->GetGoal());
+    }
 
     BuildDrawList();
 
@@ -673,6 +696,15 @@ void TutorialStage2::Update()
         }
     }
 
+    for (auto* goal : m_goal)
+    {
+        goal->Update(dt, playerPos);
+
+        if (goal->IsReached())
+        {
+            m_isGoalReached = true;
+        }
+    }
 
     // Õ“Ë”»’è
     m_collision->CheckAll();
@@ -769,6 +801,13 @@ void TutorialStage2::UnInit()
         delete tutorial;
     }
     m_tutorials.clear();
+
+    for (auto* goal : m_goal)
+    {
+        goal->UnInit();
+        delete goal;
+    }
+    m_goal.clear();
 
     delete m_collision;
     m_collision = nullptr;

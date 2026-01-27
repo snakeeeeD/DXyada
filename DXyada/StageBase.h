@@ -17,6 +17,8 @@
 #include "BlockPin.h"
 #include "RemoteWindPin.h"
 #include "Tutorial.h"
+#include "Goal.h"
+#include "GoalPin.h"
 
 enum class DrawLayer {
     Background = 0,
@@ -34,6 +36,8 @@ struct DrawItem {
 };
 
 class StageBase {
+protected:
+    bool m_isGoalReached = false;
 public:
     virtual ~StageBase() {}
 
@@ -43,4 +47,6 @@ public:
     virtual void UnInit() = 0;
 
     virtual bool IsPlayerDead() = 0;
+    bool IsGoalReached() const { return m_isGoalReached; }
+
 };

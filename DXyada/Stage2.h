@@ -19,6 +19,7 @@ private:
     std::vector<Enemy*>   m_spawnQueue;
     std::vector<DrawItem> m_drawList;
     std::vector<Tutorial*>     m_tutorials;
+    std::vector<Goal*>    m_goal;
 
     bool m_isPlayerDead = false;
 
