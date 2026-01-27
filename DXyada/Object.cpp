@@ -248,6 +248,10 @@ void Object::SetCurrentAnimationName(const std::string& name)
 
 void Object::UnInit()
 {
+    if (m_uninitCheck)
+    {
+        return;
+    }
     SAFE_RELEASE(m_pVertexBuffer);
 
     for (auto& kv : m_animations)
@@ -259,6 +263,8 @@ void Object::UnInit()
     m_currentAnim.clear();
     m_currentFrame = 0;
     m_animTime = 0.0f;
+
+    m_uninitCheck = true;
 }
 
 void Object::SetPos(float x, float y, float z) { m_pos = { x, y, z }; }

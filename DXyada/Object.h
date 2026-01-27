@@ -140,6 +140,8 @@ private:
 
     bool m_flipX = false;
 
+    bool m_uninitCheck = false;
+
     // UVÉãÅ[Évóp
     UVMode m_uvMode = UVMode::Sprite;
     float  m_uvLength = 1.0f;

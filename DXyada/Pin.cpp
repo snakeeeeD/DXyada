@@ -22,6 +22,8 @@ void Pin::Init(const char* texture, float x, float y, float width, float height)
     auto pos = m_object.GetPos();
     auto sz = m_object.GetSize();
     m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
+
+    m_object.AddAnimation("Decoration", "asset/Field/Needle_Floor_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
 }
 
 void Pin::Update(float dt)
@@ -145,7 +147,7 @@ void Pin::SetState(State state, bool justdeco)
 
             if (justdeco)
             {
-                m_object.AddTexture("asset/Field/Needle_Floor_Decoretad.png");
+                m_object.PlayAnimation("Decoration");
             }
             else
             {

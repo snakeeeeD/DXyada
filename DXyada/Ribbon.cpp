@@ -42,7 +42,6 @@ void Ribbon::Init()
     seg.pos = { 0.0f, 0.0f };
     m_segments.push_back(seg);
 
-
     m_state = State::Idle;
     m_time = 0.0f;
 }
@@ -401,32 +400,34 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
     if (m_state == State::Throwing || m_state == State::Holding)
     {
         //最大長に達していない場合のみスクロール
-        if (m_currentLength < m_maxLength && !m_hasHit)
+       /* if (m_currentLength < m_maxLength && !m_hasHit)
         {
             m_time += deltaTime;
-        }
+        }*/
+
+        m_time += deltaTime;
 
         for (size_t i = 0; i < m_segments.size(); ++i)
         {
             auto& seg = m_segments[i];
 
             //リボンの長さに応じたUV長
-            float length = m_currentLength / (m_segmentLength * 5) ;
+           float length = m_currentLength / (m_segmentLength * 5) ;
 
             //最大長に達したら、または当たったらスクロール停止
-            float scroll = 0.0f;
+        
             if (m_currentLength < m_maxLength && !m_hasHit)
             {
-                scroll = m_time * m_speed * 0.0002f;
+                m_UVOffset = m_time * m_speed * 0.002f * -1.0;
             }
             else
             {
                 //最大長または当たった時点でのスクロール値を保持
-                scroll = m_time * m_speed * 0.0002f;
+                m_UVOffset = m_time * m_speed * 0.002f * -1.0;
             }
 
             //UVループモードに設定
-            seg.obj->SetUVLoop(length, scroll);
+            seg.obj->SetUVLoop(length, m_UVOffset);
         }
     }
     else if (m_state == State::Returning)
@@ -438,10 +439,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         {
             auto& seg = m_segments[i];
 
-            float length = m_currentLength / (m_segmentLength * 5);
-            float scroll = m_time * m_speed * 0.0002f * -1.0f;  //逆方向
+           float length = m_currentLength / (m_segmentLength * 5);
 
-            seg.obj->SetUVLoop(length, scroll);
+            seg.obj->SetUVLoop(length, m_UVOffset);
         }
     }
     CheckBodyHitWall();

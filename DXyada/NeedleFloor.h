@@ -13,6 +13,9 @@ public:
 private:
 	State m_state = State::Spiky;
 
+	bool m_enablePlatformRegisterOnDecorated = true;
+	bool m_isPlatformRegistered = false;
+
 public:
 	NeedleFloor() = default;
 	~NeedleFloor() override = default;
@@ -23,7 +26,7 @@ public:
 	void Update(float deltaTime) override;
 
 	//ƒŠƒ{ƒ“‚ª“–‚½‚Á‚½‚Æ‚«‚ÌŠÖ”(‰¼)
-	void OnDecorated();
+	void OnDecorated(bool justDeco);
 
 	//Œ»İ‚Ìó‘Ô
 	State GetState() const { return m_state; }

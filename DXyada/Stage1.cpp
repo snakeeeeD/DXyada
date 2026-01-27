@@ -295,7 +295,7 @@ void Stage1::Init()
 
         NeedleFloor* nf = new NeedleFloor();
 
-        nf->Init("asset/Field/needle_floor.png", x + w1 * 0.5f, LOW_Y + 320, 250, 50);
+        nf->Init("asset/Field/needle_floor.png", x + w1 * 0.5f, LOW_Y + 340, 250, 100);
 
         // CollisionManager をセット（将来のリボン判定用）
         nf->SetCollisionManager(m_collision);
@@ -446,6 +446,8 @@ void Stage1::Update()
 
     // 敵
     for (auto& enemy : m_enemies) {
+        if (!enemy) continue;
+
         enemy->Update(dt);
 
         //リッパー君の場合は敵同士の衝突をチェック
@@ -453,6 +455,14 @@ void Stage1::Update()
         {
             rippa->CheckEnemyCollision(m_enemies);
         }
+        
+        NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy);
+
+        if (enemy->IsDead())
+        {
+            continue;
+        }
+
 
         auto playerAABB = m_collision->GetAABB(m_player.GetObject());
         auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
@@ -484,7 +494,17 @@ void Stage1::Update()
                 playerPos.y - enemyPos.y
             };
 
-            m_player.TakeDamage(1, knockbackDir);
+            //リッパー君の場合は敵同士の衝突をチェック
+            if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
+            {
+                m_player.TakeDamage(1, knockbackDir);
+            }
+            else if(needleflr->GetState() != NeedleFloor::State::Decorated)
+            {
+                m_player.TakeDamage(1, knockbackDir);
+            }
+
+            
         }
     }
 

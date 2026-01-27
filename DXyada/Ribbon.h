@@ -71,6 +71,8 @@ private:
     // “Š‚°‚é•ûŒüi³‹K‰»Ï‚İj
     DirectX::XMFLOAT2 m_direction{};
 
+    float m_UVOffset = 0.0f;
+
     //==============================
     // EnemyŠÖ˜A
     //==============================

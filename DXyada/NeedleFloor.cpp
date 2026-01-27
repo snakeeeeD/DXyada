@@ -15,7 +15,7 @@ void NeedleFloor::Update(float deltaTime)
     m_object.Update(deltaTime);
 }
 
-void NeedleFloor::OnDecorated() 
+void NeedleFloor::OnDecorated(bool justDeco) 
 {
 
     // すでに飾られていたら何もしない
@@ -31,6 +31,7 @@ void NeedleFloor::OnDecorated()
 
     // 2. 【重要】CollisionManagerに「静止した地形」として登録する
     // これにより、PlayerやRippaのCheckHitStaticで「床」として認識されるようになります
+    
     if (m_pCollision) 
     {
         // 自分の現在の座標とサイズから、その場で AABB を作成する
@@ -51,12 +52,49 @@ void NeedleFloor::OnDecorated()
 void NeedleFloor::Disable(bool justdeco)
 {
 
-    Enemy::Disable(justdeco);
+    //Enemy::Disable(justdeco);
 
-    if (justdeco)
+    if (m_state == State::Decorated)
+    {
+        return;
+    }
+
+    m_state = State::Decorated;
+
+    m_object.PlayAnimation("Decoration");
+
+    // Decorated → Platform登録（ただし許可されている場合のみ）
+    if (m_state == State::Decorated &&
+        m_enablePlatformRegisterOnDecorated &&
+        !m_isPlatformRegistered)
+    {
+        //m_mark.SetSize(200, 150, 0);
+
+        if (m_pCollision)
+        {
+            m_pCollision->SetTag(&m_object, ColliderTag::Platform);
+            m_pCollision->AddStatic(&m_object);
+            m_isPlatformRegistered = true;
+
+            auto currentSize = m_object.GetSize();
+            m_object.SetSize(currentSize.x, currentSize.y, currentSize.z);
+
+
+            if (justdeco)
+            {
+                m_object.PlayAnimation("Decoration");
+            }
+            else
+            {
+                m_object.SetColor(1.0, 1.0, 1.0, 1.0);
+            }
+        }
+    }
+
+   /* if (justdeco)
     {
         m_object.PlayAnimation("Decoration");
 
         OnDecorated();
-    }
+    }*/
 }
