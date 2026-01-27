@@ -14,7 +14,7 @@ void Pin::Init(const char* texture, float x, float y, float width, float height)
     m_state = State::Normal;
 
     m_mark.Init();
-    m_mark.AddTexture("asset/Field/back.png");
+    m_mark.AddTexture("asset/Field/星.png");
     m_mark.SetSize(0, 0, 0);
     int angle = (rand() % 61) - 30;
     m_mark.SetAngle(angle);
@@ -69,7 +69,7 @@ void Pin::OnHit()
     }
     m_object.SetColor(1, 0, 0, 1); // まず赤くして確認
     // 見た目を変える（リボン付き画像にするなど）
-    m_object.AddTexture("asset/block.png");
+    m_object.AddTexture("asset/床ブロック.png");
 
     // 足場として登録する
     if (m_pCollision)

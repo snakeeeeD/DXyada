@@ -86,15 +86,15 @@ void SceneLoad::Init()
     m_ribbonGauge.AddTexture("asset/UI/リボンゲージ_満タン.png");
     m_ribbonGauge.SetUVMode(Object::UVMode::Gauge);
 
-    m_ribbonGauge.SetPos(m_gaugeLeftX, m_gaugeY, 0); 
+    m_ribbonGauge.SetPos(m_gaugeLeftX, m_gaugeY, 0);
     m_ribbonGauge.SetSize(0.0f, m_gaugeFinalH, 0);
-    m_ribbonGauge.SetUVCrop(1.0f); 
+    m_ribbonGauge.SetUVCrop(1.0f);
 
     TextureManager& tm = TextureManager::Instance();
     tm.Enqueue("asset/Field/back.png");
     tm.Enqueue("asset/Player/Player_Idle.png");
     tm.Enqueue("asset/Player/Player_Walk.png");
-    tm.Enqueue("asset/Field/block.png");
+    tm.Enqueue("asset/Field/床ブロック.png");
     tm.Enqueue("asset/Field/Wing_Rippa.png");
     tm.Enqueue("asset/Field/rippa.png");
     tm.Enqueue("asset/Field/needle_floor.png");
@@ -130,14 +130,38 @@ void SceneLoad::BuildQueue()
 
 void SceneLoad::Update(SceneManager& mgr)
 {
+
     input.Update();
     TextureManager& tm = TextureManager::Instance();
     const float dt = 1.0f / 60.0f;
 
     m_frame++;
 
-    m_gaugeT += dt;
-    m_gauge01 = Clamp(m_gaugeT / 4.0f, 0.0f, 1.0f);
+    const float kGaugeTime = 3.0f;
+    const float kHoldPoint01 = 0.70f;
+    const float kHoldTime = kGaugeTime * kHoldPoint01; // 2.1f
+
+    float nextGaugeT = m_gaugeT + dt;
+    float nextGauge01 = Clamp(nextGaugeT / kGaugeTime, 0.0f, 1.0f);
+
+    const bool allowGaugeWhileMini = (m_mode == MODE_MINI);
+    const bool shouldHoldAt70 =
+        (nextGauge01 >= kHoldPoint01) &&
+        (m_mode != MODE_READY) &&
+        (!allowGaugeWhileMini);
+
+    if (shouldHoldAt70)
+    {
+        m_gaugeT = kHoldTime;
+        m_gauge01 = kHoldPoint01;
+    }
+    else
+    {
+        m_gaugeT = nextGaugeT;
+        m_gauge01 = nextGauge01;
+    }
+
+
 
     float curW = m_gaugeFinalW * m_gauge01;
     float curCenterX = m_gaugeLeftX + (curW * 0.5f);
@@ -198,7 +222,7 @@ void SceneLoad::Update(SceneManager& mgr)
             }
 
             if (m_gauge01 >= 1) {
-                if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B))
+                //if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B))
                 {
                     mgr.ChangeScene(m_next);
                     return;
@@ -210,7 +234,7 @@ void SceneLoad::Update(SceneManager& mgr)
         {
             MiniUpdate(dt);
 
-            if ((input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B))&& m_gauge01 >= 1)
+            if ((input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) && m_gauge01 >= 1)
             {
                 mgr.ChangeScene(m_next);
                 return;
@@ -303,7 +327,7 @@ void SceneLoad::MiniInit()
     if (m_previewReady)
     {
         m_previewPlayer.SetPos(-500, m_playerY);
-        m_previewPlayer.PlayWalkPreview(); 
+        m_previewPlayer.PlayWalkPreview();
     }
 
     m_lastType = ObstacleType::WingRippa;
@@ -438,8 +462,8 @@ void SceneLoad::MiniUpdate(float dt)
         return;
     }
 
-    const float texW = 256.0f;           
-    float du = (m_speed * dt) / texW;    
+    const float texW = 256.0f;
+    float du = (m_speed * dt) / texW;
     m_groundUV += du;
 
     if (m_groundUV > 1000.0f) m_groundUV -= 1000.0f;
