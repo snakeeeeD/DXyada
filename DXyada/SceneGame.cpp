@@ -38,13 +38,13 @@ void SceneGame::Init()
 
 
     Pouse_BackGround.Init();
-    Pouse_BackGround.AddTexture("asset/UI/Pouse_Back.png");
+    Pouse_BackGround.AddTexture("asset/UI/Pouse.png");
 
     GameOver_BackGround.Init();
     GameOver_BackGround.AddTexture("asset/UI/GameOver.png");
 
     m_cursor.Init();
-    m_cursor.AddTexture("asset/UI/cursor.png");
+    m_cursor.AddTexture("asset/UI/cursor2.png");
 
     m_Star1.Init();
     m_Star2.Init();
@@ -56,14 +56,23 @@ void SceneGame::Init()
     m_Star2.AddTexture("asset/UI/Star.png");
     m_Star3.AddTexture("asset/UI/Star.png");
 
-    m_Buttonretry.Init();
-    m_Buttonretry.AddTexture("asset/UI/Button_Retry.png");
+    m_Buttonretry.Init();;
+    m_Buttonretry.AddAnimation("Normal", "asset/UI/Button_Retry.png",
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
+    m_Buttonretry.AddAnimation("NotSerect", "asset/UI/Button_Retry_notsct.png",
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
 
     m_Buttoncontinue.Init();
-    m_Buttoncontinue.AddTexture("asset/UI/Button_Continue.png");
+    m_Buttoncontinue.AddAnimation("Normal", "asset/UI/Button_Continue.png",
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
+    m_Buttoncontinue.AddAnimation("NotSerect", "asset/UI/Button_Continue_notsct.png",
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
 
     m_ButtonStageselect.Init();
-    m_ButtonStageselect.AddTexture("asset/UI/Button_StageSelect.png");
+    m_ButtonStageselect.AddAnimation("Normal", "asset/UI/Button_StageSelect.png",
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
+    m_ButtonStageselect.AddAnimation("NotSerect", "asset/UI/Button_StageSelect_notsct.png",
+        1, 1, 0, 0, 0, 0.0f, false, false, 0);
 
     m_ResultUI.Init();
     m_ResultUI.AddTexture("asset/UI/クリア画面.png");
@@ -131,7 +140,7 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
 }
 void SceneGame::UpdatePouse(SceneManager& mgr) {
 
-    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
+    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
     const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
 
     if (leftStick.y > moveThreshold)
@@ -168,7 +177,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
     m_ButtonStageselect.SetColor(1, 1, 1, 1);
     m_ButtonStageselect.SetPos(g_cameraPos.x + 320, g_cameraPos.y - 320, 0);
 
-    m_cursor.SetSize(m_size, m_size, 0);
+    m_cursor.SetSize(m_size, m_size / 3.5, 0);
 
     if (input.GetButtonTrigger(XINPUT_START) || input.GetButtonTrigger(XINPUT_B))
     {
@@ -196,20 +205,31 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
     switch (m_cursorNum)
     {
     case 0:
-        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y + 225, 0);
+        m_cursor.SetPos(g_cameraPos.x + 320, g_cameraPos.y + 145, 0);
         m_Buttoncontinue.SetSize(670, 185, 0);
+        m_Buttoncontinue.PlayAnimation("Normal");
+
         m_Buttonretry.SetSize(572, 160, 0);
+        m_Buttonretry.PlayAnimation("NotSerect");
+
         m_ButtonStageselect.SetSize(572, 160, 0);
+        m_ButtonStageselect.PlayAnimation("NotSerect");
+
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
             m_state = GameState::Playing;
         }
         break;
 
     case 1:
-        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y - 5, 0);
+        m_cursor.SetPos(g_cameraPos.x + 320, g_cameraPos.y - 90, 0);
         m_Buttoncontinue.SetSize(572, 160, 0);
+        m_Buttoncontinue.PlayAnimation("NotSerect");
+
         m_Buttonretry.SetSize(670, 185, 0);
+        m_Buttonretry.PlayAnimation("Normal");
+
         m_ButtonStageselect.SetSize(572, 160, 0);
+        m_ButtonStageselect.PlayAnimation("NotSerect");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_GAME);
@@ -217,10 +237,15 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         break;
 
     case 2:
-        m_cursor.SetPos(g_cameraPos.x + 30, g_cameraPos.y - 235, 0);
+        m_cursor.SetPos(g_cameraPos.x + 320, g_cameraPos.y - 320, 0);
         m_Buttoncontinue.SetSize(572, 160, 0);
+        m_Buttoncontinue.PlayAnimation("NotSerect");
+
         m_Buttonretry.SetSize(572, 160, 0);
+        m_Buttonretry.PlayAnimation("NotSerect");
+
         m_ButtonStageselect.SetSize(670, 185, 0);
+        m_ButtonStageselect.PlayAnimation("Normal");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_SELECT);
@@ -238,15 +263,15 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
     }
 
     if (Big == true) {
-        if (deltaTime == 5) {
-            m_size += 1;
+        if (deltaTime == 2) {
+            m_size += 2;
             deltaTime = 0;
         }
         deltaTime++;
     }
     if (Small == true) {
-        if (deltaTime == 5) {
-            m_size -= 1;
+        if (deltaTime == 2) {
+            m_size -= 2;
             deltaTime = 0;
         }
         deltaTime++;
@@ -324,7 +349,7 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     m_Star2.SetSize(200, 200, 0);
     m_Star3.SetSize(200, 200, 0);
 
-   // if (Star != m_prevStar)
+    // if (Star != m_prevStar)
     {
         switch (Star) {
         case 0:
@@ -388,6 +413,27 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
 }
 
 void SceneGame::UpdateGameOver(SceneManager& mgr) {
+
+    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
+    const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
+
+    if (leftStick.x < -moveThreshold)
+    {
+        m_stickNow = 1;
+    }
+    else if (leftStick.x > moveThreshold)
+    {
+        m_stickNow = 2;
+    }
+    else
+    {
+        m_stickNow = 0;
+    }
+
+    //左スティック判定
+    bool leftStickLeftTrigger = (m_stickNow == 1) && !m_prevLeftStick;
+    bool leftStickRightTrigger = (m_stickNow == 2) && !m_prevLeftStick;
+
     GameOver_BackGround.SetSize(1920, 1080, 0);
     GameOver_BackGround.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
 
@@ -397,21 +443,25 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
     m_ButtonStageselect.SetColor(1, 1, 1, 1);
     m_ButtonStageselect.SetPos(g_cameraPos.x + 420, g_cameraPos.y - 335, 0);
 
-    m_cursor.SetSize(m_size, m_size, 0);
+    m_cursor.SetSize(m_size, m_size / 3.5, 0);
 
-    if (input.GetKeyTrigger(VK_LEFT) || input.GetButtonTrigger(XINPUT_LEFT)) {
+    if (input.GetKeyTrigger(VK_LEFT) || input.GetButtonTrigger(XINPUT_LEFT) || leftStickLeftTrigger) {
         m_cursorNum = 0;
     }
-    if (input.GetKeyTrigger(VK_RIGHT) || input.GetButtonTrigger(XINPUT_RIGHT)) {
+    if (input.GetKeyTrigger(VK_RIGHT) || input.GetButtonTrigger(XINPUT_RIGHT) || leftStickRightTrigger) {
         m_cursorNum = 1;
     }
 
     switch (m_cursorNum)
     {
     case 0:
-        m_cursor.SetPos(g_cameraPos.x - 700, g_cameraPos.y - 240, 0);
+        m_cursor.SetPos(g_cameraPos.x - 420, g_cameraPos.y - 335, 0);
+
         m_Buttonretry.SetSize(670, 185, 0);
+        m_Buttonretry.PlayAnimation("Normal");
+
         m_ButtonStageselect.SetSize(572, 160, 0);
+        m_ButtonStageselect.PlayAnimation("NotSerect");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_GAME);
@@ -419,15 +469,45 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         break;
 
     case 1:
-        m_cursor.SetPos(g_cameraPos.x + 130, g_cameraPos.y - 240, 0);
+        m_cursor.SetPos(g_cameraPos.x + 420, g_cameraPos.y - 335, 0);
+
         m_Buttonretry.SetSize(572, 160, 0);
+        m_Buttonretry.PlayAnimation("NotSerect");
+
         m_ButtonStageselect.SetSize(670, 185, 0);
+        m_ButtonStageselect.PlayAnimation("Normal");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_SELECT);
         }
         break;
     }
+
+    if (m_size == SizeMin) {
+        Big = true;
+        Small = false;
+    }
+    if (m_size == SizeMax) {
+        Big = false;
+        Small = true;
+    }
+
+    if (Big == true) {
+        if (deltaTime == 2) {
+            m_size += 2;
+            deltaTime = 0;
+        }
+        deltaTime++;
+    }
+    if (Small == true) {
+        if (deltaTime == 2) {
+            m_size -= 2;
+            deltaTime = 0;
+        }
+        deltaTime++;
+    }
+
+    m_prevLeftStick = m_stickNow;
 }
 
 void SceneGame::Draw()

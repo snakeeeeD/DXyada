@@ -101,7 +101,7 @@ void TutorialStage2::BuildDrawList()
         m_drawList.push_back(item);
     }
 
- 
+
     for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetObject();
         item.layer = DrawLayer::Background;
@@ -157,7 +157,10 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 250, 0);
+    m_player.GetObject()->SetPos(8000, 250, 0);
+
+    m_currentCheckpoint = { 0, 150, 0 };
+    m_hasCheckpoint = true;
 
     m_background.Init();
     m_background.AddTexture("asset/Field/aa.png");
@@ -289,7 +292,7 @@ void TutorialStage2::Init()
 
         float holeW = 400.0f;
         BlockPin* m_targetPin = AddPullPin(x + holeW * 1.0f - 20, -200.0f, true);
-        
+
         //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
         m_targetPin->SetLimitPos(x + holeW * 1.0f, x + holeW * 0.5f, -200.0f, -200.0f);
@@ -417,7 +420,7 @@ void TutorialStage2::Init()
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
             m_pins.push_back(m_targetPin2);
-           // m_collision->AddStatic(m_targetPin2->GetObject());
+            m_collision->AddStatic(m_targetPin2->GetObject());
             m_targetPin2->SetForceGround(true);
             m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
 
@@ -448,9 +451,10 @@ void TutorialStage2::Init()
     {
         x += 500;
 
+        float w1 = TILE * 6.0f;
         Pin* JumpPin = new Pin;
 
-        JumpPin->Init("asset/Field/Pin.png", x - 280, -130, 35, 35);
+        JumpPin->Init("asset/Field/PinJump.png", x, -130, 35, 35);
         JumpPin->SetCollisionManager(m_collision);
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);
@@ -460,16 +464,16 @@ void TutorialStage2::Init()
         JumpPin->SetPinKind(PinKind::Jump);
 
         BlockPin* m_targetPin;
-        m_targetPin = AddPullPin(x - 70, -418.0f, true);
+        m_targetPin = AddPullPin(x + 130, -418.0f, true);
 
         //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x, x - 110, -0.0f, -600.0f);
+        m_targetPin->SetLimitPos(x + 130, x, -418.0f, -418.0f);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
         m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
 
-        float w1 = TILE * 6.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.45f, -700, w1, H);
+
+        AddPlatform("asset/Field/block.png", x + w1 * 0.45f + 200, -700, w1, H);
         x += w1;
     }
 
@@ -479,7 +483,7 @@ void TutorialStage2::Init()
 
         Pin* JumpPin = new Pin;
 
-        JumpPin->Init("asset/Field/Pin.png", x - 750, -100, 35, 35);
+        JumpPin->Init("asset/Field/PinJump.png", x - 750, -100, 35, 35);
         JumpPin->SetCollisionManager(m_collision);
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);
@@ -495,7 +499,7 @@ void TutorialStage2::Init()
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
             m_pins.push_back(m_targetPin2);
-           // m_collision->AddStatic(m_targetPin2->GetObject());
+            m_collision->AddStatic(m_targetPin2->GetObject());
             m_targetPin2->SetForceGround(true);
             m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
 
@@ -591,39 +595,42 @@ void TutorialStage2::Update()
     // ===== カメラ更新 =====
     m_camera.Update(cameraFollowPos);
 
+    m_cameraNowPos = m_player.GetObject()->GetPos();
 
+    if (m_cameraNowPos.y < -500) {
+        g_cameraPos = { g_cameraPos.x , -200, g_cameraPos.z };
 
-    DirectX::XMFLOAT3 nowPos;
+    }
 
-    nowPos = m_player.GetObject()->GetPos();
-
-    /*  if (nowPos.x < 11500 && nowPos.x>10100) {
-          g_cameraPos = { 10600, -300, 0 };
-
-      }*/
-
-      // プレイヤー更新
+    // プレイヤー更新
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
     const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
     if (p.y < m_fallDeadLineY)
-        if (p.y < m_fallDeadLineY)
-        {
-            DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
-            m_player.TakeDamage(1, dummyDir);
+    {
+        DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
+        m_player.TakeDamage(1, dummyDir);
 
-            if (m_hasCheckpoint)
-            {
-                m_player.GetObject()->SetPos(
-                    m_currentCheckpoint.x,
-                    m_currentCheckpoint.y,
-                    m_currentCheckpoint.z
-                );
-                m_isPlayerDead = false;
-            }
-        }
+        Respawn();
+    }
+    /*  if (p.y < m_fallDeadLineY)
+          if (p.y < m_fallDeadLineY)
+          {
+              DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
+              m_player.TakeDamage(1, dummyDir);
 
-    // 敵
+              if (m_hasCheckpoint)
+              {
+                  m_player.GetObject()->SetPos(
+                      m_currentCheckpoint.x,
+                      m_currentCheckpoint.y,
+                      m_currentCheckpoint.z
+                  );
+                  m_isPlayerDead = false;
+              }
+          }*/
+
+          // 敵
     for (auto& enemy : m_enemies) {
         enemy->Update(dt);
         //リッパー君の場合は敵同士の衝突をチェック
@@ -744,7 +751,7 @@ void TutorialStage2::Update()
     if (m_player.isDead()) {
         m_isPlayerDead = true;
     }
-    BuildDrawList();
+
 }
 
 void TutorialStage2::Draw()
@@ -794,6 +801,7 @@ void TutorialStage2::UnInit()
         delete pin;
     }
     m_pins.clear();
+    m_goal.clear();
 
     for (auto* tutorial : m_tutorials)
     {
@@ -802,12 +810,12 @@ void TutorialStage2::UnInit()
     }
     m_tutorials.clear();
 
-    for (auto* goal : m_goal)
-    {
-        goal->UnInit();
-        delete goal;
-    }
-    m_goal.clear();
+    /*   for (auto* goal : m_goal)
+       {
+           goal->UnInit();
+           delete goal;
+       }
+       m_goal.clear();*/
 
     delete m_collision;
     m_collision = nullptr;

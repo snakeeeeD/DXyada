@@ -27,7 +27,7 @@ void Stage1::AddDecorPin(float x, float y, bool canDecorate)
 
     pin->SetPinKind(PinKind::Deco); //ピンの種類のStateを"Deco(飾れる)"に
 
-   m_pins.push_back(pin);
+    m_pins.push_back(pin);
 }
 
 BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
@@ -51,7 +51,7 @@ BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
         pin->SetPinKind(PinKind::Pulled);
     }
 
-   m_pins.push_back(pin);
+    m_pins.push_back(pin);
 
     // 掴む用のタグは Pin のまま推奨
     m_collision->SetTag(pin->GetObject(), ColliderTag::Pin);
@@ -94,6 +94,10 @@ void Stage1::BuildDrawList()
     m_drawList.push_back(item);
 
     for (size_t i = 0; i < m_enemies.size(); ++i) {
+        item.obj = m_enemies[i]->GetMarkObject();
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
@@ -339,7 +343,7 @@ void Stage1::Init()
         rippa->Init("asset/Field/rippa.png", x + w1 * 0.5f, LOW_Y + 350, 150, 150);
         rippa->SetCollisionManager(m_collision);
 
-        m_enemies.push_back(rippa);   
+        m_enemies.push_back(rippa);
         x += w1;
     }
 
@@ -348,14 +352,14 @@ void Stage1::Init()
     {
         float w1 = TILE * 5.0f;
         Rippa* rippa_2 = new Rippa(Rippa::Type::Wandering);
-        rippa_2->Init("asset/Field/rippa.png", x , LOW_Y + 350, 150, 150);
+        rippa_2->Init("asset/Field/rippa.png", x, LOW_Y + 350, 150, 150);
         rippa_2->SetCollisionManager(m_collision);
 
         rippa_2->SetTurnInterval(2.5f);
 
         m_enemies.push_back(rippa_2);
 
-       
+
     }
     //7
     {
@@ -393,7 +397,7 @@ void Stage1::Init()
 
         Pin* JumpPin = new Pin;
 
-        JumpPin->Init("asset/Field/PinJump.png", x + w1 *0.5 - TILE * 0.5, LOW_Y +600, 35, 35);
+        JumpPin->Init("asset/Field/PinJump.png", x + w1 * 0.5 - TILE * 0.5, LOW_Y + 600, 35, 35);
         JumpPin->SetCollisionManager(m_collision);
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);
@@ -465,7 +469,7 @@ void Stage1::Update()
         {
             rippa->CheckEnemyCollision(m_enemies);
         }
-        
+
         NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy);
 
         if (enemy->IsDead())
@@ -509,12 +513,12 @@ void Stage1::Update()
             {
                 m_player.TakeDamage(1, knockbackDir);
             }
-            else if(needleflr->GetState() != NeedleFloor::State::Decorated)
+            else if (needleflr->GetState() != NeedleFloor::State::Decorated)
             {
                 m_player.TakeDamage(1, knockbackDir);
             }
 
-            
+
         }
     }
 
