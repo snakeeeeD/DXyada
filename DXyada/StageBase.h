@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Platform.h"
+#include "DecoMarker.h"
 
 #include "Enemy.h"
 #include "Rippa.h"

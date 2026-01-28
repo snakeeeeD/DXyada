@@ -580,6 +580,7 @@ void Player::Update(
                 // 必要時間に達したら撃破
                 if (m_LT)
                 {
+                    
                     hitEnemy->Disable(true);
                     m_ribbon.Return();
                     m_isRibbonOut = false;
@@ -646,6 +647,7 @@ void Player::Update(
             // 必要時間に達したら撃破
             if (m_LT)
             {
+                hitEnemy->NotifyDecoratedJust(m_justDeco);
                 hitEnemy->OnDecorated();
                 hitEnemy->Disable(m_justDeco);
                 m_ribbon.Return();
@@ -887,7 +889,7 @@ void Player::Update(
 
                         m_decoratingEffectBack.SetColor(1, 1, 1, 0);
                         m_decoratingEffectFront.SetColor(1, 1, 1, 0);
-
+                        hitPin->NotifyDecoratedJust(m_justDeco);
                         hitPin->SetState(Pin::State::Decorated, m_justDeco);
 
                         // リセット
@@ -946,6 +948,7 @@ void Player::Update(
                         float dirX = (jdx > 0) ? 1.0f : -1.0f;
 
                         // Pinジャンプ開始
+                        hitPin->RaiseMarkerEvent(Pin::MarkerEvent::HighJump);
                         m_isPinJumping = true;
                         m_pinJumpVelocity.x = dirX * XForce;
 
@@ -1190,7 +1193,8 @@ void Player::Update(
             float dot = (dirX * toX + dirY * toY) / dist;
 
 
-           
+       
+
 
 
             // ±20度以内か
@@ -1276,7 +1280,6 @@ void Player::Update(
                         m_circleKind = 0;
                         break;
                     }
-
                 }
             }
         }

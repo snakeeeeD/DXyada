@@ -48,6 +48,10 @@ private:
 	float  m_markOffsetY = 20.0f;
 	float  m_markW = 320.0f;
 	float  m_markH = 320.0f;
+	bool m_decorated;
+
+	bool m_justDecorated;
+
 
 public:
 	Pin() = default;
@@ -104,5 +108,48 @@ public:
 
 	PinKind GetPinKind() const { return m_kind; }
 	void SetPinKind(PinKind pinkind) { m_kind = pinkind; }
+
+public:
+	void NotifyDecoratedJust(bool just)
+	{
+		if (m_decoratedFlag) return;
+		m_decoratedFlag = true;
+		m_justDecoratedFlag = true;
+		m_decoratedJust = just; // optional
+	}
+
+	bool ConsumeJustDecorated()
+	{
+		if (!m_justDecoratedFlag) return false;
+		m_justDecoratedFlag = false;
+		return true;
+	}
+
+	bool WasJustDecorated() const { return m_decoratedJust; } // optional
+
+private:
+	bool m_decoratedFlag = false;
+	bool m_justDecoratedFlag = false;
+	bool m_decoratedJust = false; // optional
+
+	public:
+		enum class MarkerEvent
+		{
+			None = 0,
+			Decorated,
+			RollMax,     // 限界まで巻けた
+			HighJump     // ハイジャンプ発動
+		};
+
+		void RaiseMarkerEvent(MarkerEvent e) { m_markerEvent = e; }
+		MarkerEvent ConsumeMarkerEvent()
+		{
+			MarkerEvent e = m_markerEvent;
+			m_markerEvent = MarkerEvent::None;
+			return e;
+		}
+
+private:
+	MarkerEvent m_markerEvent = MarkerEvent::None;
 
 };

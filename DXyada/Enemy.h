@@ -49,6 +49,9 @@ protected:
     float  m_markW = 320.0f;
     float  m_markH = 320.0f;
 
+    bool m_decorated;
+    bool m_justDecorated;
+
 public:
     Tag tag = Tag::Enemy;
 
@@ -90,4 +93,26 @@ public:
 
     virtual void OnDecorated();  //飾られた時の処理
     bool IsDecorated() const { return m_isDecorated; }
+
+public:
+    void NotifyDecoratedJust(bool just)
+    {
+        if (m_decorated) return;      // 1回だけ
+        m_decorated = true;
+        m_justDecorated = true;
+        m_decoratedJust = just;       // “ジャスト演出”に使うなら保持
+    }
+
+    bool ConsumeJustDecorated()
+    {
+        if (!m_justDecorated) return false;
+        m_justDecorated = false;
+        return true;
+    }
+
+    bool WasJustDecorated() const { return m_decoratedJust; } // optional
+
+private:
+    bool m_decoratedJust = false; // optional
+
 };

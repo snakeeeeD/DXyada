@@ -13,11 +13,11 @@ void Pin::Init(const char* texture, float x, float y, float width, float height)
     m_object.SetSize(width, height, 0);
     m_state = State::Normal;
 
-    m_mark.Init();
+  /*  m_mark.Init();
     m_mark.AddTexture("asset/Field/êØ.png");
     m_mark.SetSize(0, 0, 0);
     int angle = (rand() % 61) - 30;
-    m_mark.SetAngle(angle);
+    m_mark.SetAngle(angle);*/
 
     auto pos = m_object.GetPos();
     auto sz = m_object.GetSize();

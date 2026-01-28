@@ -20,6 +20,13 @@ private:
     std::vector<Pin*>     m_pins;
     std::vector<Tutorial*>     m_tutorials;
 
+    struct DecoLinkPin { Pin* pin; DecoMarker marker; };
+    struct DecoLinkEnemy { Enemy* enemy; DecoMarker marker; };
+
+    std::vector<DecoLinkPin>   m_pinMarkers;
+    std::vector<DecoLinkEnemy> m_enemyMarkers;
+
+
     std::vector<DrawItem> m_drawList;
 
     bool m_isPlayerDead = false;
@@ -44,6 +51,8 @@ public:
     void Update() override;
     void Draw() override;
     void UnInit() override;
+
+    void RegisterEnemyMarker(Enemy* enemy, const char* markerTex);
 
     int StageState = 0;
     bool on = false;

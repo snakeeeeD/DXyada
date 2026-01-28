@@ -7,6 +7,17 @@ extern Sound* g_sound;
 // 既存と同様に外部にある想定
 extern DirectX::XMFLOAT3 g_cameraPos;
 
+
+void Stage1::RegisterEnemyMarker(Enemy* enemy, const char* markerTex)
+{
+    DecoLinkEnemy el;
+    el.enemy = enemy;
+    el.marker.Init(markerTex);
+    el.marker.Hide();
+    m_enemyMarkers.push_back(el);
+}
+
+
 void Stage1::AddPlatform(const char* tex, float x, float y, float w, float h)
 {
     Platform p;
@@ -30,6 +41,14 @@ void Stage1::AddDecorPin(float x, float y, bool canDecorate)
     pin->SetPinKind(PinKind::Deco); //ピンの種類のStateを"Deco(飾れる)"に
 
     m_pins.push_back(pin);
+
+    DecoLinkPin link;
+    link.pin = pin;
+    link.marker.Init("asset/Field/bbbbb.png");
+    //link.marker.Init("asset/Field/星 ワッペン.png");
+    link.marker.Hide();
+    m_pinMarkers.push_back(link);
+
 }
 
 BlockPin* Stage1::AddPullPin(float x, float y, bool canRollPin)
@@ -95,6 +114,25 @@ void Stage1::BuildDrawList()
     item.layer = DrawLayer::Enemy;
     m_drawList.push_back(item);
 
+
+    // --- Enemy marker（敵の後ろ or 上、好きなレイヤーに）---
+    for (auto& em : m_enemyMarkers)
+    {
+        item.obj = em.marker.GetObject();
+        item.layer = DrawLayer::BackObject; // or Enemy, StageObject
+        m_drawList.push_back(item);
+    }
+
+    // --- Pin marker ---
+    for (auto& pm : m_pinMarkers)
+    {
+        item.obj = pm.marker.GetObject();
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+    }
+
+
+
     for (size_t i = 0; i < m_enemies.size(); ++i) {
         item.obj = m_enemies[i]->GetMarkObject();
         item.layer = DrawLayer::BackObject;
@@ -118,13 +156,13 @@ void Stage1::BuildDrawList()
 
     for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetObject();
-        item.layer = DrawLayer::StageObject;
+        item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
     }
 
     for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetDisplayObject();
-        item.layer = DrawLayer::StageObject;
+        item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
     }
 
@@ -317,7 +355,7 @@ void Stage1::Init()
         nf->SetCollisionManager(m_collision);
 
         m_enemies.push_back(nf);
-
+        RegisterEnemyMarker(nf, "asset/Field/星 ワッペン.png");
         x += w1;
     }
 
@@ -346,6 +384,7 @@ void Stage1::Init()
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png");
         x += w1;
     }
 
@@ -360,6 +399,8 @@ void Stage1::Init()
         rippa_2->SetTurnInterval(2.5f);
 
         m_enemies.push_back(rippa_2);
+        RegisterEnemyMarker(rippa_2, "asset/Field/フェルトワッペン リッパー.png");
+
 
 
     }
@@ -383,12 +424,15 @@ void Stage1::Init()
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png");
+
 
         Rippa* rippa2 = new Rippa(Rippa::Type::Normal);
         rippa2->Init("asset/Field/rippa.png", x + w1, LOW_Y + 350, 150, 150);
         rippa2->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa2);
+        RegisterEnemyMarker(rippa2, "asset/Field/フェルトワッペン リッパー.png");
 
         x += w1;
     }
@@ -404,9 +448,16 @@ void Stage1::Init()
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);
         JumpPin->SetcanDecorate(false);
+        m_collision->SetTag(JumpPin->GetObject(), ColliderTag::Pin);
 
         //ピンの種類のStateを"Jump(飾れる)"に
         JumpPin->SetPinKind(PinKind::Jump);
+
+        DecoLinkPin link;
+        link.pin = JumpPin;
+        link.marker.Init("asset/Field/リボンちゃん ワッペン.png"); // 好きなやつ
+        link.marker.Hide();
+        m_pinMarkers.push_back(link);
 
         AddPlatform("asset/Field/床ブロック.png", x + w1, LOW_Y, w1, H);
 
@@ -593,6 +644,30 @@ void Stage1::Update()
         m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
         break;
     }
+
+    for (auto& pm : m_pinMarkers)
+    {
+        pm.marker.Update(dt);
+        if (!pm.pin) continue;
+
+        Pin::MarkerEvent ev = pm.pin->ConsumeMarkerEvent();
+        if (ev == Pin::MarkerEvent::None) continue;
+
+        // 表示（位置/サイズは好みで）
+        pm.marker.ShowAtHead(pm.pin->GetObject(), 120.0f, 300.0f, 200.0f);
+
+    }
+
+    for (auto& em : m_enemyMarkers)
+    {
+        em.marker.Update(dt);
+
+        if (em.enemy && em.enemy->ConsumeJustDecorated())
+        {
+            em.marker.ShowAtHead(em.enemy->GetObject(), 180.0f, 300.0f, 200.0f);
+        }
+    }
+
 
     if (m_player.isDead()) {
         m_isPlayerDead = true;
