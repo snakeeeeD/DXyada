@@ -41,7 +41,9 @@ private:
 
     ObstacleType PickRandomType();
     void SpawnObstacle();
-
+    float m_walkSETimer = 0.0f;
+    int walkchange = 0;
+    bool jumpse = true;
 
 private:
     SceneID m_next = SCENE_GAME;
@@ -120,13 +122,13 @@ private:
     bool m_miniDamageLock = false;
 
     float m_groundUV = 0.0f;
-    float  m_gaugeT = 0.0f;   
-    float  m_gauge01 = 0.0f;  
+    float  m_gaugeT = 0.0f;
+    float  m_gauge01 = 0.0f;
     bool   m_gaugeStarted = false;
 
     float m_gaugeFinalW = 600.0f;
     float m_gaugeFinalH = 80.0f;
-    float m_gaugeLeftX = 0.0f; 
+    float m_gaugeLeftX = 0.0f;
     float m_gaugeY = 350.0f;
 
     bool m_gaugeJustMax = false;

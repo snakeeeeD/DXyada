@@ -1,6 +1,8 @@
 #include "SceneSelect.h"
 #include "Input.h"
+#include "sound.h"   
 
+extern Sound* g_sound;
 extern Input input;
 
 void SceneSelect::Init() {
@@ -106,6 +108,8 @@ void SceneSelect::Update(SceneManager& mgr)
     {
         m_stage = 1;
         m_cursor.SetPos(-700, -50, 0);
+        g_sound->Play(SOUND_LABEL_SE_Select);
+
     }
 
     if (input.GetKeyTrigger(VK_RIGHT) ||
@@ -114,19 +118,24 @@ void SceneSelect::Update(SceneManager& mgr)
     {
         m_stage = 2;
         m_cursor.SetPos(100, -50, 0);
+        g_sound->Play(SOUND_LABEL_SE_Select);
+
     }
 
 
     if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A)) {
         mgr.SetSelectedStage(m_stage);
         mgr.ChangeScene(SCENE_LOAD);
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+
     }
 
     if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
         mgr.SetSelectedStage(99);
         mgr.ChangeScene(SCENE_GAME);
-    }
+        g_sound->Play(SOUND_LABEL_SE_Ok);
 
+    }
     m_prevLeftStick = m_stickNow;
 
 }

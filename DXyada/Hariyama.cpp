@@ -1,6 +1,8 @@
 #include "Hariyama.h"
 #include "Player.h"
+#include "sound.h"   
 
+extern Sound* g_sound;
 void Hariyama::Init(const char* texture, float x, float y, float width, float height)
 {
     Enemy::Init(texture, x, y, width, height);
@@ -39,6 +41,7 @@ void Hariyama::Update(float dt)
             m_shotTimer += dt;
             if (m_shotTimer >= SHOT_INTERVAL)
             {
+                g_sound->Play(SOUND_LABEL_SE_Hariyamasan);
                 Shoot();
                 m_shotTimer = 0.0f; // ƒŠƒZƒbƒg
             }

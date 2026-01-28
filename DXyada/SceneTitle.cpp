@@ -1,6 +1,9 @@
 // SceneTitle.cpp
 #include "SceneTitle.h"
 #include "Input.h"
+#include "sound.h"   
+
+extern Sound* g_sound;
 extern Input input;
 
 Object m_title;
@@ -73,11 +76,15 @@ void SceneTitle::Update(SceneManager& mgr) {
     // スペースキーでゲーム開始
     if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonPress(XINPUT_A)) {
         mgr.ChangeScene(SCENE_SELECT);
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+
     }
 
     if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
         mgr.SetSelectedStage(99);
         mgr.ChangeScene(SCENE_GAME);
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+
     }
 }
 

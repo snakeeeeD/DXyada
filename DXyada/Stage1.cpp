@@ -1,7 +1,9 @@
 #include "Stage1.h"
 #include "Renderer.h"
 #include <algorithm>
+#include "sound.h"   
 
+extern Sound* g_sound;
 // Šù‘¶‚Æ“¯—l‚ÉŠO•”‚É‚ ‚é‘z’è
 extern DirectX::XMFLOAT3 g_cameraPos;
 
@@ -454,7 +456,14 @@ void Stage1::Update()
     {
         DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
         m_player.TakeDamage(1, dummyDir);
-
+        if (currentHP > 1)
+        {
+            g_sound->Play(SOUND_LABEL_SE_Fall);
+        }
+        else
+        {
+            //BGM
+        }
         Respawn();
     }
 
@@ -512,10 +521,14 @@ void Stage1::Update()
             if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
             {
                 m_player.TakeDamage(1, knockbackDir);
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+
             }
             else if (needleflr->GetState() != NeedleFloor::State::Decorated)
             {
                 m_player.TakeDamage(1, knockbackDir);
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+
             }
 
 

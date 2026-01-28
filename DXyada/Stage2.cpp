@@ -4,7 +4,9 @@
 #include "Enemy.h"
 #include "WingRippa.h"
 #include "Hariyama.h"
+#include "sound.h"   
 
+extern Sound* g_sound;
 // Šù‘¶‚Æ“¯—l‚ÉŠO•”‚É‚ ‚é‘z’è
 extern DirectX::XMFLOAT3 g_cameraPos;
 
@@ -610,7 +612,14 @@ void TutorialStage2::Update()
     {
         DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
         m_player.TakeDamage(1, dummyDir);
-
+        if (currentHP > 1)
+        {
+            g_sound->Play(SOUND_LABEL_SE_Fall);
+        }
+        else
+        {
+            //BGM
+        }
         Respawn();
     }
     /*  if (p.y < m_fallDeadLineY)
@@ -674,6 +683,7 @@ void TutorialStage2::Update()
                 playerPos.x - enemyPos.x,
                 playerPos.y - enemyPos.y
             };
+            g_sound->Play(SOUND_LABEL_SE_Damage);
 
             m_player.TakeDamage(1, knockbackDir);
         }

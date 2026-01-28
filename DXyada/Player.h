@@ -33,7 +33,8 @@ private:
 	Object m_Circle;
 
 	float deltaTime;//一度読み込むたびに何秒分すすむか
-
+	float m_walkSETimer = 0.0f;
+	int walkchange = 0;
 	float m_velY = 0.0f;
 	float m_gravity = 200.0f;
 	bool m_isOnGround = false;
@@ -49,6 +50,13 @@ private:
 	bool m_isLastRightDirection = true;	//最終右むいてるか
 
 	bool m_isPinJumping = false;
+	bool m_isAssist = true;
+	bool m_isAim = true;
+	bool m_isDecorate = true;
+	bool m_isKiran = true;
+	bool m_isBack = true;
+	bool m_isRibbon_hodoki = true;
+
 	DirectX::XMFLOAT2 m_pinJumpVelocity = { 0.0f, 0.0f };
 
 	int m_inputDir = 0;	//プレイヤーの左右入力優先用　0：入力なし　1：左入力　-1：右入力
@@ -117,6 +125,7 @@ private:
 
 	Player_AnimState m_animState = Idle;
 	Player_AnimState m_prevAnimState = Idle;
+	Player_AnimState m_prevSEState = Idle;// static_cast<Player_AnimState>(-1);
 
 	bool m_prevIsRightDirection;
 	bool m_isThrowingThisFrame;
@@ -125,6 +134,7 @@ private:
 	bool m_throwDirectionRight = false;
 
 	bool m_waitReleaseAfterThrow;
+	bool m_pinJumpStarted = true;
 
 	// CollisionManager用
 	CollisionManager* m_collisionMgr = nullptr;
@@ -174,6 +184,7 @@ public:
 	bool IsEnemyInRange(const DirectX::XMFLOAT3& enemyPos, float& distance) const;
 
 	void ApplyAnimation();
+	void ApplySE();
 
 	// リボン取得用
 	Ribbon& GetRibbon();

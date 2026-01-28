@@ -5,8 +5,9 @@
 #include "Object.h"
 #include "framework.h"
 #include "CollisionManager.h"
+#include "sound.h"   
 
-
+extern Sound* g_sound;
 extern Input input;
 DirectX::XMFLOAT3 g_StartPlayer = { 0,0,0 };
 
@@ -169,7 +170,7 @@ void Player::Init() {
     m_decoratingEffectBack.SetColor(1, 1, 1, 0);
     m_decoratingEffectFront.SetColor(1, 1, 1, 0);
 
-
+    m_prevSEState = static_cast<Player_AnimState>(-1);
 }
 
 void Player::TakeDamage(int damage, DirectX::XMFLOAT2 knockbackDir)
@@ -525,7 +526,12 @@ void Player::Update(
     if (m_isPinJumping)
     {
         pos.x += m_pinJumpVelocity.x * deltaTime;
+        if (m_pinJumpStarted == true && !m_isOnGround)
+        {
+            g_sound->Play(SOUND_LABEL_SE_RibbonJump);
+            m_pinJumpStarted = false;
 
+        }
         // 速度を減衰
         m_pinJumpVelocity.x *= 0.98f;
 
@@ -534,6 +540,10 @@ void Player::Update(
         {
             m_isPinJumping = false;
             m_pinJumpVelocity = { 0.0f, 0.0f };
+            if (m_pinJumpStarted == false)
+            {
+                m_pinJumpStarted = true;
+            }
         }
     }
     //ノックバック中出ない場合のみ移動
@@ -593,8 +603,18 @@ void Player::Update(
                     m_showDecoratingEffect = true;
                     m_decoratingEffectBack.PlayAnimation("DecoEffectBack");
                     m_decoratingEffectFront.PlayAnimation("DecoEffectFront");
+                    if (m_isDecorate)
+                    {
+                        g_sound->Play(SOUND_LABEL_SE_Decorate);
+                        m_isDecorate = false;
+                        m_isRibbon_hodoki = false;
+                        m_isBack = false;
+                    }
                 }
-
+                if (m_isDecorate == false)
+                {
+                    m_isDecorate = true;
+                }
 
                 auto enemyPos = hitEnemy->GetObject()->GetPos();
                 auto enemySize = hitEnemy->GetObject()->GetSize();
@@ -662,8 +682,18 @@ void Player::Update(
                 {
                     m_justDeco = true;
                     m_LT = true;
+                    if (m_isKiran)
+                    {
+                        g_sound->Play(SOUND_LABEL_SE_Kiran);
+                        m_isKiran = false;
+                        m_isRibbon_hodoki = false;
+                        m_isBack = false;
+                    }
                 }
-
+                if (m_isKiran == false)
+                {
+                    m_isKiran = true;
+                }
                 // LTを離したらタイマーリセット
                 m_holdLTTimer = 0.0f;
                 m_holdRTTimer = 0.0f;
@@ -831,6 +861,17 @@ void Player::Update(
                             m_showDecoratingEffect = true;
                             m_decoratingEffectBack.PlayAnimation("DecoEffectBack");
                             m_decoratingEffectFront.PlayAnimation("DecoEffectFront");
+                            if (m_isDecorate)
+                            {
+                                g_sound->Play(SOUND_LABEL_SE_Decorate);
+                                m_isDecorate = false;
+                                m_isRibbon_hodoki = false;
+                                m_isBack = false;
+                            }
+                        }
+                        if (m_isDecorate == false)
+                        {
+                            m_isDecorate = true;
                         }
 
                         auto pinPos = hitPin->GetObject()->GetPos();
@@ -876,6 +917,17 @@ void Player::Update(
                         {
                             m_justDeco = true;
                             m_LT = true;
+                            if (m_isKiran)
+                            {
+                                g_sound->Play(SOUND_LABEL_SE_Kiran);
+                                m_isKiran = false;
+                                m_isRibbon_hodoki = false;
+                                m_isBack = false;
+                            }
+                        }
+                        if (m_isKiran == false)
+                        {
+                            m_isKiran = true;
                         }
 
 
@@ -1024,6 +1076,8 @@ void Player::Update(
     {
         m_velY = -m_jumpPower;
         m_isOnGround = false;
+        g_sound->Play(SOUND_LABEL_SE_Jump);
+
     }
 
     //========================================
@@ -1316,6 +1370,13 @@ void Player::Update(
                 m_circleKind = 0;
             }
 
+            if (m_isAssist && !hitPin && !hitEnemy)
+            {
+                g_sound->Play(SOUND_LABEL_SE_Assist);
+                m_isAssist = false;
+            }
+
+
             // ターゲットあり色
             m_guideline.SetColor(1, 0.5f, 0.5f, 0.8f);
 
@@ -1365,7 +1426,15 @@ void Player::Update(
             // 通常色
             m_guideline.SetColor(1, 1, 1, 0.5f);
             m_Circle.SetColor(1, 1, 1, 0);
-
+            if (m_isAssist == false)
+            {
+                m_isAssist = true;
+            }
+            if (m_isAim)
+            {
+                g_sound->Play(SOUND_LABEL_SE_Aim);
+                m_isAim = false;
+            }
 
         }
 
@@ -1439,6 +1508,16 @@ void Player::Update(
         m_decoratingEffectBack.SetColor(1, 1, 1, 0);
         m_decoratingEffectFront.SetColor(1, 1, 1, 0);
         m_showDecoratingEffect = false;
+        if (m_isBack && !hitEnemy)
+        {
+            g_sound->Play(SOUND_LABEL_SE_Back);
+            m_isBack = false;
+        }
+        else  if (m_isRibbon_hodoki && hitEnemy)
+        {
+            g_sound->Play(SOUND_LABEL_SE_Ribbon_hodoki);
+            m_isRibbon_hodoki = false;
+        }
     }
 
     //========================================
@@ -1593,9 +1672,29 @@ void Player::Update(
         m_decoratingEffectBack.Update(deltaTime);
         m_decoratingEffectFront.Update(deltaTime);
     }
-
+    if (m_animState == Run)
+    {
+        m_walkSETimer += deltaTime;
+        if (m_walkSETimer > 0.4f && walkchange == 0)
+        {
+            g_sound->Play(SOUND_LABEL_SE_MoveA);
+            walkchange = 1;
+            m_walkSETimer = 0.0f;
+        }
+        if (m_walkSETimer > 0.4f && walkchange == 1)
+        {
+            g_sound->Play(SOUND_LABEL_SE_MoveB);
+            walkchange = 0;
+            m_walkSETimer = 0.0f;
+        }
+    }
+    else
+    {
+        m_walkSETimer = 0.0f;
+    }
     //実行
     ApplyAnimation();
+    ApplySE();
     m_player.SetPos(pos.x, pos.y, pos.z);
     m_player.Update(deltaTime);
 }
@@ -1790,7 +1889,50 @@ void Player::ApplyAnimation()
         m_prevIsRightDirection = m_isLastRightDirection;
     }
 }
+void Player::ApplySE()
+{
+    if (m_animState == m_prevSEState)
+        return;
 
+    if (!g_sound) return;
+
+    switch (m_animState)
+    {
+        /* case Jump:
+             g_sound->Play(SOUND_LABEL_SE_Jump);
+             break;
+
+        */
+        /* case Damage:
+             g_sound->Play(SOUND_LABEL_SE_Damage);
+             break;*/
+
+    case Throw:
+        g_sound->Play(SOUND_LABEL_SE_Throw);
+        break;
+
+    case RibbonJump:
+        g_sound->Play(SOUND_LABEL_SE_RibbonJump);
+        break;
+
+    case Pulled:
+        g_sound->Play(SOUND_LABEL_SE_Pull);
+        m_isRibbon_hodoki = false;
+        m_isBack = false;
+        break;
+
+    case Roll:
+        g_sound->Play(SOUND_LABEL_SE_Pull);
+        m_isRibbon_hodoki = false;
+        m_isBack = false;
+        break;
+
+    default:
+        break;
+    }
+
+    m_prevSEState = m_animState;
+}
 //RibbonにCollisionManagerを渡すために.hから.cppへ移動
 void Player::SetCollisionManager(CollisionManager* mgr)
 {

@@ -7,7 +7,9 @@
 
 #include <cstdlib>
 #include <ctime>
+#include "sound.h"   
 
+extern Sound* g_sound;
 extern Input input;
 
 static float Clamp(float v, float a, float b)
@@ -94,7 +96,7 @@ void SceneLoad::Init()
     tm.Enqueue("asset/Field/back.png");
     tm.Enqueue("asset/Player/Player_Idle.png");
     tm.Enqueue("asset/Player/Player_Walk.png");
-    tm.Enqueue("asset/Field/°ƒuƒƒbƒN.png");
+    tm.Enqueue("asset/Field/block.png");
     tm.Enqueue("asset/Field/Wing_Rippa.png");
     tm.Enqueue("asset/Field/rippa.png");
     tm.Enqueue("asset/Field/needle_floor.png");
@@ -130,38 +132,30 @@ void SceneLoad::BuildQueue()
 
 void SceneLoad::Update(SceneManager& mgr)
 {
-
     input.Update();
     TextureManager& tm = TextureManager::Instance();
     const float dt = 1.0f / 60.0f;
+    m_walkSETimer += dt;
+    if (m_mode != MODE_MINI)
+    {
+        if (m_walkSETimer > 0.5f && walkchange == 0)
+        {
+            g_sound->Play(SOUND_LABEL_SE_MoveA);
+            walkchange = 1;
+            m_walkSETimer = 0.0f;
+        }
+        if (m_walkSETimer > 0.5f && walkchange == 1)
+        {
+            g_sound->Play(SOUND_LABEL_SE_MoveB);
+            walkchange = 0;
+            m_walkSETimer = 0.0f;
+        }
+    }
 
     m_frame++;
 
-    const float kGaugeTime = 3.0f;
-    const float kHoldPoint01 = 0.70f;
-    const float kHoldTime = kGaugeTime * kHoldPoint01; // 2.1f
-
-    float nextGaugeT = m_gaugeT + dt;
-    float nextGauge01 = Clamp(nextGaugeT / kGaugeTime, 0.0f, 1.0f);
-
-    const bool allowGaugeWhileMini = (m_mode == MODE_MINI);
-    const bool shouldHoldAt70 =
-        (nextGauge01 >= kHoldPoint01) &&
-        (m_mode != MODE_READY) &&
-        (!allowGaugeWhileMini);
-
-    if (shouldHoldAt70)
-    {
-        m_gaugeT = kHoldTime;
-        m_gauge01 = kHoldPoint01;
-    }
-    else
-    {
-        m_gaugeT = nextGaugeT;
-        m_gauge01 = nextGauge01;
-    }
-
-
+    m_gaugeT += dt;
+    m_gauge01 = Clamp(m_gaugeT / 4.0f, 0.0f, 1.0f);
 
     float curW = m_gaugeFinalW * m_gauge01;
     float curCenterX = m_gaugeLeftX + (curW * 0.5f);
@@ -222,9 +216,11 @@ void SceneLoad::Update(SceneManager& mgr)
             }
 
             if (m_gauge01 >= 1) {
-                //if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B))
+                if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B))
                 {
                     mgr.ChangeScene(m_next);
+                    g_sound->Play(SOUND_LABEL_SE_Ok);
+
                     return;
                 }
             }
@@ -237,6 +233,7 @@ void SceneLoad::Update(SceneManager& mgr)
             if ((input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) && m_gauge01 >= 1)
             {
                 mgr.ChangeScene(m_next);
+                g_sound->Play(SOUND_LABEL_SE_Ok);
                 return;
             }
         }
@@ -485,6 +482,7 @@ void SceneLoad::MiniUpdate(float dt)
         {
             m_jumpDelayT += dt;
             m_playerY = m_groundY;
+
         }
         else
         {
@@ -494,8 +492,13 @@ void SceneLoad::MiniUpdate(float dt)
                 if (m_jumpHoldT > m_jumpHoldMax) m_jumpHoldT = m_jumpHoldMax;
                 float k = m_jumpHoldT / m_jumpHoldMax;
                 m_jumpY = m_jumpY_Short + (m_jumpY_Long - m_jumpY_Short) * k;
-            }
 
+            }
+            if (jumpse == true)
+            {
+                g_sound->Play(SOUND_LABEL_SE_Jump);
+                jumpse = false;
+            }
             m_jumpT += dt / m_jumpDuration;
             float t01 = Clamp(m_jumpT, 0.0f, 1.0f);
             float updown = UpDown01(t01);
@@ -508,12 +511,14 @@ void SceneLoad::MiniUpdate(float dt)
                 m_jumpDelayT = 0.0f;
                 m_jumpHoldT = 0.0f;
                 m_playerY = m_groundY;
+
             }
         }
     }
     else
     {
         m_playerY = m_groundY;
+        jumpse = true;
     }
 
     m_playerBox.SetPos(-500, m_playerY, 0);
@@ -564,8 +569,25 @@ void SceneLoad::MiniUpdate(float dt)
             if (m_previewReady)
             {
                 m_previewPlayer.PlayDamagePreview();
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+
             }
             break;
+        }
+        else
+        {
+            if (m_walkSETimer > 0.35f && walkchange == 0)
+            {
+                g_sound->Play(SOUND_LABEL_SE_MoveA);
+                walkchange = 1;
+                m_walkSETimer = 0.0f;
+            }
+            if (m_walkSETimer > 0.35f && walkchange == 1)
+            {
+                g_sound->Play(SOUND_LABEL_SE_MoveB);
+                walkchange = 0;
+                m_walkSETimer = 0.0f;
+            }
         }
     }
 

@@ -2,7 +2,9 @@
 #include "SceneManager.h"
 #include "Input.h"
 #include <iostream>
+#include "sound.h"   
 
+extern Sound* g_sound;
 extern Input input;
 
 extern DirectX::XMFLOAT3 g_cameraPos;
@@ -121,6 +123,8 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
     //エスケープでポーズに、コントローラーはスタートで
     if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_START)) {
         m_state = GameState::Pouse;
+        g_sound->Play(SOUND_LABEL_SE_Pause);
+
     }
 
     if (input.GetKeyTrigger(VK_UP)) {
@@ -191,6 +195,8 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         if (m_cursorNum > 0)
         {
             m_cursorNum -= 1;
+            g_sound->Play(SOUND_LABEL_SE_Select);
+
         }
     }
     if (input.GetKeyTrigger(VK_DOWN) ||
@@ -199,6 +205,8 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         if (m_cursorNum < 2)
         {
             m_cursorNum += 1;
+            g_sound->Play(SOUND_LABEL_SE_Select);
+
         }
     }
 
@@ -217,6 +225,8 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
 
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
             m_state = GameState::Playing;
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+
         }
         break;
 
@@ -233,6 +243,8 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_GAME);
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+
         }
         break;
 
@@ -249,6 +261,8 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_SELECT);
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+
         }
         break;
     }
@@ -382,6 +396,8 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
         if (Star < 0) {
             Star = 0;
         }
+        g_sound->Play(SOUND_LABEL_SE_Select);
+
     }
 
     if (input.GetKeyTrigger(VK_RIGHT))
@@ -390,6 +406,8 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
         if (Star > 3) {
             Star = 3;
         }
+        g_sound->Play(SOUND_LABEL_SE_Select);
+
     }
 
 
@@ -402,12 +420,16 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
         x = 1.0f;
         g_cameraPos = m_resultCam.goal;
         m_resultCam.t = m_resultCam.duration;
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+
     }
 
     if (x >= 1.0f)
     {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
             mgr.ChangeScene(SCENE_SELECT);
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+
         }
     }
 }
