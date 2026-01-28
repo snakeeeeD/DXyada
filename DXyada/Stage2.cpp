@@ -159,7 +159,7 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 250, 0);
+    m_player.GetObject()->SetPos(6850, 250, 0);
 
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
@@ -456,7 +456,7 @@ void TutorialStage2::Init()
         float w1 = TILE * 6.0f;
         Pin* JumpPin = new Pin;
 
-        JumpPin->Init("asset/Field/PinJump.png", x, -130, 35, 35);
+        JumpPin->Init("asset/Field/PinJump.png", x - 280, -130, 35, 35);
         JumpPin->SetCollisionManager(m_collision);
         m_pins.push_back(JumpPin);
         JumpPin->SetcanRollPin(false);
@@ -466,7 +466,7 @@ void TutorialStage2::Init()
         JumpPin->SetPinKind(PinKind::Jump);
 
         BlockPin* m_targetPin;
-        m_targetPin = AddPullPin(x + 100, -418.0f, true);
+        m_targetPin = AddPullPin(x - 70, -418.0f, true);
 
         //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
@@ -475,7 +475,7 @@ void TutorialStage2::Init()
         m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
 
 
-        AddPlatform("asset/Field/block.png", x + w1 * 0.45f + 200, -700, w1, H);
+        AddPlatform("asset/Field/block.png", x + w1 * 0.45f, -700, w1, H);
         x += w1;
     }
 
