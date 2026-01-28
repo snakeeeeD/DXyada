@@ -467,40 +467,40 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
 
     m_cursor.SetSize(m_size, m_size / 3.5, 0);
 
-    if (input.GetKeyTrigger(VK_LEFT) || input.GetButtonTrigger(XINPUT_LEFT) || leftStickLeftTrigger) {
+    if (input.GetKeyTrigger(VK_LEFT) || input.GetButtonTrigger(XINPUT_LEFT)) {
         m_cursorNum = 0;
+        g_sound->Play(SOUND_LABEL_SE_Select);
+
     }
-    if (input.GetKeyTrigger(VK_RIGHT) || input.GetButtonTrigger(XINPUT_RIGHT) || leftStickRightTrigger) {
+    if (input.GetKeyTrigger(VK_RIGHT) || input.GetButtonTrigger(XINPUT_RIGHT)) {
         m_cursorNum = 1;
+        g_sound->Play(SOUND_LABEL_SE_Select);
+
     }
 
     switch (m_cursorNum)
     {
     case 0:
-        m_cursor.SetPos(g_cameraPos.x - 420, g_cameraPos.y - 335, 0);
-
+        m_cursor.SetPos(g_cameraPos.x - 700, g_cameraPos.y - 240, 0);
         m_Buttonretry.SetSize(670, 185, 0);
-        m_Buttonretry.PlayAnimation("Normal");
-
         m_ButtonStageselect.SetSize(572, 160, 0);
-        m_ButtonStageselect.PlayAnimation("NotSerect");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_GAME);
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+
         }
         break;
 
     case 1:
-        m_cursor.SetPos(g_cameraPos.x + 420, g_cameraPos.y - 335, 0);
-
+        m_cursor.SetPos(g_cameraPos.x + 130, g_cameraPos.y - 240, 0);
         m_Buttonretry.SetSize(572, 160, 0);
-        m_Buttonretry.PlayAnimation("NotSerect");
-
         m_ButtonStageselect.SetSize(670, 185, 0);
-        m_ButtonStageselect.PlayAnimation("Normal");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
             mgr.ChangeScene(SCENE_SELECT);
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+
         }
         break;
     }
