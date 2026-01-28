@@ -42,6 +42,8 @@ private:
 	bool m_justDeco = false;
 
 	Object m_mark;
+	Object m_mark2;
+	Object m_mark3;
 	bool   m_markVisible = true;
 
 	float  m_markOffsetX = 0.0f;
@@ -74,6 +76,8 @@ public:
 	Object* GetObject() { return &m_object; }
 	//まーかー
 	Object* GetMarkObject() { return &m_mark; }
+	Object* GetMarkObject2() { return &m_mark2; }
+	Object* GetMarkObject3() { return &m_mark3; }
 
 	//引き寄せ、巻き取り判別用
 	bool GetcanRollPin() const { return m_canRollPin; }

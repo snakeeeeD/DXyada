@@ -8,11 +8,12 @@ extern Sound* g_sound;
 extern DirectX::XMFLOAT3 g_cameraPos;
 
 
-void Stage1::RegisterEnemyMarker(Enemy* enemy, const char* markerTex)
+void Stage1::RegisterEnemyMarker(Enemy* enemy, const char* markerTex , bool isMove)
 {
     DecoLinkEnemy el;
     el.enemy = enemy;
     el.marker.Init(markerTex);
+    el.marker.SetMoveMode(isMove);
     el.marker.Hide();
     m_enemyMarkers.push_back(el);
 }
@@ -119,7 +120,7 @@ void Stage1::BuildDrawList()
     for (auto& em : m_enemyMarkers)
     {
         item.obj = em.marker.GetObject();
-        item.layer = DrawLayer::BackObject; // or Enemy, StageObject
+        item.layer = DrawLayer::Enemy; // or Enemy, StageObject
         m_drawList.push_back(item);
     }
 
@@ -127,16 +128,16 @@ void Stage1::BuildDrawList()
     for (auto& pm : m_pinMarkers)
     {
         item.obj = pm.marker.GetObject();
-        item.layer = DrawLayer::BackObject;
+        item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
     }
 
 
 
     for (size_t i = 0; i < m_enemies.size(); ++i) {
-        item.obj = m_enemies[i]->GetMarkObject();
-        item.layer = DrawLayer::BackObject;
-        m_drawList.push_back(item);
+      /*  item.obj = m_enemies[i]->GetMarkObject();
+        item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);*/
 
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
@@ -145,7 +146,15 @@ void Stage1::BuildDrawList()
 
     for (size_t i = 0; i < m_pins.size(); ++i) {
         item.obj = m_pins[i]->GetMarkObject();
-        item.layer = DrawLayer::BackObject;
+        item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);
+
+        item.obj = m_pins[i]->GetMarkObject2();
+        item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);
+
+        item.obj = m_pins[i]->GetMarkObject3();
+        item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
 
         item.obj = m_pins[i]->GetObject();
@@ -203,7 +212,7 @@ void Stage1::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 150, 0);
+    m_player.GetObject()->SetPos(7000, 150, 0);
 
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
@@ -355,7 +364,7 @@ void Stage1::Init()
         nf->SetCollisionManager(m_collision);
 
         m_enemies.push_back(nf);
-        RegisterEnemyMarker(nf, "asset/Field/星 ワッペン.png");
+        RegisterEnemyMarker(nf, "asset/Field/星 ワッペン.png", false);
         x += w1;
     }
 
@@ -384,7 +393,7 @@ void Stage1::Init()
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png");
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", false);
         x += w1;
     }
 
@@ -399,10 +408,7 @@ void Stage1::Init()
         rippa_2->SetTurnInterval(2.5f);
 
         m_enemies.push_back(rippa_2);
-        RegisterEnemyMarker(rippa_2, "asset/Field/フェルトワッペン リッパー.png");
-
-
-
+        RegisterEnemyMarker(rippa_2, "asset/Field/フェルトワッペン リッパー.png", false);
     }
     //7
     {
@@ -424,7 +430,7 @@ void Stage1::Init()
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png");
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png" , false);
 
 
         Rippa* rippa2 = new Rippa(Rippa::Type::Normal);
@@ -432,7 +438,7 @@ void Stage1::Init()
         rippa2->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa2);
-        RegisterEnemyMarker(rippa2, "asset/Field/フェルトワッペン リッパー.png");
+        RegisterEnemyMarker(rippa2, "asset/Field/フェルトワッペン リッパー.png", false);
 
         x += w1;
     }

@@ -52,7 +52,7 @@ public:
     void Draw() override;
     void UnInit() override;
 
-    void RegisterEnemyMarker(Enemy* enemy, const char* markerTex);
+    void RegisterEnemyMarker(Enemy* enemy, const char* markerTex, bool isMove);
 
     int StageState = 0;
     bool on = false;
