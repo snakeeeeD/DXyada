@@ -159,7 +159,7 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(8000, 250, 0);
+    m_player.GetObject()->SetPos(0, 250, 0);
 
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
@@ -466,11 +466,11 @@ void TutorialStage2::Init()
         JumpPin->SetPinKind(PinKind::Jump);
 
         BlockPin* m_targetPin;
-        m_targetPin = AddPullPin(x + 130, -418.0f, true);
+        m_targetPin = AddPullPin(x + 100, -418.0f, true);
 
         //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x + 130, x, -418.0f, -418.0f);
+        m_targetPin->SetLimitPos(x + 100, x, -418.0f, -418.0f);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
         m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
 

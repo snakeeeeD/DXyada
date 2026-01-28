@@ -414,66 +414,6 @@ void Player::Update(
 
     m_isOnGround = false;
 
-    //// Platform上の着地判定
-    //for (auto& plat : platforms)
-    //{
-    //    auto pPos = plat.GetObject()->GetPos();
-    //    auto pSize = plat.GetObject()->GetSize();
-
-    //    float platTop = pPos.y + pSize.y * 0.5f;
-    //    float platLeft = pPos.x - pSize.x * 0.5f;
-    //    float platRight = pPos.x + pSize.x * 0.5f;
-
-    //    float playerBottom = pos.y - m_height * 0.5f;
-    //    float playerLeft = pos.x - m_width * 0.5f;
-    //    float playerRight = pos.x + m_width * 0.5f;
-
-    //    if (playerRight > platLeft && playerLeft < platRight)
-    //    {
-    //        if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
-    //        {
-    //            pos.y = platTop + m_height * 0.5f;
-    //            m_velY = 0.0f;
-    //            m_isOnGround = true;
-    //        }
-    //    }
-    //}
-
-    //// 飾ったピンを地面扱い
-    //for (auto* pin : pins)
-    //{
-    //    if (!pin) continue;
-
-    //    // ここで「地面になれるPin」だけ許可
-    //    if (!pin->CanBeGround())
-    //        continue;
-
-    //    // ★ Decorated限定をやめて、Pin側の判定に寄せる
-    //    if (!pin->IsGround())
-    //        continue;
-
-    //    auto pPos = pin->GetObject()->GetPos();
-    //    auto pSize = pin->GetObject()->GetSize();
-
-    //    float platTop = pPos.y + pSize.y * 0.5f;
-    //    float platLeft = pPos.x - pSize.x * 0.5f;
-    //    float platRight = pPos.x + pSize.x * 0.5f;
-
-    //    float playerBottom = pos.y - m_height * 0.5f;
-    //    float playerLeft = pos.x - m_width * 0.5f;
-    //    float playerRight = pos.x + m_width * 0.5f;
-
-    //    if (playerRight > platLeft && playerLeft < platRight)
-    //    {
-    //        if (playerBottom <= platTop && playerBottom >= platTop - 50.0f)
-    //        {
-    //            pos.y = platTop + m_height * 0.5f;
-    //            m_velY = 0.0f;
-    //            m_isOnGround = true;
-    //        }
-    //    }
-    //}
-
 // 地面（Platformタグ）に対する着地判定
     if (m_collisionMgr)
     {
@@ -1108,8 +1048,6 @@ void Player::Update(
         // 指示線からの垂直距離（最小）
         float minPerpendicularDist = FLT_MAX;
 
-
-
         // ±20度の範囲判定用
         float angleThreshold = cos(20.0f * DirectX::XM_PI / 180.0f);
 
@@ -1252,33 +1190,7 @@ void Player::Update(
             float dot = (dirX * toX + dirY * toY) / dist;
 
 
-            switch (pin->GetPinKind())
-            {
-            case PinKind::Roll:
-                m_circleKind = 1;
-                break;
-
-            case PinKind::Pulled:
-                m_circleKind = 2;
-                break;
-
-            case  PinKind::Deco:
-                m_circleKind = 3;
-                break;
-
-            case  PinKind::Jump:
-                m_circleKind = 4;
-                break;
-
-            case  PinKind::RemoteDeco:
-                m_circleKind = 5;
-                break;
-
-            default:
-                m_circleKind = 0;
-                break;
-            }
-
+           
 
 
             // ±20度以内か
@@ -1337,6 +1249,34 @@ void Player::Update(
                     guidelineLength = projectionLength;
                     foundPin = true;  // Pinも発見扱い
                     m_targetPosition = pinPos;
+
+                    switch (pin->GetPinKind())
+                    {
+                    case PinKind::Roll:
+                        m_circleKind = 1;
+                        break;
+
+                    case PinKind::Pulled:
+                        m_circleKind = 2;
+                        break;
+
+                    case  PinKind::Deco:
+                        m_circleKind = 3;
+                        break;
+
+                    case  PinKind::Jump:
+                        m_circleKind = 4;
+                        break;
+
+                    case  PinKind::RemoteDeco:
+                        m_circleKind = 5;
+                        break;
+
+                    default:
+                        m_circleKind = 0;
+                        break;
+                    }
+
                 }
             }
         }
@@ -1388,7 +1328,7 @@ void Player::Update(
             {
 
             case 0:
-                m_Circle.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+                m_Circle.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
                 break;
 
                 //巻取り用
@@ -1417,7 +1357,7 @@ void Player::Update(
                 break;
 
             default:
-                m_Circle.SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+                m_Circle.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
                 break;
             }
         }

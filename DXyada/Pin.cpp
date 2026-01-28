@@ -23,19 +23,21 @@ void Pin::Init(const char* texture, float x, float y, float width, float height)
     auto sz = m_object.GetSize();
     m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
 
-    m_object.AddAnimation("Decoration", "asset/Field/Needle_Floor_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
+    m_object.AddAnimation("Decoration", "asset/Field/Pin_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
 }
 
 void Pin::Update(float dt)
 {
     m_object.Update(dt);
-
-    if (m_markVisible)
+    if (m_justDeco)
     {
-        auto pos = m_object.GetPos();
-        auto sz = m_object.GetSize();
-        m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y * 0.5f) + m_markOffsetY, 0);
-        m_mark.Update(dt);
+        if (m_markVisible)
+        {
+            auto pos = m_object.GetPos();
+            auto sz = m_object.GetSize();
+            m_mark.SetPos(pos.x + m_markOffsetX, pos.y + (sz.y) + m_markOffsetY, 0);
+            m_mark.Update(dt);
+        }
     }
 
     if (GetState() == State::Decorated)
@@ -127,12 +129,14 @@ void Pin::SetState(State state, bool justdeco)
 
     m_state = state;
 
+    m_justDeco = justdeco;
+
     // Decorated Å® Platformìoò^ÅiÇΩÇæÇµãñâ¬Ç≥ÇÍÇƒÇ¢ÇÈèÍçáÇÃÇ›Åj
     if (m_state == State::Decorated &&
         m_enablePlatformRegisterOnDecorated &&
         !m_isPlatformRegistered)
     {
-        m_mark.SetSize(200, 150, 0);
+        m_mark.SetSize(100, 75, 0);
 
         if (m_pCollision)
         {
@@ -141,26 +145,21 @@ void Pin::SetState(State state, bool justdeco)
             m_isPlatformRegistered = true;
 
             auto currentSize = m_object.GetSize();
-            m_object.SetSize(currentSize.x * 4.0f, currentSize.y, currentSize.z);
+            m_object.SetSize(currentSize.x * 5.0f, currentSize.y, currentSize.z);
 
-            m_object.AddTexture("asset/Field/block.png");
+           // m_object.AddTexture("asset/Field/block.png");
+            m_object.PlayAnimation("Decoration");
 
             if (justdeco)
             {
-                m_object.PlayAnimation("Decoration");
+                //m_object.PlayAnimation("Decoration");
+                m_markVisible = true;
             }
             else
             {
-                m_object.SetColor(1.0, 1.0, 1.0, 1.0); 
+                //m_object.SetColor(1.0, 1.0, 1.0, 1.0); 
+                m_markVisible = false;
             }
         }
     }
-}
-
-
-void Pin::SetPinKind(PinKind pinkind)
-{
-    if (m_kind == pinkind) return;
-
-    m_kind = pinkind;
 }

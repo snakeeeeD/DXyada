@@ -39,6 +39,8 @@ private:
 	bool m_canBeGround = true;
 	bool m_canBeHookedByRibbon = true;
 
+	bool m_justDeco = false;
+
 	Object m_mark;
 	bool   m_markVisible = true;
 
@@ -101,6 +103,6 @@ public:
 	}
 
 	PinKind GetPinKind() const { return m_kind; }
-	void SetPinKind(PinKind pinkind);
+	void SetPinKind(PinKind pinkind) { m_kind = pinkind; }
 
 };
