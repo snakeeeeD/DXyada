@@ -419,7 +419,7 @@ void Stage1::Init()
             true    //チェックポイントON
         );
         tutorial1->InitTutorialImage(
-            "asset/Ui/title.png",
+            "asset/Field/Tutorial_Pinjump.png",
             1000, 500,   //表示サイズ
             300, 450      //看板からのオフセット
         );
