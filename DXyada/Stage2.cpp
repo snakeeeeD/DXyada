@@ -1,99 +1,138 @@
-#include "Stage2.h"
+#include "Stage2.h"      // ←あなたのプロジェクト側で TutorialStage2 を宣言してるヘッダ名に合わせて
 #include "Renderer.h"
 #include <algorithm>
-#include "Enemy.h"
-#include "WingRippa.h"
-#include "Hariyama.h"
-#include "sound.h"   
+#include "sound.h"
 
 extern Sound* g_sound;
-// 既存と同様に外部にある想定
 extern DirectX::XMFLOAT3 g_cameraPos;
 
+//==================================================
+// Marker registration (Stage1互換)
+//==================================================
+void TutorialStage2::RegisterEnemyMarker(Enemy* enemy, const char* markerTex)
+{
+    DecoLinkEnemy el;
+    el.enemy = enemy;
+    el.marker.Init(markerTex);
+    el.marker.Hide();
+    m_enemyMarkers.push_back(el);
+}
+
+//==================================================
+// Stage building helpers
+//==================================================
 void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, float h)
 {
-    Platform p = Platform();
+    Platform p;
     p.Init(tex, x, y, w, h);
     m_platforms.push_back(p);
 
     Platform& back = m_platforms.back();
     m_collision->AddStatic(back.GetObject());
     m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
-
 }
 
 void TutorialStage2::AddDecorPin(float x, float y, bool canDecorate)
 {
     Pin* pin = new Pin();
-    pin->Init("asset/Field/Pin.png", x, y, 35, 35);
+    pin->Init("asset/Field/PinDeco.png", x, y, 35, 35); // Stage1と合わせる
     pin->SetCollisionManager(m_collision);
 
     pin->SetcanRollPin(true);
     pin->SetcanDecorate(canDecorate);
+    pin->SetPinKind(PinKind::Deco);
 
     m_pins.push_back(pin);
 
-    pin->SetPinKind(PinKind::Deco); //ピンの種類のStateを"Deco(飾れる)"に
+    // --- Pin marker（Stage1と同じ）
+    DecoLinkPin link;
+    link.pin = pin;
+    link.marker.Init("asset/Field/bbbbb.png"); // 好きなのに差し替えてOK
+    link.marker.Hide();
+    m_pinMarkers.push_back(link);
+
+    m_collision->SetTag(pin->GetObject(), ColliderTag::Pin);
 }
 
 BlockPin* TutorialStage2::AddPullPin(float x, float y, bool canRollPin)
 {
     BlockPin* pin = new BlockPin();
-    pin->Init("asset/Field/Pin.png", x, y, 35, 35);
     pin->SetCollisionManager(m_collision);
 
     pin->SetcanRollPin(canRollPin);
     pin->SetcanDecorate(false);
 
-    //巻取り(引き寄せ)の場合
     if (canRollPin)
     {
         pin->Init("asset/Field/PinRoll.png", x, y, 35, 35);
         pin->SetPinKind(PinKind::Roll);
     }
-    //巻き取られの場合
-    else if (!canRollPin)
+    else
     {
         pin->Init("asset/Field/PinPulled.png", x, y, 35, 35);
         pin->SetPinKind(PinKind::Pulled);
     }
 
     m_pins.push_back(pin);
-
-    // 掴む用のタグは Pin のまま推奨
     m_collision->SetTag(pin->GetObject(), ColliderTag::Pin);
 
     return pin;
 }
 
-
+//==================================================
+// Draw list
+//==================================================
 void TutorialStage2::BuildDrawList()
 {
     m_drawList.clear();
 
     DrawItem item;
 
+    // Background
     item.obj = &m_background;
     item.layer = DrawLayer::Background;
     m_drawList.push_back(item);
 
-    for (size_t i = 0; i < m_platforms.size(); ++i) {
+    // Platforms
+    for (size_t i = 0; i < m_platforms.size(); ++i)
+    {
         item.obj = m_platforms[i].GetObject();
         item.layer = DrawLayer::StageObject;
         m_drawList.push_back(item);
     }
 
+    // Player effects (back)
     item.obj = m_player.GetDecoratingEffectBack();
     item.layer = DrawLayer::Enemy;
     m_drawList.push_back(item);
 
-    for (size_t i = 0; i < m_enemies.size(); ++i) {
+    // --- Enemy marker（Stage1と同じ）---
+    for (size_t i = 0; i < m_enemyMarkers.size(); ++i)
+    {
+        item.obj = m_enemyMarkers[i].marker.GetObject();
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+    }
+
+    // --- Pin marker（Stage1と同じ）---
+    for (size_t i = 0; i < m_pinMarkers.size(); ++i)
+    {
+        item.obj = m_pinMarkers[i].marker.GetObject();
+        item.layer = DrawLayer::BackObject;
+        m_drawList.push_back(item);
+    }
+
+    // Enemies
+    for (size_t i = 0; i < m_enemies.size(); ++i)
+    {
         item.obj = m_enemies[i]->GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
     }
 
-    for (size_t i = 0; i < m_pins.size(); ++i) {
+    // Pins（Pin自身のmarkObjectも残すなら）
+    for (size_t i = 0; i < m_pins.size(); ++i)
+    {
         item.obj = m_pins[i]->GetMarkObject();
         item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
@@ -103,25 +142,27 @@ void TutorialStage2::BuildDrawList()
         m_drawList.push_back(item);
     }
 
-
-    for (size_t i = 0; i < m_tutorials.size(); ++i) {
+    // Tutorials（あなたの好みで BackObject/StageObject を揃える）
+    for (size_t i = 0; i < m_tutorials.size(); ++i)
+    {
         item.obj = m_tutorials[i]->GetObject();
-        item.layer = DrawLayer::Background;
+        item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
-    }
 
-    for (size_t i = 0; i < m_tutorials.size(); ++i) {
         item.obj = m_tutorials[i]->GetDisplayObject();
-        item.layer = DrawLayer::Background;
+        item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
     }
 
-    for (size_t i = 0; i < m_goal.size(); ++i) {
+    // Goals
+    for (size_t i = 0; i < m_goal.size(); ++i)
+    {
         item.obj = m_goal[i]->GetObject();
-        item.layer = DrawLayer::Background;
+        item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
     }
 
+    // Player
     item.obj = m_player.GetObject();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
@@ -131,51 +172,68 @@ void TutorialStage2::BuildDrawList()
     m_drawList.push_back(item);
 
     item.obj = m_player.GetGuideLineObject();
-    item.layer = DrawLayer::BackObject;
+    item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
     item.obj = m_player.GetCircle();
-    item.layer = DrawLayer::BackObject;
+    item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
-    for (auto* obj : m_player.GetRibbon().GetDrawObjects())
+    // Ribbon draw objects
     {
-        DrawItem it;
-        it.obj = obj;
-        it.layer = DrawLayer::BackObject;
-        m_drawList.push_back(it);
+        const std::vector<Object*>& ribbonObjs = m_player.GetRibbon().GetDrawObjects();
+        for (size_t i = 0; i < ribbonObjs.size(); ++i)
+        {
+            DrawItem it;
+            it.obj = ribbonObjs[i];
+            it.layer = DrawLayer::Player;
+            m_drawList.push_back(it);
+        }
     }
 
+    // UI
     item.obj = &m_HP_UI1; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI2; item.layer = DrawLayer::UI; m_drawList.push_back(item);
     item.obj = &m_HP_UI3; item.layer = DrawLayer::UI; m_drawList.push_back(item);
 }
 
+//==================================================
+// Init
+//==================================================
 void TutorialStage2::Init()
 {
     g_cameraPos = { 0, 0, 0 };
 
     m_collision = new CollisionManager();
 
+    // Player
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 250, 0);
+    m_player.GetObject()->SetPos(0, 150, 0);
 
+    // Checkpoint
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
 
+    // Background (Stage1と同じ)
     m_background.Init();
-    m_background.AddTexture("asset/Field/aa.png");
-    m_background.SetPos(0, 0, 0);
-    m_background.SetSize(192000, 108000, 0);
+    m_background.AddTexture("asset/Field/ステージ背景.png");
+    m_background.SetPos(7200.0f, 0.0f, 0.0f);
+    m_background.SetSize(23000.0f, 2100.0f, 0.0f);
+    m_background.SetUVMode(Object::UVMode::Loop);
+    m_background.SetUVLength(5.0f);
+    m_background.SetUVScroll(0.0f);
 
+    // UI
     m_HP_UI1.Init(); m_HP_UI1.AddTexture("asset/UI/cursor.png"); m_HP_UI1.SetSize(200, 200, 0);
     m_HP_UI2.Init(); m_HP_UI2.AddTexture("asset/UI/cursor.png"); m_HP_UI2.SetSize(200, 200, 0);
     m_HP_UI3.Init(); m_HP_UI3.AddTexture("asset/UI/cursor.png"); m_HP_UI3.SetSize(200, 200, 0);
 
+    // Collision: player
     m_collision->AddDynamic(m_player.GetObject());
     m_collision->SetTag(m_player.GetObject(), ColliderTag::Player);
 
+    // Stage build constants
     const float TILE = 150.0f;
     const float H = 600.0f;
 
@@ -184,15 +242,26 @@ void TutorialStage2::Init()
 
     float x = -300.0f;
 
-    // const float SECTION_GAP = TILE * 0.8f;
+    // Stage1と同じ床テクスチャに統一
+    const char* FLOOR_TEX = "asset/Field/床ブロック.png";
 
+    // clear
     m_platforms.clear();
-    m_platforms.reserve(32);
+    m_enemies.clear();
+    m_pins.clear();
+    m_tutorials.clear();
+    m_goal.clear();
+    m_spawnQueue.clear();
+    m_pinMarkers.clear();
+    m_enemyMarkers.clear();
+    m_drawList.clear();
 
-    //1
+    //========================
+    // 1
+    //========================
     {
         float w1 = TILE * 8.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform(FLOOR_TEX, x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
         Tutorial* tutorial1 = new Tutorial();
@@ -200,29 +269,28 @@ void TutorialStage2::Init()
             "asset/Field/Boad.png",
             1, -230, 0, 0,
             Tutorial::Type::Move,
-            false,   //チュートリアル表示ON
-            true    //チェックポイントON
+            false,
+            true
         );
-
         tutorial1->SetRespawnPosition(1, -150, 0);
         m_tutorials.push_back(tutorial1);
 
         float gap = TILE * 3.0f;
-
         AddDecorPin(x + gap * 0.5f, -317.0f, true);
 
         x += gap;
 
         float w2 = TILE * 5.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f, LOW_Y, w2, H);
-
+        AddPlatform(FLOOR_TEX, x + w2 * 0.5f, LOW_Y, w2, H);
         x += w2;
     }
 
-    //2
+    //========================
+    // 2
+    //========================
     {
         float w1 = TILE * 2.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform(FLOOR_TEX, x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
         Tutorial* tutorial = new Tutorial();
@@ -233,44 +301,41 @@ void TutorialStage2::Init()
             true,
             true
         );
-        tutorial->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 750,
-            300, 450
-        );
-
+        tutorial->InitTutorialImage("asset/Ui/title.png", 1000, 750, 300, 450);
         tutorial->SetRespawnPosition(x - 200, -150, 0);
-
         m_tutorials.push_back(tutorial);
-        float gap = TILE * 2.0f;
 
+        float gap = TILE * 2.0f;
         AddPullPin(x + gap + 150.0f, -100.0f, false);
 
         x += gap;
 
         float w2 = TILE * 5.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f, LOW_Y, w2, H);
+        AddPlatform(FLOOR_TEX, x + w2 * 0.5f, LOW_Y, w2, H);
         x += w2;
     }
 
-    //3
+    //========================
+    // 3
+    //========================
     {
         float w1 = TILE * 2.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform(FLOOR_TEX, x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
-
 
         AddPullPin(x + 120.0f, 40.0f, false);
 
         float w2 = TILE * 5.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.5f, HIGH_Y, w2, H);
+        AddPlatform(FLOOR_TEX, x + w2 * 0.5f, HIGH_Y, w2, H);
         x += w2;
     }
 
-    //4
+    //========================
+    // 4 (動くBlockPinを足場扱いにする例)
+    //========================
     {
         float leftW = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + leftW * 0.5f, HIGH_Y, leftW, H);
+        AddPlatform(FLOOR_TEX, x + leftW * 0.5f, HIGH_Y, leftW, H);
         x += leftW;
 
         Tutorial* tutorial = new Tutorial();
@@ -281,279 +346,57 @@ void TutorialStage2::Init()
             true,
             true
         );
-        tutorial->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 750,
-            300, 450
-        );
-
+        tutorial->InitTutorialImage("asset/Ui/title.png", 1000, 750, 300, 450);
         tutorial->SetRespawnPosition(x - 200, -150, 0);
-
         m_tutorials.push_back(tutorial);
 
-
         float holeW = 400.0f;
-        BlockPin* m_targetPin = AddPullPin(x + holeW * 1.0f - 20, -200.0f, true);
+        BlockPin* targetPin = AddPullPin(x + holeW * 1.0f - 20, -200.0f, true);
 
-        //m_collision->AddStatic(m_targetPin->GetObject());
-        m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x + holeW * 1.0f, x + holeW * 0.5f, -200.0f, -200.0f);
-        m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
-        m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
+        targetPin->SetForceGround(true);
+        targetPin->SetLimitPos(x + holeW * 1.0f, x + holeW * 0.5f, -200.0f, -200.0f);
+        targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
+
+        // 足場扱いにするならタグ変更（必要なら AddStatic も）
+        m_collision->SetTag(targetPin->GetObject(), ColliderTag::Platform);
 
         x += holeW;
 
         float rightW = TILE * 2.0f;
-        AddPlatform("asset/Field/block.png", x + rightW * 0.5f, HIGH_Y, rightW, H);
+        AddPlatform(FLOOR_TEX, x + rightW * 0.5f, HIGH_Y, rightW, H);
         x += rightW;
     }
 
-    //5
-    {
-        float w1 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.1f, HIGH_Y, w1, H);
-        x += w1;
-
-        Tutorial* tutorial = new Tutorial();
-        tutorial->Init(
-            "asset/Field/Boad.png",
-            x - 200, -80, 200, 200,
-            Tutorial::Type::Move,
-            true,
-            true
-        );
-        tutorial->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 750,
-            300, 450
-        );
-
-        tutorial->SetRespawnPosition(x - 200, -150, 0);
-
-        m_tutorials.push_back(tutorial);
-
-        {
-            BlockPin* m_targetPin1 = new BlockPin;
-            m_targetPin1->Init("asset/Field/block.png", x + w1 * 6.8f, HIGH_Y, 800, H);
-            m_targetPin1->SetCollisionManager(m_collision);
-            m_targetPin1->SetcanRollPin(true);
-            m_targetPin1->SetcanDecorate(false);
-            m_pins.push_back(m_targetPin1);
-            //m_collision->AddStatic(m_targetPin1->GetObject());
-            m_targetPin1->SetForceGround(true);
-            m_collision->SetTag(m_targetPin1->GetObject(), ColliderTag::Platform);
-
-            RemoteWindPin* m_hook = new RemoteWindPin;
-            m_hook->Init("asset/Field/PinRemote.png", x - 50, 100, 35, 35);
-            m_hook->SetCollisionManager(m_collision);
-            m_hook->SetcanRollPin(false);
-            m_hook->SetTarget(m_targetPin1);
-
-            //ピンの種類のStateを"RemoteDeco(飾れる)"に
-            m_hook->SetPinKind(PinKind::RemoteDeco);
-
-            // ガイド
-            m_hook->AddGuide({ x + 300, HIGH_Y, 0 });
-
-            m_pins.push_back(m_hook);
-            m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
-        }
-
-        x += 500;
-
-        float w2 = TILE * 2.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 1.4f, HIGH_Y, 550, H);
-        x += w2;
-    }
-
-    //6
+    //========================
+    // 6 (敵の例 + マーカー登録)
+    //========================
     {
         float sectionW = 1200.0f;
-        float w1 = TILE * 10.0f;
+        AddPlatform(FLOOR_TEX, x + sectionW * 0.5f, HIGH_Y, sectionW, H);
 
-        Tutorial* tutorial = new Tutorial();
-        tutorial->Init(
-            "asset/Field/Boad.png",
-            x, -80, 0, 0,
-            Tutorial::Type::Move,
-            false,
-            true
-        );
-
-
-        tutorial->SetRespawnPosition(x, -150, 0);
-
-        m_tutorials.push_back(tutorial);
-
-        AddPlatform(
-            "asset/Field/block.png",
-            x + sectionW * 0.5f,
-            HIGH_Y,
-            sectionW,
-            H
-        );
+        // Rippa
         Rippa* rippa = new Rippa(Rippa::Type::Wandering);
-        rippa->Init("asset/Field/rippa.png", x + w1 * 0.7f, HIGH_Y + 360, 140, 150);
+        rippa->Init("asset/Field/rippa.png", x + 700, HIGH_Y + 360, 140, 150);
         rippa->SetCollisionManager(m_collision);
-
         m_enemies.push_back(rippa);
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png");
 
+        // WingRippa
         WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
-        wirippa->Init("asset/Field/Wing_Rippa.png", x + w1 * 1.1, HIGH_Y + 550, 150, 150);
+        wirippa->Init("asset/Field/Wing_Rippa.png", x + 900, HIGH_Y + 550, 150, 150);
         wirippa->SetCollisionManager(m_collision);
-
         m_enemies.push_back(wirippa);
+        RegisterEnemyMarker(wirippa, "asset/Field/星 ワッペン.png"); // 好きに差し替え
 
         x += sectionW;
     }
-    //7
-    {
-        float section7StartX = 7000.0f;
-        float section7EndX = 8000.0f;
 
-        float w1 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, -700, w1, H);
-        x += w1;
-
-        {
-            BlockPin* m_targetPin2 = new BlockPin;
-            m_targetPin2->Init("asset/Field/block.png", x + 580.0, -433.0f, 360, 65);
-            m_targetPin2->SetCollisionManager(m_collision);
-            m_targetPin2->SetcanRollPin(true);
-            m_targetPin2->SetcanDecorate(false);
-            m_pins.push_back(m_targetPin2);
-            m_collision->AddStatic(m_targetPin2->GetObject());
-            m_targetPin2->SetForceGround(true);
-            m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
-
-            RemoteWindPin* m_hook = new RemoteWindPin;
-            m_hook->Init("asset/Field/PinRemote.png", x - 50, 150, 35, 35);
-            m_hook->SetCollisionManager(m_collision);
-            m_hook->SetcanRollPin(false);
-            m_hook->SetTarget(m_targetPin2);
-
-            //ピンの種類のStateを"RemoteDeco(飾れる)"に
-            m_hook->SetPinKind(PinKind::RemoteDeco);
-
-            // ガイド
-            m_hook->AddGuide({ x + 170, -433.0, 0 });
-
-            m_pins.push_back(m_hook);
-            m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
-        }
-
-        x += 500;
-
-        float w2 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.1f, -700, 350, H);
-        x += w2;
-    }
-
-    //8
-    {
-        x += 500;
-
-        float w1 = TILE * 6.0f;
-        Pin* JumpPin = new Pin;
-
-        JumpPin->Init("asset/Field/PinJump.png", x, -130, 35, 35);
-        JumpPin->SetCollisionManager(m_collision);
-        m_pins.push_back(JumpPin);
-        JumpPin->SetcanRollPin(false);
-        JumpPin->SetcanDecorate(false);
-
-        //ピンの種類のStateを"Jump(飾れる)"に
-        JumpPin->SetPinKind(PinKind::Jump);
-
-        BlockPin* m_targetPin;
-        m_targetPin = AddPullPin(x + 100, -418.0f, true);
-
-        //m_collision->AddStatic(m_targetPin->GetObject());
-        m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x + 100, x, -418.0f, -418.0f);
-        m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
-        m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
-
-
-        AddPlatform("asset/Field/block.png", x + w1 * 0.45f + 200, -700, w1, H);
-        x += w1;
-    }
-
-    //9
-    {
-        x += 1000;
-
-        Pin* JumpPin = new Pin;
-
-        JumpPin->Init("asset/Field/PinJump.png", x - 750, -100, 35, 35);
-        JumpPin->SetCollisionManager(m_collision);
-        m_pins.push_back(JumpPin);
-        JumpPin->SetcanRollPin(false);
-        JumpPin->SetcanDecorate(false);
-
-        //ピンの種類のStateを"Jump(飾れる)"に
-        JumpPin->SetPinKind(PinKind::Jump);
-
-        {
-            BlockPin* m_targetPin2 = new BlockPin;
-            m_targetPin2->Init("asset/Field/block.png", x + 00.0, -433.0f, 650, 65);
-            m_targetPin2->SetCollisionManager(m_collision);
-            m_targetPin2->SetcanRollPin(true);
-            m_targetPin2->SetcanDecorate(false);
-            m_pins.push_back(m_targetPin2);
-            m_collision->AddStatic(m_targetPin2->GetObject());
-            m_targetPin2->SetForceGround(true);
-            m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
-
-            RemoteWindPin* m_hook = new RemoteWindPin;
-            m_hook->Init("asset/Field/PinRemote.png", x - 1300, -230, 35, 35);
-            m_hook->SetCollisionManager(m_collision);
-            m_hook->SetcanRollPin(false);
-            m_hook->SetTarget(m_targetPin2);
-
-            //ピンの種類のStateを"RemoteDeco(飾れる)"に
-            m_hook->SetPinKind(PinKind::RemoteDeco);
-
-            // ガイド
-            m_hook->AddGuide({ x - 300, -433.0, 0 });
-
-            m_pins.push_back(m_hook);
-            m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
-        }
-
-        float w1 = TILE;
-        AddPlatform("asset/Field/block.png", x - 0.01 + w1 * 0.5f, -700, w1 + 450, H);
-        x += w1;
-    }
-    //10
-    {
-        //x += 500;
-/*
-        {
-            Hariyama* hariyama = new Hariyama();
-            hariyama->Init("asset/Field/hariyama.png", x + 1100, -250, 500, 500);
-            hariyama->SetCollisionManager(m_collision);
-            hariyama->SetEnemyList(&m_spawnQueue);
-            hariyama->SetPlayer(&m_player);
-
-            m_enemies.push_back(hariyama);
-
-        }*/
-
-        float w1 = TILE * 6.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.9f, -700, w1 * 1.9f, H);
-        x += w1;
-    }
-    //11
+    //========================
+    // 11 (GoalPinの例) ※GoalはGoalPin所有想定
+    //========================
     {
         GoalPin* goalPin = new GoalPin;
-        goalPin->Init(
-            "asset/Field/Goal.png",
-            x + 500,
-            -230.0f,
-            0,
-            0
-        );
+        goalPin->Init("asset/Field/Goal.png", x + 500, -230.0f, 0, 0);
         goalPin->SetCollisionManager(m_collision);
 
         m_pins.push_back(goalPin);
@@ -563,218 +406,282 @@ void TutorialStage2::Init()
         m_goal.push_back(goalPin->GetGoal());
     }
 
+    // Draw list
     BuildDrawList();
 
-    // HP系初期値
+    // HP init
     maxHP = m_player.GetMaxHP();
     currentHP = m_player.GetHP();
 }
 
+//==================================================
+// Update (Stage1風に整理 + Stage2カメラオフセット + marker対応)
+//==================================================
 void TutorialStage2::Update()
 {
-    float dt = 1.0f / 60.0f;
+    const float dt = 1.0f / 60.0f;
 
-    DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-
-    // ===== トリガー =====
-    if (playerPos.x > 7000.0f)// && playerPos.x < 8500.0f
+    //==================================================
+    // (A) Camera (Stage2: offset)
+    //==================================================
     {
-        m_cameraTargetOffset = -150.0f;
-    }
-    else
-    {
-        m_cameraTargetOffset = 0.0f;
-    }
+        const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
 
-    // ===== オフセット補間 =====
-    const float lerpSpeed = 0.05f;
-    m_cameraYOffset += (m_cameraTargetOffset - m_cameraYOffset) * lerpSpeed;
+        // トリガー例
+        if (playerPos.x > 7000.0f)
+            m_cameraTargetOffset = -150.0f;
+        else
+            m_cameraTargetOffset = 0.0f;
 
-    // ===== カメラに渡す位置を作る =====
-    DirectX::XMFLOAT3 cameraFollowPos = playerPos;
-    cameraFollowPos.y += m_cameraYOffset;
+        const float lerpSpeed = 0.05f;
+        m_cameraYOffset += (m_cameraTargetOffset - m_cameraYOffset) * lerpSpeed;
 
-    // ===== カメラ更新 =====
-    m_camera.Update(cameraFollowPos);
+        DirectX::XMFLOAT3 cameraFollowPos = playerPos;
+        cameraFollowPos.y += m_cameraYOffset;
 
-    m_cameraNowPos = m_player.GetObject()->GetPos();
+        m_camera.Update(cameraFollowPos);
+        m_cameraNowPos = playerPos;
 
-    if (m_cameraNowPos.y < -500) {
-        g_cameraPos = { g_cameraPos.x , -200, g_cameraPos.z };
-
+        if (m_cameraNowPos.y < -500.0f)
+        {
+            g_cameraPos = { g_cameraPos.x, -200.0f, g_cameraPos.z };
+        }
     }
 
-    // プレイヤー更新
+    //==================================================
+    // (B) Player Update + Fall death
+    //==================================================
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
-    const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
-    if (p.y < m_fallDeadLineY)
     {
-        DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
-        m_player.TakeDamage(1, dummyDir);
-        if (currentHP > 1)
+        const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
+        if (p.y < m_fallDeadLineY)
         {
-            g_sound->Play(SOUND_LABEL_SE_Fall);
+            const int hpBefore = m_player.GetHP();
+            DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
+
+            m_player.TakeDamage(1, dummyDir);
+
+            if (hpBefore > 1) g_sound->Play(SOUND_LABEL_SE_Fall);
+            Respawn();
         }
-        else
-        {
-            //BGM
-        }
-        Respawn();
     }
-    /*  if (p.y < m_fallDeadLineY)
-          if (p.y < m_fallDeadLineY)
-          {
-              DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
-              m_player.TakeDamage(1, dummyDir);
 
-              if (m_hasCheckpoint)
-              {
-                  m_player.GetObject()->SetPos(
-                      m_currentCheckpoint.x,
-                      m_currentCheckpoint.y,
-                      m_currentCheckpoint.z
-                  );
-                  m_isPlayerDead = false;
-              }
-          }*/
+    //==================================================
+    // (C) Enemies Update + Enemy vs Enemy
+    //==================================================
+    for (size_t i = 0; i < m_enemies.size(); ++i)
+    {
+        Enemy* enemy = m_enemies[i];
+        if (!enemy) continue;
 
-          // 敵
-    for (auto& enemy : m_enemies) {
         enemy->Update(dt);
-        //リッパー君の場合は敵同士の衝突をチェック
+
         if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
-        {
             rippa->CheckEnemyCollision(m_enemies);
-        }
-        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
-        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
+    }
 
-        m_enemies.erase(
-            std::remove_if(
-                m_enemies.begin(),
-                m_enemies.end(),
-                [&](Enemy* enemy)
-                {
-                    if (enemy->IsDead())
-                    {
-                        m_collision->Remove(enemy->GetObject());
-                        return true;
-                    }
-                    return false;
-                }
-            ),
-            m_enemies.end()
-        );
-        if (!m_spawnQueue.empty())
+    //==================================================
+    // (D) SpawnQueue flush
+    //==================================================
+    if (!m_spawnQueue.empty())
+    {
+        for (size_t i = 0; i < m_spawnQueue.size(); ++i)
+            m_enemies.push_back(m_spawnQueue[i]);
+        m_spawnQueue.clear();
+    }
+
+    //==================================================
+    // (E) Pins Update
+    //==================================================
+    for (size_t i = 0; i < m_pins.size(); ++i)
+    {
+        Pin* pin = m_pins[i];
+        if (!pin) continue;
+
+        pin->Update(dt);
+
+        if (BlockPin* blockPin = dynamic_cast<BlockPin*>(pin))
+            m_collision->GetAABB(blockPin->GetObject());
+    }
+
+    //==================================================
+    // (F) Collision solve
+    //==================================================
+    m_collision->CheckAll();
+
+    //==================================================
+    // (G) Tutorials (checkpoint)
+    //==================================================
+    {
+        const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+
+        for (size_t i = 0; i < m_tutorials.size(); ++i)
         {
-            for (auto* newEnemy : m_spawnQueue)
+            Tutorial* tutorial = m_tutorials[i];
+            if (!tutorial) continue;
+
+            tutorial->Update(dt, playerPos);
+
+            if (tutorial->IsActivated() && tutorial->IsCheckpoint())
             {
-                m_enemies.push_back(newEnemy);
+                m_currentCheckpoint = tutorial->GetRespawnPosition();
+                m_hasCheckpoint = true;
             }
-            m_spawnQueue.clear(); //予約リストを空にする
         }
-        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
-        {
-            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
+    }
 
-            DirectX::XMFLOAT2 knockbackDir = {
+    //==================================================
+    // (H) Goals
+    //==================================================
+    {
+        const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+
+        for (size_t i = 0; i < m_goal.size(); ++i)
+        {
+            Goal* goal = m_goal[i];
+            if (!goal) continue;
+
+            goal->Update(dt, playerPos);
+            if (goal->IsReached())
+                m_isGoalReached = true;
+        }
+    }
+
+    //==================================================
+    // (I) Player vs Enemy damage
+    //==================================================
+    {
+        const auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+
+        for (size_t i = 0; i < m_enemies.size(); ++i)
+        {
+            Enemy* enemy = m_enemies[i];
+            if (!enemy) continue;
+            if (enemy->IsDead()) continue;
+
+            const auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
+            if (!m_collision->CheckOverlap(playerAABB, enemyAABB))
+                continue;
+
+            const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+            const DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
+
+            DirectX::XMFLOAT2 knockbackDir =
+            {
                 playerPos.x - enemyPos.x,
                 playerPos.y - enemyPos.y
             };
-            g_sound->Play(SOUND_LABEL_SE_Damage);
 
             m_player.TakeDamage(1, knockbackDir);
+            g_sound->Play(SOUND_LABEL_SE_Damage);
         }
     }
 
-    // ピン更新（BlockPinが動くならAABB更新）
-    for (auto* pin : m_pins)
-    {
-        pin->Update(dt);
+    //==================================================
+    // (J) Remove dead enemies（ループ中erase禁止）
+    //==================================================
+    m_enemies.erase(
+        std::remove_if(
+            m_enemies.begin(),
+            m_enemies.end(),
+            [&](Enemy* e)
+            {
+                if (!e) return true;
 
-        BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
-        if (blockPin)
-        {
-            m_collision->GetAABB(blockPin->GetObject());
-        }
-    }
+                if (e->IsDead())
+                {
+                    m_collision->Remove(e->GetObject());
+                    e->UnInit();
+                    delete e;
+                    return true;
+                }
+                return false;
+            }),
+        m_enemies.end()
+    );
 
+    //==================================================
+    // (K) HP UI
+    //==================================================
+    currentHP = m_player.GetHP();
 
-    for (auto* tutorial : m_tutorials)
-    {
-        tutorial->Update(dt, playerPos);
-
-        if (tutorial->IsActivated() && tutorial->IsCheckpoint())
-        {
-            m_currentCheckpoint = tutorial->GetRespawnPosition();
-            m_hasCheckpoint = true;
-        }
-    }
-
-    for (auto* goal : m_goal)
-    {
-        goal->Update(dt, playerPos);
-
-        if (goal->IsReached())
-        {
-            m_isGoalReached = true;
-        }
-    }
-
-    // 衝突判定
-    m_collision->CheckAll();
-
-    // UI追従
     m_HP_UI1.SetPos(g_cameraPos.x - 800, g_cameraPos.y + 400, 0);
     m_HP_UI2.SetPos(g_cameraPos.x - 600, g_cameraPos.y + 400, 0);
     m_HP_UI3.SetPos(g_cameraPos.x - 400, g_cameraPos.y + 400, 0);
 
-    currentHP = m_player.GetHP();
-
     switch (currentHP)
     {
     case 3:
-        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI3.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI1.SetColor(1, 1, 1, 1);
+        m_HP_UI2.SetColor(1, 1, 1, 1);
+        m_HP_UI3.SetColor(1, 1, 1, 1);
         break;
     case 2:
-        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI1.SetColor(1, 1, 1, 1);
+        m_HP_UI2.SetColor(1, 1, 1, 1);
+        m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     case 1:
-        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
-        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI1.SetColor(1, 1, 1, 1);
+        m_HP_UI2.SetColor(0.1f, 0.1f, 0.1f, 1);
+        m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     default:
-        // 0以下は全部暗く（任意）
-        m_HP_UI1.SetColor(0.1, 0.1, 0.1, 1.0);
-        m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
-        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI1.SetColor(0.1f, 0.1f, 0.1f, 1);
+        m_HP_UI2.SetColor(0.1f, 0.1f, 0.1f, 1);
+        m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     }
 
-    if (m_player.isDead()) {
-        m_isPlayerDead = true;
+    //==================================================
+    // (L) Markers（Stage1互換：飾った瞬間の表示）
+    //==================================================
+    for (size_t i = 0; i < m_pinMarkers.size(); ++i)
+    {
+        m_pinMarkers[i].marker.Update(dt);
+
+        if (!m_pinMarkers[i].pin) continue;
+
+        const Pin::MarkerEvent ev = m_pinMarkers[i].pin->ConsumeMarkerEvent();
+        if (ev == Pin::MarkerEvent::None) continue;
+
+        m_pinMarkers[i].marker.ShowAtHead(m_pinMarkers[i].pin->GetObject(), 120.0f, 300.0f, 200.0f);
     }
 
+    for (size_t i = 0; i < m_enemyMarkers.size(); ++i)
+    {
+        m_enemyMarkers[i].marker.Update(dt);
+
+        if (m_enemyMarkers[i].enemy && m_enemyMarkers[i].enemy->ConsumeJustDecorated())
+        {
+            m_enemyMarkers[i].marker.ShowAtHead(m_enemyMarkers[i].enemy->GetObject(), 180.0f, 300.0f, 200.0f);
+        }
+    }
+
+    //==================================================
+    // (M) Dead flag
+    //==================================================
+    if (m_player.isDead())
+        m_isPlayerDead = true;
 }
 
+//==================================================
+// Draw
+//==================================================
 void TutorialStage2::Draw()
 {
     std::sort(
         m_drawList.begin(),
         m_drawList.end(),
-        [](const DrawItem& a, const DrawItem& b) {
+        [](const DrawItem& a, const DrawItem& b)
+        {
             return static_cast<int>(a.layer) < static_cast<int>(b.layer);
         }
     );
 
-    for (size_t i = 0; i < m_drawList.size(); ++i) {
+    for (size_t i = 0; i < m_drawList.size(); ++i)
+    {
         Object* obj = m_drawList[i].obj;
         if (!obj) continue;
 
@@ -788,65 +695,84 @@ void TutorialStage2::Draw()
     }
 }
 
+//==================================================
+// UnInit
+//==================================================
 void TutorialStage2::UnInit()
 {
     // Platform
-    for (auto& plat : m_platforms) plat.UnInit();
+    for (size_t i = 0; i < m_platforms.size(); ++i)
+        m_platforms[i].UnInit();
     m_platforms.clear();
 
     // Enemy
-    for (auto& enemy : m_enemies) {
-        enemy->UnInit();
-        delete enemy;
+    for (size_t i = 0; i < m_enemies.size(); ++i)
+    {
+        if (!m_enemies[i]) continue;
+        m_enemies[i]->UnInit();
+        delete m_enemies[i];
     }
     m_enemies.clear();
+
+    // spawnQueue（残ってたら解放）
+    for (size_t i = 0; i < m_spawnQueue.size(); ++i)
+    {
+        if (!m_spawnQueue[i]) continue;
+        m_spawnQueue[i]->UnInit();
+        delete m_spawnQueue[i];
+    }
+    m_spawnQueue.clear();
 
     // Background / Player
     m_background.UnInit();
     m_player.Uninit();
 
-    // Pins（メモリ解放まで行う）
-    for (auto* pin : m_pins) {
-        pin->UnInit();
-        delete pin;
+    // Pins
+    for (size_t i = 0; i < m_pins.size(); ++i)
+    {
+        if (!m_pins[i]) continue;
+        m_pins[i]->UnInit();
+        delete m_pins[i];
     }
     m_pins.clear();
-    m_goal.clear();
 
-    for (auto* tutorial : m_tutorials)
+    // Tutorials
+    for (size_t i = 0; i < m_tutorials.size(); ++i)
     {
-        tutorial->UnInit();
-        delete tutorial;
+        if (!m_tutorials[i]) continue;
+        m_tutorials[i]->UnInit();
+        delete m_tutorials[i];
     }
     m_tutorials.clear();
 
-    /*   for (auto* goal : m_goal)
-       {
-           goal->UnInit();
-           delete goal;
-       }
-       m_goal.clear();*/
+    // Goals（GoalPin所有想定なのでdeleteしない）
+    m_goal.clear();
+
+    // Markers
+    m_pinMarkers.clear();
+    m_enemyMarkers.clear();
+    m_drawList.clear();
 
     delete m_collision;
     m_collision = nullptr;
 }
+
+//==================================================
+// Respawn
+//==================================================
 void TutorialStage2::Respawn()
 {
-    if (!m_hasCheckpoint)
-        return;
+    if (!m_hasCheckpoint) return;
 
     m_player.SetInvincible(false);
 
-    //チェックポイント位置にプレイヤーを配置
     m_player.GetObject()->SetPos(
         m_currentCheckpoint.x,
         m_currentCheckpoint.y,
         m_currentCheckpoint.z
     );
 
-    //死亡フラグをリセット
     m_isPlayerDead = false;
-
 }
 
 void TutorialStage2::SetResoawnPos(DirectX::XMFLOAT3 respawnpos)

@@ -48,6 +48,6 @@ public:
     virtual void UnInit() = 0;
 
     virtual bool IsPlayerDead() = 0;
-    bool IsGoalReached() const { return m_isGoalReached; }
+    virtual bool IsGoalReached() const { return m_isGoalReached; }
 
 };

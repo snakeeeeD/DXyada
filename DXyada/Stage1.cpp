@@ -44,8 +44,7 @@ void Stage1::AddDecorPin(float x, float y, bool canDecorate)
 
     DecoLinkPin link;
     link.pin = pin;
-    link.marker.Init("asset/Field/bbbbb.png");
-    //link.marker.Init("asset/Field/星 ワッペン.png");
+    link.marker.Init("asset/Field/星 ワッペン.png");
     link.marker.Hide();
     m_pinMarkers.push_back(link);
 
@@ -203,7 +202,10 @@ void Stage1::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 150, 0);
+    m_player.GetObject()->SetPos(9000, 150, 0);
+
+    m_isGoalReached = false;
+    m_isPlayerDead = false;
 
     m_currentCheckpoint = { 0, 150, 0 };
     m_hasCheckpoint = true;
@@ -460,7 +462,28 @@ void Stage1::Init()
         m_pinMarkers.push_back(link);
 
         AddPlatform("asset/Field/床ブロック.png", x + w1, LOW_Y, w1, H);
+        {
+            const float platformCenterX = x + w1;
+            const float platformTopY = LOW_Y + (H * 0.5f);
 
+            const float pinW = 35.0f;
+            const float pinH = 35.0f;
+
+            GoalPin* goalPin = new GoalPin();
+            goalPin->Init(
+                "asset/Field/PinDeco.png",                 // Pin本体の見た目（好きなのでOK）
+                platformCenterX,
+                platformTopY + (pinH * 0.5f),              // 足場の上面 + Pin半分
+                pinW,
+                pinH
+            );
+            goalPin->SetCollisionManager(m_collision);
+
+            m_pins.push_back(goalPin);
+            m_collision->SetTag(goalPin->GetObject(), ColliderTag::Pin);
+            m_goal.push_back(goalPin->GetGoal());
+
+        }
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
             "asset/Field/Boad.png",
@@ -488,174 +511,245 @@ void Stage1::Init()
 
 void Stage1::Update()
 {
-    float dt = 1.0f / 60.0f;
+    const float dt = 1.0f / 60.0f;
 
-    m_camera.Update(m_player.GetObject()->GetPos());
+    //==================================================
+    // (A) Camera
+    //==================================================
+    {
+        const auto playerPos = m_player.GetObject()->GetPos();
+        m_camera.Update(playerPos);
+        m_cameraNowPos = playerPos;
 
-    m_cameraNowPos = m_player.GetObject()->GetPos();
-
-    if (m_cameraNowPos.y < -500) {
-        g_cameraPos = { g_cameraPos.x , -200, g_cameraPos.z };
-
+        if (m_cameraNowPos.y < -500.0f)
+        {
+            g_cameraPos = { g_cameraPos.x, -200.0f, g_cameraPos.z };
+        }
     }
 
-    // プレイヤー更新
+    //==================================================
+    // (B) Player Update + Fall death
+    //==================================================
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
-    const DirectX::XMFLOAT3 p = m_player.GetObject()->GetPos();
-    if (p.y < m_fallDeadLineY)
     {
-        DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
-        m_player.TakeDamage(1, dummyDir);
-        if (currentHP > 1)
+        const auto p = m_player.GetObject()->GetPos();
+        if (p.y < m_fallDeadLineY)
         {
-            g_sound->Play(SOUND_LABEL_SE_Fall);
+            // ダメージ → 効果音 → リスポーン
+            DirectX::XMFLOAT2 dummyDir = { 0.0f, -1.0f };
+
+            // ※ currentHP はここでは古い可能性があるので、取ってから使う
+            const int hpBefore = m_player.GetHP();
+
+            m_player.TakeDamage(1, dummyDir);
+
+            if (hpBefore > 1)
+            {
+                g_sound->Play(SOUND_LABEL_SE_Fall);
+            }
+            else
+            {
+                // BGM切替など
+            }
+
+            Respawn();
         }
-        else
-        {
-            //BGM
-        }
-        Respawn();
     }
 
-    // 敵
-    for (auto& enemy : m_enemies) {
+    //==================================================
+    // (C) Enemies Update + Enemy vs Enemy
+    //==================================================
+    for (auto* enemy : m_enemies)
+    {
         if (!enemy) continue;
 
         enemy->Update(dt);
 
-        //リッパー君の場合は敵同士の衝突をチェック
         if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
         {
             rippa->CheckEnemyCollision(m_enemies);
         }
-
-        NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy);
-
-        if (enemy->IsDead())
-        {
-            continue;
-        }
-
-
-        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
-        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
-
-        m_enemies.erase(
-            std::remove_if(
-                m_enemies.begin(),
-                m_enemies.end(),
-                [&](Enemy* enemy)
-                {
-                    if (enemy->IsDead())
-                    {
-                        m_collision->Remove(enemy->GetObject());
-                        return true;
-                    }
-                    return false;
-                }
-            ),
-            m_enemies.end()
-        );
-
-        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
-        {
-            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
-
-            DirectX::XMFLOAT2 knockbackDir = {
-                playerPos.x - enemyPos.x,
-                playerPos.y - enemyPos.y
-            };
-
-            //リッパー君の場合は敵同士の衝突をチェック
-            if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
-            {
-                m_player.TakeDamage(1, knockbackDir);
-                g_sound->Play(SOUND_LABEL_SE_Damage);
-
-            }
-            else if (needleflr->GetState() != NeedleFloor::State::Decorated)
-            {
-                m_player.TakeDamage(1, knockbackDir);
-                g_sound->Play(SOUND_LABEL_SE_Damage);
-
-            }
-
-
-        }
     }
 
-    // ピン更新（BlockPinが動くならAABB更新）
+    //==================================================
+    // (D) Pins Update (BlockPinならAABB更新など)
+    //==================================================
     for (auto* pin : m_pins)
     {
+        if (!pin) continue;
+
         pin->Update(dt);
 
-        BlockPin* blockPin = dynamic_cast<BlockPin*>(pin);
-        if (blockPin)
+        if (BlockPin* blockPin = dynamic_cast<BlockPin*>(pin))
         {
+            // 「動くピン」ならAABB更新したい意図だと思うけど、
+            // GetAABBが更新キャッシュ用途ならOK。無意味なら削ってOK。
             m_collision->GetAABB(blockPin->GetObject());
         }
     }
 
-    // 衝突判定
+    //==================================================
+    // (E) Collision solve
+    //==================================================
     m_collision->CheckAll();
 
-    auto playerPos = m_player.GetObject()->GetPos();
-    for (auto* tutorial : m_tutorials)
+    //==================================================
+    // (F) Tutorials (checkpoint)
+    //==================================================
     {
-        tutorial->Update(dt, playerPos);
+        const auto playerPos = m_player.GetObject()->GetPos();
 
-        // チェックポイントとして有効化されたら記録
-        if (tutorial->IsActivated() && tutorial->IsCheckpoint())
+        for (auto* tutorial : m_tutorials)
         {
-            m_currentCheckpoint = tutorial->GetRespawnPosition();
-            m_hasCheckpoint = true;
+            if (!tutorial) continue;
+
+            tutorial->Update(dt, playerPos);
+
+            if (tutorial->IsActivated() && tutorial->IsCheckpoint())
+            {
+                m_currentCheckpoint = tutorial->GetRespawnPosition();
+                m_hasCheckpoint = true;
+            }
         }
     }
-    // UI追従
+
+    //==================================================
+    // (G) Player vs Enemy damage check
+    //   ※ ここは「敵Updateのfor内でerase」してたのが危険なので分離
+    //==================================================
+    {
+        const auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+
+        for (auto* enemy : m_enemies)
+        {
+            if (!enemy) continue;
+            if (enemy->IsDead()) continue;
+
+            const auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
+            if (!m_collision->CheckOverlap(playerAABB, enemyAABB))
+                continue;
+
+            const auto playerPos = m_player.GetObject()->GetPos();
+            const auto enemyPos = enemy->GetObject()->GetPos();
+
+            DirectX::XMFLOAT2 knockbackDir =
+            {
+                playerPos.x - enemyPos.x,
+                playerPos.y - enemyPos.y
+            };
+
+            // Rippa なら常にダメージ
+            if (dynamic_cast<Rippa*>(enemy))
+            {
+                m_player.TakeDamage(1, knockbackDir);
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+                continue;
+            }
+
+            // NeedleFloor は Decorated じゃない時だけ
+            if (NeedleFloor* needle = dynamic_cast<NeedleFloor*>(enemy))
+            {
+                if (needle->GetState() != NeedleFloor::State::Decorated)
+                {
+                    m_player.TakeDamage(1, knockbackDir);
+                    g_sound->Play(SOUND_LABEL_SE_Damage);
+                }
+                continue;
+            }
+
+            // 他の敵タイプが増えたらここに追加
+        }
+    }
+    //==================================================
+// (G2) Goals
+//==================================================
+    {
+        const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+
+        for (size_t i = 0; i < m_goal.size(); ++i)
+        {
+            Goal* goal = m_goal[i];
+            if (!goal) continue;
+
+            goal->Update(dt, playerPos);
+
+            if (goal->IsReached())
+            {
+                m_isGoalReached = true;
+            }
+        }
+    }
+
+
+    //==================================================
+    // (H) Remove dead enemies (erase-remove)
+    //==================================================
+    m_enemies.erase(
+        std::remove_if(
+            m_enemies.begin(),
+            m_enemies.end(),
+            [&](Enemy* e)
+            {
+                if (!e) return true;
+
+                if (e->IsDead())
+                {
+                    m_collision->Remove(e->GetObject());
+                    e->UnInit();
+                    delete e;
+                    return true;
+                }
+                return false;
+            }),
+        m_enemies.end()
+    );
+
+    //==================================================
+    // (I) HP UI update
+    //==================================================
+    currentHP = m_player.GetHP();
+
     m_HP_UI1.SetPos(g_cameraPos.x - 800, g_cameraPos.y + 400, 0);
     m_HP_UI2.SetPos(g_cameraPos.x - 600, g_cameraPos.y + 400, 0);
     m_HP_UI3.SetPos(g_cameraPos.x - 400, g_cameraPos.y + 400, 0);
 
-    currentHP = m_player.GetHP();
-
     switch (currentHP)
     {
     case 3:
-        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI3.SetColor(1.0, 1.0, 1.0, 1.0);
+        m_HP_UI1.SetColor(1, 1, 1, 1);
+        m_HP_UI2.SetColor(1, 1, 1, 1);
+        m_HP_UI3.SetColor(1, 1, 1, 1);
         break;
     case 2:
-        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI2.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI1.SetColor(1, 1, 1, 1);
+        m_HP_UI2.SetColor(1, 1, 1, 1);
+        m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     case 1:
-        m_HP_UI1.SetColor(1.0, 1.0, 1.0, 1.0);
-        m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
-        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI1.SetColor(1, 1, 1, 1);
+        m_HP_UI2.SetColor(0.1f, 0.1f, 0.1f, 1);
+        m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     default:
-        // 0以下は全部暗く（任意）
-        m_HP_UI1.SetColor(0.1, 0.1, 0.1, 1.0);
-        m_HP_UI2.SetColor(0.1, 0.1, 0.1, 1.0);
-        m_HP_UI3.SetColor(0.1, 0.1, 0.1, 1.0);
+        m_HP_UI1.SetColor(0.1f, 0.1f, 0.1f, 1);
+        m_HP_UI2.SetColor(0.1f, 0.1f, 0.1f, 1);
+        m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     }
 
+    //==================================================
+    // (J) Markers
+    //==================================================
     for (auto& pm : m_pinMarkers)
     {
         pm.marker.Update(dt);
         if (!pm.pin) continue;
 
-        Pin::MarkerEvent ev = pm.pin->ConsumeMarkerEvent();
+        const Pin::MarkerEvent ev = pm.pin->ConsumeMarkerEvent();
         if (ev == Pin::MarkerEvent::None) continue;
 
-        // 表示（位置/サイズは好みで）
         pm.marker.ShowAtHead(pm.pin->GetObject(), 120.0f, 300.0f, 200.0f);
-
     }
 
     for (auto& em : m_enemyMarkers)
@@ -668,11 +762,15 @@ void Stage1::Update()
         }
     }
 
-
-    if (m_player.isDead()) {
+    //==================================================
+    // (K) Player dead flag
+    //==================================================
+    if (m_player.isDead())
+    {
         m_isPlayerDead = true;
     }
 }
+
 
 void Stage1::Draw()
 {

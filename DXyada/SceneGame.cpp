@@ -104,7 +104,8 @@ void SceneGame::Update(SceneManager& mgr)
     }
 }
 
-void SceneGame::UpdatePlaying(SceneManager& mgr) {
+void SceneGame::UpdatePlaying(SceneManager& mgr)
+{
     GameOver_BackGround.SetSize(0, 0, 0);
     Pouse_BackGround.SetSize(0, 0, 0);
 
@@ -120,28 +121,36 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
     m_ButtonStageselect.SetPos(0, 0, 0);
     m_ButtonStageselect.SetSize(0, 0, 0);
 
-    //エスケープでポーズに、コントローラーはスタートで
-    if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_START)) {
+    // エスケープでポーズ
+    if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_START))
+    {
         m_state = GameState::Pouse;
         g_sound->Play(SOUND_LABEL_SE_Pause);
-
-    }
-
-    if (input.GetKeyTrigger(VK_UP)) {
-        BeginResult(mgr);
         return;
     }
 
     // ステージ更新
     m_stageManager.Update();
 
-    // プレイヤー死亡判定
     StageBase* stage = m_stageManager.GetStage();
-    if (stage && stage->IsPlayerDead()) {
+    if (!stage) return;
+
+    // ★ ゴール判定（ここが追加）
+    if (stage->IsGoalReached())
+    {
+        BeginResult(mgr);
+        return;
+    }
+
+    // プレイヤー死亡判定
+    if (stage->IsPlayerDead())
+    {
         m_state = GameState::GameOver;
         return;
     }
 }
+
+
 void SceneGame::UpdatePouse(SceneManager& mgr) {
 
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
@@ -308,9 +317,9 @@ DirectX::XMFLOAT3 SceneGame::GetResultStartCamPos(int stageNum) const
     switch (stageNum)
     {
     default:
-    case 0: return { 0, 0, 0 };
-    case 1: return { 0, 0, 0 };
-    case 2: return { 0, 0, 0 };
+    case 0: return { 0, 100, 0 };
+    case 1: return { 0, 100, 0 };
+    case 2: return { 0, 100, 0 };
     }
 }
 
@@ -320,9 +329,9 @@ DirectX::XMFLOAT3 SceneGame::GetResultGoalCamPos(int stageNum) const
     switch (stageNum)
     {
     default:
-    case 0: return { 8000, -300, 0 };
-    case 1: return { 10600, -300, 0 };
-    case 2: return { 14000, -300, 0 };
+    case 0: return { 8000, 100, 0 };
+    case 1: return { 11000, 100, 0 };
+    case 2: return { 14000, 100, 0 };
     }
 }
 
