@@ -209,7 +209,10 @@ void TutorialStage2::Init()
     // Player
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(6850, 250, 0);
+    m_player.GetObject()->SetPos(0, 250, 0);
+
+    m_isGoalReached = false;
+    m_isPlayerDead = false;
 
     // Checkpoint
     m_currentCheckpoint = { 0, 150, 0 };
@@ -255,6 +258,7 @@ void TutorialStage2::Init()
     m_pinMarkers.clear();
     m_enemyMarkers.clear();
     m_drawList.clear();
+    m_platforms.reserve(32);
 
     //========================
     // 1
@@ -467,15 +471,26 @@ void TutorialStage2::Init()
     // 11 (GoalPinの例) ※GoalはGoalPin所有想定
     //========================
     {
-        GoalPin* goalPin = new GoalPin;
-        goalPin->Init("asset/Field/Goal.png", x + 500, -230.0f, 0, 0);
+        const float platformCenterX = x;
+        const float platformTopY = LOW_Y + (H * 0.5f);
+
+        const float pinW = 35.0f;
+        const float pinH = 35.0f;
+
+        GoalPin* goalPin = new GoalPin();
+        goalPin->Init(
+            "asset/Field/PinDeco.png",                 // Pin本体の見た目（好きなのでOK）
+            platformCenterX,
+            platformTopY + (pinH * 0.5f),              // 足場の上面 + Pin半分
+            pinW,
+            pinH
+        );
         goalPin->SetCollisionManager(m_collision);
 
         m_pins.push_back(goalPin);
-        m_collision->AddStatic(goalPin->GetObject());
         m_collision->SetTag(goalPin->GetObject(), ColliderTag::Pin);
-
         m_goal.push_back(goalPin->GetGoal());
+
     }
 
     // Draw list
