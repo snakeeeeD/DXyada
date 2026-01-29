@@ -62,6 +62,10 @@ private:
 
     bool Result_Next = false;
 
+    bool m_bgmGamePlaying = false;
+    bool m_bgmClearPlaying = false;
+    bool m_bgmGameOverPlaying = false;
+
 public:
     SceneGame(int stageNum = 1);
     virtual void Init() override;

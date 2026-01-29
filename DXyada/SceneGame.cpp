@@ -39,7 +39,7 @@ void SceneGame::Init()
     m_stageManager.LoadStage(m_stageNumber);
 
 
-   
+
 
     Pouse_BackGround.Init();
     Pouse_BackGround.AddTexture("asset/UI/Pouse.png");
@@ -89,7 +89,7 @@ void SceneGame::Update(SceneManager& mgr)
     switch (m_state)
     {
     case GameState::Playing:
-        g_sound->Play(SOUND_LABEL_BGM_GAME);
+        //g_sound->Play(SOUND_LABEL_BGM_GAME);
         UpdatePlaying(mgr);
         break;
 
@@ -102,27 +102,32 @@ void SceneGame::Update(SceneManager& mgr)
         break;
 
     case GameState::GameOver:
-        g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);
+        //g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);
         UpdateGameOver(mgr);
         break;
     }
 }
 
 void SceneGame::UpdatePlaying(SceneManager& mgr) {
-    g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
-    g_sound->Play(SOUND_LABEL_BGM_GAME);
-
     /*g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
     g_sound->Play(SOUND_LABEL_BGM_GAME);*/
 
-    static bool bgmGamePlaying = false;
 
-    if (!bgmGamePlaying)
+
+    if (!m_bgmGamePlaying)
+        /*g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+        g_sound->Play(SOUND_LABEL_BGM_GAME);*/
+
+        static bool bgmGamePlaying = false;
+
+    if (!m_bgmGamePlaying)
     {
         g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
         g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
         g_sound->Play(SOUND_LABEL_BGM_GAME);
-        bgmGamePlaying = true;
+
+        m_bgmGamePlaying = true;
+
     }
     GameOver_BackGround.SetSize(0, 0, 0);
     Pouse_BackGround.SetSize(0, 0, 0);
@@ -156,7 +161,7 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
     // ★ ゴール判定（ここが追加）
     if (stage->IsGoalReached())
     {
-        bgmGamePlaying = false;
+        m_bgmGamePlaying = false;
         BeginResult(mgr);
         return;
     }
@@ -164,7 +169,7 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
     // プレイヤー死亡判定
     if (stage->IsPlayerDead())
     {
-        bgmGamePlaying = false;
+        m_bgmGamePlaying = false;
         m_state = GameState::GameOver;
         return;
     }
@@ -272,7 +277,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         {
             mgr.ChangeScene(SCENE_GAME);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-            //g_sound->Stop(SOUND_LABEL_BGM_GAME);
+            g_sound->Stop(SOUND_LABEL_BGM_GAME);
         }
         break;
 
@@ -290,7 +295,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         {
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-          //  g_sound->Stop(SOUND_LABEL_BGM_GAME);
+            g_sound->Stop(SOUND_LABEL_BGM_GAME);
         }
         break;
     }
@@ -370,7 +375,16 @@ void SceneGame::BeginResult(SceneManager& mgr)
 }
 
 void SceneGame::UpdateResult(SceneManager& mgr) {
-    g_sound->Play(SOUND_LABEL_BGM_CLEAR);
+    //g_sound->Play(SOUND_LABEL_BGM_CLEAR);
+
+    m_bgmClearPlaying = false;
+
+    if (!m_bgmClearPlaying)
+    {
+        g_sound->Stop(SOUND_LABEL_BGM_GAME);
+        g_sound->Play(SOUND_LABEL_BGM_CLEAR);
+        m_bgmClearPlaying = true;
+    }
 
     //g_sound->Play(SOUND_LABEL_BGM_CLEAR);
 
@@ -468,27 +482,26 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     if (x >= 1.0f)
     {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
+            m_bgmClearPlaying = false;
+
             bgmClearPlaying = false;
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-            g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
         }
     }
 }
 
 void SceneGame::UpdateGameOver(SceneManager& mgr) {
-  /*  g_sound->Stop(SOUND_LABEL_BGM_GAME);
-    g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);*/
-    static bool bgmGameOverPlaying = false;
+    /*  g_sound->Stop(SOUND_LABEL_BGM_GAME);
+      g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);*/
+    m_bgmGameOverPlaying = false;
 
-    if (!bgmGameOverPlaying)
+    if (!m_bgmGameOverPlaying)
     {
         g_sound->Stop(SOUND_LABEL_BGM_GAME);
         g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);
-        bgmGameOverPlaying = true;
+        m_bgmGameOverPlaying = true;
     }
-
-
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
     const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
 
@@ -542,10 +555,11 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         m_ButtonStageselect.PlayAnimation("NotSerect");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
-            bgmGameOverPlaying = false;
+            m_bgmGameOverPlaying = false;
+            g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
             mgr.ChangeScene(SCENE_GAME);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-            g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+
         }
         break;
 
@@ -558,10 +572,10 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         m_ButtonStageselect.PlayAnimation("Normal");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
-            bgmGameOverPlaying = false;
+            m_bgmGameOverPlaying = false;
+            g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-            g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
         }
         break;
     }

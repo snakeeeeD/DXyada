@@ -574,20 +574,6 @@ void Stage1::Update()
         }
     }
 
-    //==================================================
-    // (C) Enemies Update + Enemy vs Enemy
-    //==================================================
-    for (auto* enemy : m_enemies)
-    {
-        if (!enemy) continue;
-
-        enemy->Update(dt);
-
-        if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
-        {
-            rippa->CheckEnemyCollision(m_enemies);
-        }
-    }
 
     //==================================================
     // (D) Pins Update (BlockPinならAABB更新など)
@@ -635,49 +621,73 @@ void Stage1::Update()
     // (G) Player vs Enemy damage check
     //   ※ ここは「敵Updateのfor内でerase」してたのが危険なので分離
     //==================================================
-    {
-        const auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+    for (auto& enemy : m_enemies) {
+        if (!enemy) continue;
 
-        for (auto* enemy : m_enemies)
+        enemy->Update(dt);
+
+        //リッパー君の場合は敵同士の衝突をチェック
+        if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
         {
-            if (!enemy) continue;
-            if (enemy->IsDead()) continue;
+            rippa->CheckEnemyCollision(m_enemies);
+        }
 
-            const auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
-            if (!m_collision->CheckOverlap(playerAABB, enemyAABB))
-                continue;
+        NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy);
 
-            const auto playerPos = m_player.GetObject()->GetPos();
-            const auto enemyPos = enemy->GetObject()->GetPos();
+        if (enemy->IsDead())
+        {
+            continue;
+        }
 
-            DirectX::XMFLOAT2 knockbackDir =
-            {
+
+        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
+
+        m_enemies.erase(
+            std::remove_if(
+                m_enemies.begin(),
+                m_enemies.end(),
+                [&](Enemy* enemy)
+                {
+                    if (enemy->IsDead())
+                    {
+                        m_collision->Remove(enemy->GetObject());
+                        return true;
+                    }
+                    return false;
+                }
+            ),
+            m_enemies.end()
+        );
+
+        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
+        {
+            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
+
+            DirectX::XMFLOAT2 knockbackDir = {
                 playerPos.x - enemyPos.x,
                 playerPos.y - enemyPos.y
             };
 
-            // Rippa なら常にダメージ
-            if (dynamic_cast<Rippa*>(enemy))
+            //リッパー君の場合は敵同士の衝突をチェック
+            if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
             {
                 m_player.TakeDamage(1, knockbackDir);
                 g_sound->Play(SOUND_LABEL_SE_Damage);
-                continue;
-            }
 
-            // NeedleFloor は Decorated じゃない時だけ
-            if (NeedleFloor* needle = dynamic_cast<NeedleFloor*>(enemy))
+            }
+            else if (needleflr->GetState() != NeedleFloor::State::Decorated)
             {
-                if (needle->GetState() != NeedleFloor::State::Decorated)
-                {
-                    m_player.TakeDamage(1, knockbackDir);
-                    g_sound->Play(SOUND_LABEL_SE_Damage);
-                }
-                continue;
+                m_player.TakeDamage(1, knockbackDir);
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+
             }
 
-            // 他の敵タイプが増えたらここに追加
+
         }
     }
+
     //==================================================
 // (G2) Goals
 //==================================================
