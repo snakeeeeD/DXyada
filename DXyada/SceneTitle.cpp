@@ -79,13 +79,7 @@ void SceneTitle::Update(SceneManager& mgr) {
         g_sound->Play(SOUND_LABEL_SE_Ok);
 
     }
-
-    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
-        mgr.SetSelectedStage(99);
-        mgr.ChangeScene(SCENE_GAME);
-        g_sound->Play(SOUND_LABEL_SE_Ok);
-
-    }
+      
 }
 
 void SceneTitle::Draw() {

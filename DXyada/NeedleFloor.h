@@ -16,6 +16,7 @@ private:
 	bool m_enablePlatformRegisterOnDecorated = true;
 	bool m_isPlatformRegistered = false;
 
+
 public:
 	NeedleFloor() = default;
 	~NeedleFloor() override = default;

@@ -209,7 +209,7 @@ void TutorialStage2::Init()
     // Player
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 150, 0);
+    m_player.GetObject()->SetPos(6850, 250, 0);
 
     // Checkpoint
     m_currentCheckpoint = { 0, 150, 0 };
@@ -389,6 +389,78 @@ void TutorialStage2::Init()
         RegisterEnemyMarker(wirippa, "asset/Field/星 ワッペン.png"); // 好きに差し替え
 
         x += sectionW;
+    }
+    //7
+    {
+        float section7StartX = 7000.0f;
+        float section7EndX = 8000.0f;
+
+        float w1 = TILE * 1.0f;
+        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, -700, w1, H);
+        x += w1;
+
+        {
+            BlockPin* m_targetPin2 = new BlockPin;
+            m_targetPin2->Init("asset/Field/block.png", x + 580.0, -433.0f, 360, 65);
+            m_targetPin2->SetCollisionManager(m_collision);
+            m_targetPin2->SetcanRollPin(true);
+            m_targetPin2->SetcanDecorate(false);
+            m_pins.push_back(m_targetPin2);
+            m_collision->AddStatic(m_targetPin2->GetObject());
+            m_targetPin2->SetForceGround(true);
+            m_collision->SetTag(m_targetPin2->GetObject(), ColliderTag::Platform);
+
+            RemoteWindPin* m_hook = new RemoteWindPin;
+            m_hook->Init("asset/Field/PinRemote.png", x - 50, 150, 35, 35);
+            m_hook->SetCollisionManager(m_collision);
+            m_hook->SetcanRollPin(false);
+            m_hook->SetTarget(m_targetPin2);
+
+            //ピンの種類のStateを"RemoteDeco(飾れる)"に
+            m_hook->SetPinKind(PinKind::RemoteDeco);
+
+            // ガイド
+            m_hook->AddGuide({ x + 170, -433.0, 0 });
+
+            m_pins.push_back(m_hook);
+            m_collision->SetTag(m_hook->GetObject(), ColliderTag::Pin);
+        }
+
+        x += 500;
+
+        float w2 = TILE * 1.0f;
+        AddPlatform("asset/Field/block.png", x + w2 * 0.1f, -700, 350, H);
+        x += w2;
+    }
+
+    //8
+    {
+        x += 500;
+
+        float w1 = TILE * 6.0f;
+        Pin* JumpPin = new Pin;
+
+        JumpPin->Init("asset/Field/PinJump.png", x - 280, -130, 35, 35);
+        JumpPin->SetCollisionManager(m_collision);
+        m_pins.push_back(JumpPin);
+        JumpPin->SetcanRollPin(false);
+        JumpPin->SetcanDecorate(false);
+
+        //ピンの種類のStateを"Jump(飾れる)"に
+        JumpPin->SetPinKind(PinKind::Jump);
+
+        BlockPin* m_targetPin;
+        m_targetPin = AddPullPin(x - 70, -418.0f, true);
+
+        //m_collision->AddStatic(m_targetPin->GetObject());
+        m_targetPin->SetForceGround(true);
+        m_targetPin->SetLimitPos(x + 100, x, -418.0f, -418.0f);
+        m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
+        m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
+
+
+        AddPlatform("asset/Field/block.png", x + w1 * 0.45f, -700, w1, H);
+        x += w1;
     }
 
     //========================

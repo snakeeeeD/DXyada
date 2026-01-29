@@ -42,6 +42,8 @@ protected:
     std::string m_decoratedTexturePath;  //飾られた時のテクスチャパス
 
     Object m_mark;
+    Object m_mark2;
+    Object m_mark3;
     bool   m_markVisible = true;
 
     float  m_markOffsetX = 0.0f;
@@ -68,6 +70,8 @@ public:
     const Object* GetObject() const { return &m_object; }
 
     Object* GetMarkObject() { return &m_mark; }
+    Object* GetMarkObject2() { return &m_mark2; }
+    Object* GetMarkObject3() { return &m_mark3; }
 
     //強調表示用
     void SetHighlight(bool highlight) { m_isHighlighted = highlight; }
