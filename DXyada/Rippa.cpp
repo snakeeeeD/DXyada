@@ -132,6 +132,8 @@ void Rippa::CheckWandering(float deltaTime)
     }
 }
 
+
+
 void Rippa::SetTurnPos(float min, float max)
 {
     auto pos = m_object.GetPos();
