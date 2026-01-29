@@ -462,15 +462,13 @@ void Sound::Play(SOUND_LABEL label)
 	if (!pSV) return;
 	OutputDebugStringA("SE Play\n");
 
-	////SEの時だけ
+	//SEの時だけ
 	if (!loop)
 	{
 		// すでに鳴ってたら止める
 		pSV->Stop(0);
 		pSV->FlushSourceBuffers();
 	}
-
-
 
 	// バッファを再投入
 	HRESULT hr = pSV->SubmitSourceBuffer(&m_buffer[(int)label]);

@@ -138,7 +138,7 @@ void SceneSelect::Update(SceneManager& mgr)
         mgr.SetSelectedStage(99);
         mgr.ChangeScene(SCENE_GAME);
         g_sound->Play(SOUND_LABEL_SE_Ok);
-
+        g_sound->Stop(SOUND_LABEL_BGM_SELECT);
     }
     m_prevLeftStick = m_stickNow;
 

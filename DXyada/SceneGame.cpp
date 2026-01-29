@@ -109,6 +109,9 @@ void SceneGame::Update(SceneManager& mgr)
 }
 
 void SceneGame::UpdatePlaying(SceneManager& mgr) {
+    g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+    g_sound->Play(SOUND_LABEL_BGM_GAME);
+
     /*g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
     g_sound->Play(SOUND_LABEL_BGM_GAME);*/
 
@@ -367,6 +370,8 @@ void SceneGame::BeginResult(SceneManager& mgr)
 }
 
 void SceneGame::UpdateResult(SceneManager& mgr) {
+    g_sound->Play(SOUND_LABEL_BGM_CLEAR);
+
     //g_sound->Play(SOUND_LABEL_BGM_CLEAR);
 
     static bool bgmClearPlaying = false;
