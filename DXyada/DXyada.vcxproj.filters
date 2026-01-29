@@ -108,6 +108,13 @@
     <ClCompile Include="Stage2.cpp">
       <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
     </ClCompile>
+    <ClCompile Include="AssetList.cpp" />
+    <ClCompile Include="DecoMarker.cpp" />
+    <ClCompile Include="GoalPin.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="SceneLoad.cpp">
+      <Filter>ソースファイル\10-Scene管理\04-SceneLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -223,6 +230,13 @@
     </ClInclude>
     <ClInclude Include="Stage2.h">
       <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetList.h" />
+    <ClInclude Include="DecoMarker.h" />
+    <ClInclude Include="GoalPin.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="SceneLoad.h">
+      <Filter>ソースファイル\10-Scene管理\04-SceneLoad</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -369,6 +383,9 @@
     </Filter>
     <Filter Include="ソースファイル\20-Stage管理\10-TutorialStage">
       <UniqueIdentifier>{7d075e80-0e8c-4888-81db-5f0eb93457ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\10-Scene管理\04-SceneLoad">
+      <UniqueIdentifier>{28f8f9f7-5d7e-452a-ae5f-15251ceeb505}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

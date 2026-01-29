@@ -39,6 +39,8 @@ void SceneGame::Init()
     m_stageManager.LoadStage(m_stageNumber);
 
 
+   
+
     Pouse_BackGround.Init();
     Pouse_BackGround.AddTexture("asset/UI/Pouse.png");
 
@@ -87,6 +89,7 @@ void SceneGame::Update(SceneManager& mgr)
     switch (m_state)
     {
     case GameState::Playing:
+        g_sound->Play(SOUND_LABEL_BGM_GAME);
         UpdatePlaying(mgr);
         break;
 
@@ -99,13 +102,16 @@ void SceneGame::Update(SceneManager& mgr)
         break;
 
     case GameState::GameOver:
+        g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);
         UpdateGameOver(mgr);
         break;
     }
 }
 
-void SceneGame::UpdatePlaying(SceneManager& mgr)
-{
+void SceneGame::UpdatePlaying(SceneManager& mgr) {
+    g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+    g_sound->Play(SOUND_LABEL_BGM_GAME);
+
     GameOver_BackGround.SetSize(0, 0, 0);
     Pouse_BackGround.SetSize(0, 0, 0);
 
@@ -235,7 +241,6 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
             m_state = GameState::Playing;
             g_sound->Play(SOUND_LABEL_SE_Ok);
-
         }
         break;
 
@@ -253,7 +258,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         {
             mgr.ChangeScene(SCENE_GAME);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-
+            //g_sound->Stop(SOUND_LABEL_BGM_GAME);
         }
         break;
 
@@ -271,7 +276,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         {
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-
+          //  g_sound->Stop(SOUND_LABEL_BGM_GAME);
         }
         break;
     }
@@ -351,6 +356,8 @@ void SceneGame::BeginResult(SceneManager& mgr)
 }
 
 void SceneGame::UpdateResult(SceneManager& mgr) {
+    g_sound->Play(SOUND_LABEL_BGM_CLEAR);
+
     const float dt = 1.0f / 60.0f;
     m_resultCam.t += dt;
 
@@ -438,12 +445,14 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-
+            g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
         }
     }
 }
 
 void SceneGame::UpdateGameOver(SceneManager& mgr) {
+  //  g_sound->Stop(SOUND_LABEL_BGM_GAME);
+    g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);
 
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
     const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
@@ -500,7 +509,7 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         {
             mgr.ChangeScene(SCENE_GAME);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-
+            //g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
         }
         break;
 
@@ -516,7 +525,7 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
    
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
-
+            //g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
         }
         break;
     }

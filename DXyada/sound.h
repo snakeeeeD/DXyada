@@ -6,6 +6,11 @@ typedef enum
 {
 	SOUND_LABEL_BGM000,		// サンプルBGM
 	//SOUND_LABEL_BGM001,			// サンプルBGM
+	SOUND_LABEL_BGM_TITLE,		//タイトル
+	SOUND_LABEL_BGM_SELECT,		//ステージセレクト
+	SOUND_LABEL_BGM_GAME,		//ゲーム中
+	SOUND_LABEL_BGM_CLEAR,		//クリア画面
+	SOUND_LABEL_BGM_GAMEOVER,	//ゲームオーバー画面
 
 	//SOUND_LABEL_SE_LAND,			//着地音
 	SOUND_LABEL_SE_Jump,			//通常ジャンプした時
@@ -45,6 +50,12 @@ private:
 	{
 		// ===== BGM =====
 		{"asset/BGM.wav", true},                  // SOUND_LABEL_BGM000
+
+		{"asset/BGM/Title.wav", true},			  // SOUND_LABEL_BGM_TITLE
+		{"asset/BGM/Select.wav", true},			  // SOUND_LABEL_BGM_SELECT
+		{"asset/BGM/Game.wav", true},			  // SOUND_LABEL_BGM_GAME
+		{"asset/BGM/Clear.wav", true},			  // SOUND_LABEL_BGM_CLEAR
+		{"asset/BGM/Gameover.wav", true},		  // SOUND_LABEL_BGM_GAMEOVER
 
 		// ===== SE =====
 		{"asset/SE/Jump.wav", false},             // SOUND_LABEL_SE_Jump

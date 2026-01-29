@@ -64,6 +64,7 @@ void SceneTitle::Init() {
 void SceneTitle::Update(SceneManager& mgr) {
     input.Update();
 
+    g_sound->Play(SOUND_LABEL_BGM_TITLE);
     m_loadDelay += 1/60.0f;
     if (m_loadDelay > 1.0f) { 
         if (Loadtime == 3) {
@@ -75,11 +76,18 @@ void SceneTitle::Update(SceneManager& mgr) {
 
     // スペースキーでゲーム開始
     if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonPress(XINPUT_A)) {
-        mgr.ChangeScene(SCENE_SELECT);
         g_sound->Play(SOUND_LABEL_SE_Ok);
-
+         g_sound->Stop(SOUND_LABEL_BGM_TITLE);
+        mgr.ChangeScene(SCENE_SELECT);
     }
+
+    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+        g_sound->Stop(SOUND_LABEL_BGM_TITLE);
+        mgr.SetSelectedStage(99);
+        mgr.ChangeScene(SCENE_GAME);
       
+    }
 }
 
 void SceneTitle::Draw() {

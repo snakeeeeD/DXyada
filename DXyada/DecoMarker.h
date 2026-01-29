@@ -13,12 +13,16 @@ public:
 
     void Update(float dt, Object* target = nullptr);
     Object* GetObject() { return &m_obj; }
+
+    Object* GetObject2() { return &m_obj2; }
+    Object* GetObject3() { return &m_obj3; }
     void SetTexture(const char* tex)
     {
         m_obj.AddTexture(tex); // あなたのObject仕様が「差し替え」ならOK
     }
 
     void SetMoveMode(bool isMove) { m_isMove = isMove; }
+    bool GetisMove() const { return m_isMove; }
 
 private:
     Object m_obj;

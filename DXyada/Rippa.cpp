@@ -7,22 +7,8 @@ void Rippa::Init(const char* texture, float x, float y, float width, float heigh
 {
     Enemy::Init(texture, x, y, width, height);
 
-    // 【事前ロード】飾り用の画像を "Decoration" という名前のアニメーションとして登録
-    // これで画像がメモリに乗り、後で PlayAnimation("Decoration") するだけで切り替わります
     m_object.AddAnimation("Decoration", "asset/Field/Rippa_Decorated.png", 1, 1, 0, 0, 0, 1.0f, false, false, 999);
 }
-
-//void Rippa::Init(const char* tex, float x, float y, float w, float h)
-//{
-//    m_object.Init();
-//    m_object.AddTexture(tex);
-//    m_object.SetPos(x, y, 0);
-//    m_object.SetSize(w, h, 0);
-//
-//    m_decoratedTexturePath = "asset/Field/rippa_Deco.png";
-//
-//}
-
 void Rippa::Update(float deltaTime)
 {
     //LT押してるときは遅く
@@ -83,7 +69,7 @@ void Rippa::CheckCollision()
     auto pos = m_object.GetPos();
     auto size = m_object.GetSize();
     float halfW = size.x / 2.0f;
-    float halfH = size.y / 2.0f; // 高さは halfH を使うのが一般的です
+    float halfH = size.y / 2.0f;
 
     float sensorDist = 5.0f;
     float yLow = pos.y - 10.0f;
@@ -93,7 +79,7 @@ void Rippa::CheckCollision()
     float cliffYRange = 20.0f;
 
     // 足元(pos.y - halfH)を基準にする
-    float footY = pos.y - halfH; // ここは halfH が正しいです
+    float footY = pos.y - halfH;
     float yBottomCliff = footY - 10.0f; // 足元より少し下（-60付近）
 
     if (m_direction > 0)  // 右向き時
@@ -104,7 +90,7 @@ void Rippa::CheckCollision()
         cliffSensor.min = { pos.x + halfW, yBottomCliff - cliffYRange };
         cliffSensor.max = { pos.x + halfW + cliffCheckDist, yBottomCliff };
     }
-    else  // 左向き時
+    else  //左向き時
     {
         //halfH を halfW に変更し、xの計算を整理
         wallSensor.min = { pos.x - halfW - 1.0f - sensorDist, yLow };
@@ -170,8 +156,8 @@ void Rippa::SetTurnRange(float min, float max)
 
 void Rippa::CheckEnemyCollision(const std::vector<Enemy*>& enemies)
 {
-    if (m_type != Type::Normal)
-        return;
+   /* if (m_type != Type::Normal)
+        return;*/
 
     auto myPos = m_object.GetPos();
     auto mySize = m_object.GetSize();
@@ -213,12 +199,8 @@ void Rippa::CheckEnemyCollision(const std::vector<Enemy*>& enemies)
 
 void Rippa::Disable(bool justdeco)
 {
-
     Enemy::Disable(justdeco);
 
-    if (justdeco)
-    {
-
-        m_object.PlayAnimation("Decoration");
-    }
+    m_object.PlayAnimation("Decoration");
+    
 }

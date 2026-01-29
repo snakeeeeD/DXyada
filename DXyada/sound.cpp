@@ -360,6 +360,11 @@ float Sound::GetDefaultVolume(SOUND_LABEL label)
 {
 	switch (label)
 	{
+	case	SOUND_LABEL_BGM_TITLE:		//タイトル
+	case	SOUND_LABEL_BGM_SELECT:		//ステージセレクト
+	case	SOUND_LABEL_BGM_GAME:		//ゲーム中
+	case	SOUND_LABEL_BGM_CLEAR:		//クリア画面
+	case	SOUND_LABEL_BGM_GAMEOVER:	//ゲームオーバー画面
 	case	SOUND_LABEL_SE_Jump:			//通常ジャンプした時
 	case	SOUND_LABEL_SE_MoveA:			//歩く音1
 	case	SOUND_LABEL_SE_MoveB:			//歩く音2
@@ -452,12 +457,18 @@ float Sound::GetDefaultVolume(SOUND_LABEL label)
 }*/
 void Sound::Play(SOUND_LABEL label)
 {
+	bool loop = m_param[label].bLoop;
 	IXAudio2SourceVoice* pSV = m_pSourceVoice[(int)label];
 	if (!pSV) return;
 	OutputDebugStringA("SE Play\n");
-	// すでに鳴ってたら止める
-	pSV->Stop(0);
-	pSV->FlushSourceBuffers();
+
+	//SEの時だけ
+	if (!loop)
+	{
+		// すでに鳴ってたら止める
+		pSV->Stop(0);
+		pSV->FlushSourceBuffers();
+	}
 
 	// バッファを再投入
 	HRESULT hr = pSV->SubmitSourceBuffer(&m_buffer[(int)label]);

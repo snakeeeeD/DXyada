@@ -121,6 +121,17 @@ void Stage1::BuildDrawList()
         item.obj = em.marker.GetObject();
         item.layer = DrawLayer::Enemy; // or Enemy, StageObject
         m_drawList.push_back(item);
+
+        if (em.marker.GetisMove() == false)
+        {
+            item.obj = em.marker.GetObject2();
+            item.layer = DrawLayer::Enemy; // or Enemy, StageObject
+            m_drawList.push_back(item);
+
+            item.obj = em.marker.GetObject3();
+            item.layer = DrawLayer::Enemy; // or Enemy, StageObject
+            m_drawList.push_back(item);
+        }
     }
 
     // --- Pin marker ---
@@ -211,7 +222,7 @@ void Stage1::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(9000, 150, 0);
+    m_player.GetObject()->SetPos(000, 150, 0);
 
     m_isGoalReached = false;
     m_isPlayerDead = false;
@@ -224,13 +235,13 @@ void Stage1::Init()
     m_background.SetPos(7200.0f, 0.0f, 0.0f);      // 横14400の中心に置くなら 7200
     m_background.SetSize(23000.0f, 2100.0f, 0.0f);
 
-    // ★ここがUV繰り返し
+    //UV繰り返し
     m_background.SetUVMode(Object::UVMode::Loop);
 
-    // 横だけ10回繰り返したいなら「U方向の長さ」を10にする
+    //横だけ10回繰り返したいなら「U方向の長さ」を10にする
     m_background.SetUVLength(5.0f);
 
-    // スクロールしないなら0で固定
+    //スクロールしないなら0で固定
     m_background.SetUVScroll(0.0f);
 
 
@@ -395,7 +406,7 @@ void Stage1::Init()
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", false);
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
         x += w1;
     }
 
@@ -410,7 +421,7 @@ void Stage1::Init()
         rippa_2->SetTurnInterval(2.5f);
 
         m_enemies.push_back(rippa_2);
-        RegisterEnemyMarker(rippa_2, "asset/Field/フェルトワッペン リッパー.png", false);
+        RegisterEnemyMarker(rippa_2, "asset/Field/フェルトワッペン リッパー.png", true);
     }
     //7
     {
@@ -432,7 +443,7 @@ void Stage1::Init()
         rippa->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png" , false);
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png" , true);
 
 
         Rippa* rippa2 = new Rippa(Rippa::Type::Normal);
@@ -440,7 +451,7 @@ void Stage1::Init()
         rippa2->SetCollisionManager(m_collision);
 
         m_enemies.push_back(rippa2);
-        RegisterEnemyMarker(rippa2, "asset/Field/フェルトワッペン リッパー.png", false);
+        RegisterEnemyMarker(rippa2, "asset/Field/フェルトワッペン リッパー.png", true);
 
         x += w1;
     }

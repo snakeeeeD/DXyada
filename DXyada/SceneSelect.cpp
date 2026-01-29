@@ -67,10 +67,13 @@ void SceneSelect::Init() {
     tm.Enqueue("asset/Field/rippa.png");
     tm.Enqueue("asset/Field/PinJump.png");
     tm.Enqueue("asset/Field/床ブロック.png");
+
 }
 
 void SceneSelect::Update(SceneManager& mgr)
 {
+    g_sound->Play(SOUND_LABEL_BGM_SELECT);
+
     if (Loadtime == 2) {
         TextureManager::Instance().ProcessQueue(g_pDevice, 0.5);
         Loadtime = 0;
@@ -78,7 +81,7 @@ void SceneSelect::Update(SceneManager& mgr)
         
     Loadtime++;
 
-    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();// 移動専用
+    DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
     const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
 
     if (leftStick.x > moveThreshold)
@@ -102,6 +105,7 @@ void SceneSelect::Update(SceneManager& mgr)
     int ButtonCount = 0;
 
     input.Update();
+
     if (input.GetKeyTrigger(VK_LEFT) ||
         input.GetButtonTrigger(XINPUT_LEFT) ||
         leftStickLTrigger)
@@ -127,13 +131,13 @@ void SceneSelect::Update(SceneManager& mgr)
         mgr.SetSelectedStage(m_stage);
         mgr.ChangeScene(SCENE_LOAD);
         g_sound->Play(SOUND_LABEL_SE_Ok);
-
+        g_sound->Stop(SOUND_LABEL_BGM_SELECT);
     }
 
     if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
-        mgr.SetSelectedStage(0);
-        mgr.ChangeScene(SCENE_TITLE);
-        g_sound->Play(SOUND_LABEL_SE_Back);
+        mgr.SetSelectedStage(99);
+        mgr.ChangeScene(SCENE_GAME);
+        g_sound->Play(SOUND_LABEL_SE_Ok);
 
     }
     m_prevLeftStick = m_stickNow;
