@@ -462,13 +462,15 @@ void Sound::Play(SOUND_LABEL label)
 	if (!pSV) return;
 	OutputDebugStringA("SE Play\n");
 
-	//SEの時だけ
+	////SEの時だけ
 	if (!loop)
 	{
 		// すでに鳴ってたら止める
 		pSV->Stop(0);
 		pSV->FlushSourceBuffers();
 	}
+
+
 
 	// バッファを再投入
 	HRESULT hr = pSV->SubmitSourceBuffer(&m_buffer[(int)label]);
@@ -485,14 +487,22 @@ void Sound::Play(SOUND_LABEL label)
 //=============================================================================
 void Sound::Stop(SOUND_LABEL label)
 {
-	if (m_pSourceVoice[(int)label] == NULL) return;
+	/*if (m_pSourceVoice[(int)label] == NULL) return;
 
 	XAUDIO2_VOICE_STATE xa2state;
 	m_pSourceVoice[(int)label]->GetState(&xa2state);
 	if (xa2state.BuffersQueued)
 	{
 		m_pSourceVoice[(int)label]->Stop(0);
-	}
+	}*/
+
+	if (m_pSourceVoice[(int)label] == NULL) return;
+
+	IXAudio2SourceVoice* pSV = m_pSourceVoice[(int)label];
+
+	//停止してバッファをクリア
+	pSV->Stop(0);
+	pSV->FlushSourceBuffers();
 }
 
 //=============================================================================
