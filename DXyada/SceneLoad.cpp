@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 #include <ctime>
-#include "sound.h"   
+#include "sound.h"
 
 extern Sound* g_sound;
 extern Input input;
@@ -80,6 +80,7 @@ void SceneLoad::Init()
     m_gaugeY = 350.0f;
     m_gaugeT = 0.0f;
     m_gauge01 = 0.0f;
+    m_gaugeJustMax = false;
 
     const float finalCenterX = 0.0f;
     m_gaugeLeftX = finalCenterX - (m_gaugeFinalW * 0.5f);
@@ -119,6 +120,11 @@ void SceneLoad::Init()
 
     m_ribbonGauge.SetSize(0.0f, m_gaugeFinalH, 0);
     m_ribbonGauge.SetPos(m_gaugeLeftX, m_gaugeY, 0);
+
+    m_walkSETimer = 0.0f;
+    walkchange = 0;
+    jumpse = true;
+    m_groundUV = 0.0f;
 }
 
 void SceneLoad::BuildQueue()
@@ -135,6 +141,7 @@ void SceneLoad::Update(SceneManager& mgr)
     input.Update();
     TextureManager& tm = TextureManager::Instance();
     const float dt = 1.0f / 60.0f;
+
     m_walkSETimer += dt;
     if (m_mode != MODE_MINI)
     {
@@ -154,17 +161,35 @@ void SceneLoad::Update(SceneManager& mgr)
 
     m_frame++;
 
+    float prevGauge01 = m_gauge01;
+
     m_gaugeT += dt;
-    m_gauge01 = Clamp(m_gaugeT / 4.0f, 0.0f, 1.0f);
+
+    const float t0 = 2.8f;
+    const float t1 = 2.2f;
+
+    float g = 0.0f;
+    if (m_gaugeT <= t0)
+    {
+        float u = m_gaugeT / t0;
+        g = 0.70f * EaseOutCubic01(u);
+    }
+    else
+    {
+        float u = (m_gaugeT - t0) / t1;
+        u = Clamp(u, 0.0f, 1.0f);
+        g = 0.70f + 0.30f * EaseOutCubic01(u);
+    }
+
+    m_gauge01 = Clamp(g, 0.0f, 1.0f);
+    m_gaugeJustMax = (prevGauge01 < 1.0f && m_gauge01 >= 1.0f);
 
     float curW = m_gaugeFinalW * m_gauge01;
     float curCenterX = m_gaugeLeftX + (curW * 0.5f);
 
     m_ribbonGauge.SetPos(curCenterX, m_gaugeY, 0);
     m_ribbonGauge.SetSize(curW, m_gaugeFinalH, 0);
-
     m_ribbonGauge.SetUVCrop(m_gauge01);
-
 
     if (!m_done)
     {
@@ -184,7 +209,6 @@ void SceneLoad::Update(SceneManager& mgr)
             m_previewReady = true;
             m_previewPlayer.SetLoadPreviewAnim(m_done);
             m_wasDone = m_done;
-            if (m_done) m_mode = MODE_READY;
         }
     }
 
@@ -195,48 +219,23 @@ void SceneLoad::Update(SceneManager& mgr)
 
         m_previewPlayer.SetLoadPreviewAnim(true);
         m_wasDone = true;
-        m_mode = MODE_READY;
     }
 
     if (m_previewReady)
     {
         m_previewPlayer.UpdateForLoadPreview(dt);
     }
-    float prev = m_gauge01;
-    m_gaugeJustMax = (prev < 1.0f && m_gauge01 >= 1.0f);
 
-    if (m_done)
+    if (m_done && m_gauge01 >= 1.0f)
     {
-        if (m_mode == MODE_READY)
-        {
-            if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A))
-            {
-                MiniInit();
-                m_mode = MODE_MINI;
-            }
+        mgr.ChangeScene(m_next);
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+        return;
+    }
 
-            if (m_gauge01 >= 1) {
-                if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B))
-                {
-                    mgr.ChangeScene(m_next);
-                    g_sound->Play(SOUND_LABEL_SE_Ok);
-
-                    return;
-                }
-            }
-        }
-
-        if (m_mode == MODE_MINI)
-        {
-            MiniUpdate(dt);
-
-            if ((input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) && m_gauge01 >= 1)
-            {
-                mgr.ChangeScene(m_next);
-                g_sound->Play(SOUND_LABEL_SE_Ok);
-                return;
-            }
-        }
+    if (m_mode == MODE_MINI)
+    {
+        MiniUpdate(dt);
     }
 }
 
@@ -255,8 +254,6 @@ void SceneLoad::Draw()
     {
         MiniDraw();
     }
-
-
 }
 
 void SceneLoad::UnInit()
@@ -267,7 +264,6 @@ void SceneLoad::UnInit()
     for (size_t i = 0; i < m_obs.size(); ++i) m_obs[i].obj.UnInit();
     m_obs.clear();
     m_ribbonGauge.UnInit();
-
 }
 
 void SceneLoad::MiniInit()
@@ -331,6 +327,7 @@ void SceneLoad::MiniInit()
     m_sameCount = 0;
     m_miniDamageLock = false;
 
+    m_groundUV = 0.0f;
 }
 
 void SceneLoad::MiniReset()
@@ -482,7 +479,6 @@ void SceneLoad::MiniUpdate(float dt)
         {
             m_jumpDelayT += dt;
             m_playerY = m_groundY;
-
         }
         else
         {
@@ -492,7 +488,6 @@ void SceneLoad::MiniUpdate(float dt)
                 if (m_jumpHoldT > m_jumpHoldMax) m_jumpHoldT = m_jumpHoldMax;
                 float k = m_jumpHoldT / m_jumpHoldMax;
                 m_jumpY = m_jumpY_Short + (m_jumpY_Long - m_jumpY_Short) * k;
-
             }
             if (jumpse == true)
             {
@@ -511,7 +506,6 @@ void SceneLoad::MiniUpdate(float dt)
                 m_jumpDelayT = 0.0f;
                 m_jumpHoldT = 0.0f;
                 m_playerY = m_groundY;
-
             }
         }
     }
@@ -570,7 +564,6 @@ void SceneLoad::MiniUpdate(float dt)
             {
                 m_previewPlayer.PlayDamagePreview();
                 g_sound->Play(SOUND_LABEL_SE_Damage);
-
             }
             break;
         }

@@ -34,8 +34,7 @@ SceneGame::SceneGame(int stageNum)
 
 void SceneGame::Init()
 {
-    //  CheckAllPads();
-      // 選択されたステージ番号でロード
+   
     m_stageManager.LoadStage(m_stageNumber);
 
 
@@ -144,7 +143,6 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
     m_ButtonStageselect.SetPos(0, 0, 0);
     m_ButtonStageselect.SetSize(0, 0, 0);
 
-    // エスケープでポーズ
     if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_START))
     {
         m_state = GameState::Pouse;
@@ -152,13 +150,11 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
         return;
     }
 
-    // ステージ更新
     m_stageManager.Update();
 
     StageBase* stage = m_stageManager.GetStage();
     if (!stage) return;
 
-    // ★ ゴール判定（ここが追加）
     if (stage->IsGoalReached())
     {
         m_bgmGamePlaying = false;
@@ -166,7 +162,6 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
         return;
     }
 
-    // プレイヤー死亡判定
     if (stage->IsPlayerDead())
     {
         m_bgmGamePlaying = false;
@@ -179,7 +174,7 @@ void SceneGame::UpdatePlaying(SceneManager& mgr) {
 void SceneGame::UpdatePouse(SceneManager& mgr) {
 
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
-    const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
+    const float moveThreshold = 0.5f;  
 
     if (leftStick.y > moveThreshold)
     {
@@ -194,7 +189,6 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         m_stickNow = 0;
     }
 
-    //左スティック判定
     bool leftStickUpTrigger = (m_stickNow == 1) && !m_prevLeftStick;
     bool leftStickDownTrigger = (m_stickNow == 2) && !m_prevLeftStick;
 
@@ -408,32 +402,32 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     m_Star2.SetSize(200, 200, 0);
     m_Star3.SetSize(200, 200, 0);
 
-    // if (Star != m_prevStar)
-    {
-        switch (Star) {
-        case 0:
-            m_Star1.AddTexture("asset/UI/GrayStar.png");
-            m_Star2.AddTexture("asset/UI/GrayStar.png");
-            m_Star3.AddTexture("asset/UI/GrayStar.png");
-            break;
-        case 1:
-            m_Star1.AddTexture("asset/UI/Star.png");
-            m_Star2.AddTexture("asset/UI/GrayStar.png");
-            m_Star3.AddTexture("asset/UI/GrayStar.png");
-            break;
-        case 2:
-            m_Star1.AddTexture("asset/UI/Star.png");
-            m_Star2.AddTexture("asset/UI/Star.png");
-            m_Star3.AddTexture("asset/UI/GrayStar.png");
-            break;
-        case 3:
-            m_Star1.AddTexture("asset/UI/Star.png");
-            m_Star2.AddTexture("asset/UI/Star.png");
-            m_Star3.AddTexture("asset/UI/Star.png");
-            break;
-        }
-        m_prevStar = Star;
-    }
+    //// if (Star != m_prevStar)
+    //{
+    //    switch (Star) {
+    //    case 0:
+    //        m_Star1.AddTexture("asset/UI/GrayStar.png");
+    //        m_Star2.AddTexture("asset/UI/GrayStar.png");
+    //        m_Star3.AddTexture("asset/UI/GrayStar.png");
+    //        break;
+    //    case 1:
+    //        m_Star1.AddTexture("asset/UI/Star.png");
+    //        m_Star2.AddTexture("asset/UI/GrayStar.png");
+    //        m_Star3.AddTexture("asset/UI/GrayStar.png");
+    //        break;
+    //    case 2:
+    //        m_Star1.AddTexture("asset/UI/Star.png");
+    //        m_Star2.AddTexture("asset/UI/Star.png");
+    //        m_Star3.AddTexture("asset/UI/GrayStar.png");
+    //        break;
+    //    case 3:
+    //        m_Star1.AddTexture("asset/UI/Star.png");
+    //        m_Star2.AddTexture("asset/UI/Star.png");
+    //        m_Star3.AddTexture("asset/UI/Star.png");
+    //        break;
+    //    }
+    //    m_prevStar = Star;
+    //}
 
     if (input.GetKeyTrigger(VK_LEFT))
     {
@@ -459,7 +453,6 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     m_ResultUI.SetPos(g_cameraPos.x, g_cameraPos.y, 0);
     m_ResultUI.SetSize(1920, 1080, 0);
 
-    // スキップ（任意）
     if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
     {
         x = 1.0f;
@@ -491,7 +484,7 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         m_bgmGameOverPlaying = true;
     }
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
-    const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
+    const float moveThreshold = 0.5f; 
 
     if (leftStick.x < -moveThreshold)
     {
@@ -506,7 +499,6 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         m_stickNow = 0;
     }
 
-    //左スティック判定
     bool leftStickLeftTrigger = (m_stickNow == 1) && !m_prevLeftStick;
     bool leftStickRightTrigger = (m_stickNow == 2) && !m_prevLeftStick;
 
