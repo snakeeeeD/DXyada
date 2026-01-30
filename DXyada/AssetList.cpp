@@ -26,6 +26,7 @@ namespace AssetList
         "asset/UI/title.png",
         "asset/UI/cursor.png",
         "asset/UI/Pouse_Back.png",
+        "asset/UI/Pouse.png",              // ★追加（使ってるなら）
         "asset/UI/GameOver.png",
         "asset/UI/GrayStar.png",
         "asset/UI/Star.png",
@@ -41,16 +42,36 @@ namespace AssetList
     {
         "asset/Field/aa.png",
         "asset/Field/block.png",
+        "asset/Field/床ブロック.png",                 // ★追加
+        "asset/Field/ステージ背景.png",               // ★追加
+
         "asset/Field/Boad.png",
+
+        "asset/Field/PinDeco.png",                    // ★追加
+        "asset/Field/PinRoll.png",                    // ★追加
+        "asset/Field/PinPulled.png",                  // ★追加
+        "asset/Field/PinJump.png",
+
+        "asset/Field/星 ワッペン.png",                // ★追加
+        "asset/Field/フェルトワッペン リッパー.png",  // ★追加
+        "asset/Field/リボンちゃん ワッペン.png",       // ★追加
+
         "asset/Field/Tutorial_PinDeco.png",
         "asset/Field/Tutorial_NeedleFloor.png",
         "asset/Field/Tutorial_Rippa.png",
+        "asset/Field/Tutorial_Pinjump.png",           // ★追加
+
         "asset/Field/needle_floor.png",
+        "asset/Field/Needle_Floor_Decorated.png",     // ★追加（使うなら）
+
         "asset/Field/rippa.png",
-        "asset/Field/PinJump.png",
+        "asset/Field/Wing_Rippa.png",
+        "asset/Field/rippa_Deco.png",                 // ★追加（飾られ後）
+        // "asset/Field/Rippa_Decorated.png",          // ★必要なら（今のコードでは未使用っぽい）
     };
     const size_t FieldCount = sizeof(Field) / sizeof(Field[0]);
 
+    // All
     const char* const All[] =
     {
         // Player
@@ -71,6 +92,7 @@ namespace AssetList
         "asset/UI/title.png",
         "asset/UI/cursor.png",
         "asset/UI/Pouse_Back.png",
+        "asset/UI/Pouse.png",              // ★追加（使ってるなら）
         "asset/UI/GameOver.png",
         "asset/UI/GrayStar.png",
         "asset/UI/Star.png",
@@ -82,14 +104,33 @@ namespace AssetList
         // Field
         "asset/Field/aa.png",
         "asset/Field/block.png",
+        "asset/Field/床ブロック.png",                 // ★追加
+        "asset/Field/ステージ背景.png",               // ★追加
+
         "asset/Field/Boad.png",
+
+        "asset/Field/PinDeco.png",                    // ★追加
+        "asset/Field/PinRoll.png",                    // ★追加
+        "asset/Field/PinPulled.png",                  // ★追加
+        "asset/Field/PinJump.png",
+
+        "asset/Field/星 ワッペン.png",                // ★追加
+        "asset/Field/フェルトワッペン リッパー.png",  // ★追加
+        "asset/Field/フェルトワッペン 羽リッパー.png",  // ★追加
+        "asset/Field/リボンちゃん ワッペン.png",       // ★追加
+
         "asset/Field/Tutorial_PinDeco.png",
         "asset/Field/Tutorial_NeedleFloor.png",
         "asset/Field/Tutorial_Rippa.png",
+        "asset/Field/Tutorial_Pinjump.png",           // ★追加
+
         "asset/Field/needle_floor.png",
+        "asset/Field/Needle_Floor_Decorated.png",     // ★追加（使うなら）
+
         "asset/Field/rippa.png",
         "asset/Field/Wing_Rippa.png",
-        "asset/Field/PinJump.png",
+        "asset/Field/rippa_Deco.png",                 // ★追加
+        // "asset/Field/Rippa_Decorated.png",          // ★必要なら
     };
     const size_t AllCount = sizeof(All) / sizeof(All[0]);
 }

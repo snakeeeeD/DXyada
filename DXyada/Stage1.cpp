@@ -314,21 +314,21 @@ void Stage1::Init()
         float w2 = TILE * 5.0f;
         AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f, LOW_Y, w2, H);
 
-        Tutorial* tutorial1 = new Tutorial();
-        tutorial1->Init(
-            "asset/Field/Boad.png",
-            2200, -230, 200, 200,
-            Tutorial::Type::Move,
-            true,   //チュートリアル表示ON
-            true    //チェックポイントON
-        );
-        tutorial1->InitTutorialImage(
-            "asset/Ui/title.png",
-            1000, 500,   //表示サイズ
-            300, 450      //看板からのオフセット
-        );
-        tutorial1->SetRespawnPosition(2200, -150, 0);
-        m_tutorials.push_back(tutorial1);
+        //Tutorial* tutorial1 = new Tutorial();
+        //tutorial1->Init(
+        //    "asset/Field/Boad.png",
+        //    2200, -230, 200, 200,
+        //    Tutorial::Type::Move,
+        //    true,   //チュートリアル表示ON
+        //    true    //チェックポイントON
+        //);
+        //tutorial1->InitTutorialImage(
+        //    "asset/Ui/title.png",
+        //    1000, 500,   //表示サイズ
+        //    300, 450      //看板からのオフセット
+        //);
+        //tutorial1->SetRespawnPosition(2200, -150, 0);
+        //m_tutorials.push_back(tutorial1);
 
         x += w2;
     }
@@ -479,6 +479,7 @@ void Stage1::Init()
         DecoLinkPin link;
         link.pin = JumpPin;
         link.marker.Init("asset/Field/リボンちゃん ワッペン.png"); // 好きなやつ
+        link.marker.SetMoveMode(true);
         link.marker.Hide();
         m_pinMarkers.push_back(link);
 
@@ -492,11 +493,11 @@ void Stage1::Init()
 
             GoalPin* goalPin = new GoalPin();
             goalPin->Init(
-                "asset/Field/PinDeco.png",                 // Pin本体の見た目（好きなのでOK）
+                "asset/Field/Goal.png",                 // Pin本体の見た目（好きなのでOK）
                 platformCenterX,
-                platformTopY + (pinH * 0.5f),              // 足場の上面 + Pin半分
-                pinW,
-                pinH
+                platformTopY + (pinH * 0.5f) + 200,              // 足場の上面 + Pin半分
+                100,
+                400
             );
             goalPin->SetCollisionManager(m_collision);
 

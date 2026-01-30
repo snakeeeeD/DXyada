@@ -223,7 +223,7 @@ void TutorialStage2::Init()
     // Player
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 250, 0);
+    m_player.GetObject()->SetPos(7000, 250, 0);
 
     m_isGoalReached = false;
     m_isPlayerDead = false;
@@ -419,7 +419,7 @@ void TutorialStage2::Init()
 
         {
             BlockPin* m_targetPin2 = new BlockPin;
-            m_targetPin2->Init(FLOOR_TEX, x + 580.0, -433.0f, 360, 65);
+            m_targetPin2->Init("asset/Field/フェルトブロック.png", x + 580.0, -433.0f, 360, 65);
             m_targetPin2->SetCollisionManager(m_collision);
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
