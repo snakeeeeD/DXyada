@@ -111,7 +111,7 @@ void TutorialStage2::BuildDrawList()
     for (size_t i = 0; i < m_enemyMarkers.size(); ++i)
     {
         item.obj = m_enemyMarkers[i].marker.GetObject();
-        item.layer = DrawLayer::BackObject;
+        item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
 
     }
@@ -319,7 +319,7 @@ void TutorialStage2::Init()
             true,
             true
         );
-        tutorial->InitTutorialImage("asset/Ui/title.png", 1000, 750, 300, 450);
+        tutorial->InitTutorialImage("asset/Field/チュートリアル看板2-2.png", 1000, 500, 300, 450);
         tutorial->SetRespawnPosition(x - 200, -150, 0);
         m_tutorials.push_back(tutorial);
 
@@ -364,7 +364,7 @@ void TutorialStage2::Init()
             true,
             true
         );
-        tutorial->InitTutorialImage("asset/Ui/title.png", 1000, 750, 300, 450);
+        tutorial->InitTutorialImage("asset/Field/チュートリアル看板2-4.png", 1000, 500, 300, 450);
         tutorial->SetRespawnPosition(x - 200, -150, 0);
         m_tutorials.push_back(tutorial);
 
@@ -414,12 +414,12 @@ void TutorialStage2::Init()
         float section7EndX = 8000.0f;
 
         float w1 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w1 * 0.5f, -700, w1, H);
+        AddPlatform(FLOOR_TEX, x + w1 * 0.5f, -700, w1, H);
         x += w1;
 
         {
             BlockPin* m_targetPin2 = new BlockPin;
-            m_targetPin2->Init("asset/Field/block.png", x + 580.0, -433.0f, 360, 65);
+            m_targetPin2->Init(FLOOR_TEX, x + 580.0, -433.0f, 360, 65);
             m_targetPin2->SetCollisionManager(m_collision);
             m_targetPin2->SetcanRollPin(true);
             m_targetPin2->SetcanDecorate(false);
@@ -447,7 +447,7 @@ void TutorialStage2::Init()
         x += 500;
 
         float w2 = TILE * 1.0f;
-        AddPlatform("asset/Field/block.png", x + w2 * 0.1f, -700, 350, H);
+        AddPlatform(FLOOR_TEX, x + w2 * 0.1f, -700, 350, H);
         x += w2;
     }
 
@@ -477,7 +477,7 @@ void TutorialStage2::Init()
         m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
 
 
-        AddPlatform("asset/Field/block.png", x + w1 * 0.45f, -700, w1, H);
+        AddPlatform(FLOOR_TEX, x + w1 * 0.45f, -700, w1, H);
         x += w1;
     }
 
@@ -529,7 +529,7 @@ void TutorialStage2::Update()
         const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
 
         // トリガー例
-        if (playerPos.x > 6500.0f)
+        if (playerPos.x > 6000.0f)
             m_cameraTargetOffset = -150.0f;
         else
             m_cameraTargetOffset = 0.0f;

@@ -155,10 +155,6 @@ void WingRippa::Disable(bool justdeco)
 {
 
     Enemy::Disable(justdeco);
+    m_object.PlayAnimation("Decoration");
 
-    if (justdeco)
-    {
-
-        m_object.PlayAnimation("Decoration");
-    }
 }

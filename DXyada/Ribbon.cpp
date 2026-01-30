@@ -244,6 +244,8 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
             {
                 if (!enemy) continue;
 
+                if (enemy->IsDead()) continue;
+
                 auto pos = enemy->GetObject()->GetPos();
                 auto size = enemy->GetObject()->GetSize();
 

@@ -586,7 +586,7 @@ void Player::Update(
                 // 必要時間に達したら撃破
                 if (m_LT)
                 {
-                    
+              
                     hitEnemy->Disable(true);
                     m_ribbon.Return();
                     m_isRibbonOut = false;
@@ -1102,6 +1102,8 @@ void Player::Update(
         for (auto enemy : enemies)
         {
             if (!enemy) continue;
+            if (enemy->IsDead()) continue;
+
             m_circleKind = 0;
 
 
@@ -1202,11 +1204,6 @@ void Player::Update(
 
             // 方向一致度（内積）
             float dot = (dirX * toX + dirY * toY) / dist;
-
-
-       
-
-
 
             // ±20度以内か
             if (dot > angleThreshold)
