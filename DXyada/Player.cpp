@@ -1389,12 +1389,7 @@ void Player::Update(
             {
                 m_isAssist = true;
             }
-            if (m_isAim)
-            {
-                g_sound->Play(SOUND_LABEL_SE_Aim);
-                m_isAim = false;
-            }
-
+         
         }
 
         //------------------------------------
