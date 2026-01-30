@@ -9,11 +9,12 @@ extern DirectX::XMFLOAT3 g_cameraPos;
 //==================================================
 // Marker registration (Stage1互換)
 //==================================================
-void TutorialStage2::RegisterEnemyMarker(Enemy* enemy, const char* markerTex)
+void TutorialStage2::RegisterEnemyMarker(Enemy* enemy, const char* markerTex, bool isMove)
 {
     DecoLinkEnemy el;
     el.enemy = enemy;
     el.marker.Init(markerTex);
+    el.marker.SetMoveMode(isMove);
     el.marker.Hide();
     m_enemyMarkers.push_back(el);
 }
@@ -112,6 +113,7 @@ void TutorialStage2::BuildDrawList()
         item.obj = m_enemyMarkers[i].marker.GetObject();
         item.layer = DrawLayer::BackObject;
         m_drawList.push_back(item);
+
     }
 
     // --- Pin marker（Stage1と同じ）---
@@ -134,7 +136,15 @@ void TutorialStage2::BuildDrawList()
     for (size_t i = 0; i < m_pins.size(); ++i)
     {
         item.obj = m_pins[i]->GetMarkObject();
-        item.layer = DrawLayer::BackObject;
+        item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);
+
+        item.obj = m_pins[i]->GetMarkObject2();
+        item.layer = DrawLayer::Enemy;
+        m_drawList.push_back(item);
+
+        item.obj = m_pins[i]->GetMarkObject3();
+        item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
 
         item.obj = m_pins[i]->GetObject();
@@ -176,6 +186,10 @@ void TutorialStage2::BuildDrawList()
     m_drawList.push_back(item);
 
     item.obj = m_player.GetCircle();
+    item.layer = DrawLayer::Player;
+    m_drawList.push_back(item);
+
+    item.obj = m_player.GetJustkiran();
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
@@ -254,7 +268,7 @@ void TutorialStage2::Init()
     m_pins.clear();
     m_tutorials.clear();
     m_goal.clear();
-    m_spawnQueue.clear();
+  //  m_spawnQueue.clear();
     m_pinMarkers.clear();
     m_enemyMarkers.clear();
     m_drawList.clear();
@@ -383,14 +397,14 @@ void TutorialStage2::Init()
         rippa->Init("asset/Field/rippa.png", x + 700, HIGH_Y + 360, 140, 150);
         rippa->SetCollisionManager(m_collision);
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png");
+        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
 
         // WingRippa
         WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
         wirippa->Init("asset/Field/Wing_Rippa.png", x + 900, HIGH_Y + 550, 150, 150);
         wirippa->SetCollisionManager(m_collision);
         m_enemies.push_back(wirippa);
-        RegisterEnemyMarker(wirippa, "asset/Field/星 ワッペン.png"); // 好きに差し替え
+        RegisterEnemyMarker(wirippa, "asset/Field/フェルトワッペン 羽リッパー.png",true);
 
         x += sectionW;
     }
@@ -458,7 +472,7 @@ void TutorialStage2::Init()
 
         //m_collision->AddStatic(m_targetPin->GetObject());
         m_targetPin->SetForceGround(true);
-        m_targetPin->SetLimitPos(x + 100, x, -418.0f, -418.0f);
+        m_targetPin->SetLimitPos(x , x-150, -418.0f, -418.0f);
         m_targetPin->SetMoveAxis(BlockPin::MoveAxis::Horizontal);
         m_collision->SetTag(m_targetPin->GetObject(), ColliderTag::Platform);
 
@@ -515,7 +529,7 @@ void TutorialStage2::Update()
         const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
 
         // トリガー例
-        if (playerPos.x > 7000.0f)
+        if (playerPos.x > 6500.0f)
             m_cameraTargetOffset = -150.0f;
         else
             m_cameraTargetOffset = 0.0f;
@@ -554,29 +568,16 @@ void TutorialStage2::Update()
         }
     }
 
-    //==================================================
-    // (C) Enemies Update + Enemy vs Enemy
-    //==================================================
-    for (size_t i = 0; i < m_enemies.size(); ++i)
-    {
-        Enemy* enemy = m_enemies[i];
-        if (!enemy) continue;
-
-        enemy->Update(dt);
-
-        if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
-            rippa->CheckEnemyCollision(m_enemies);
-    }
 
     //==================================================
     // (D) SpawnQueue flush
     //==================================================
-    if (!m_spawnQueue.empty())
-    {
-        for (size_t i = 0; i < m_spawnQueue.size(); ++i)
-            m_enemies.push_back(m_spawnQueue[i]);
-        m_spawnQueue.clear();
-    }
+    //if (!m_spawnQueue.empty())
+    //{
+    //    for (size_t i = 0; i < m_spawnQueue.size(); ++i)
+    //        m_enemies.push_back(m_spawnQueue[i]);
+    //    m_spawnQueue.clear();
+    //}
 
     //==================================================
     // (E) Pins Update
@@ -636,39 +637,78 @@ void TutorialStage2::Update()
     }
 
     //==================================================
-    // (I) Player vs Enemy damage
+    // (I)Enemy
     //==================================================
-    {
-        const auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+    for (auto& enemy : m_enemies) {
+        if (!enemy) continue;
 
-        for (size_t i = 0; i < m_enemies.size(); ++i)
+        enemy->Update(dt);
+
+        //リッパー君の場合は敵同士の衝突をチェック
+        if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
         {
-            Enemy* enemy = m_enemies[i];
-            if (!enemy) continue;
-            if (enemy->IsDead()) continue;
+            rippa->CheckEnemyCollision(m_enemies);
+        }
 
-            const auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
-            if (!m_collision->CheckOverlap(playerAABB, enemyAABB))
-                continue;
+        NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy);
 
-            const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
-            const DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
+        if (enemy->IsDead())
+        {
+            continue;
+        }
 
-            DirectX::XMFLOAT2 knockbackDir =
-            {
+
+        auto playerAABB = m_collision->GetAABB(m_player.GetObject());
+        auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
+
+        m_enemies.erase(
+            std::remove_if(
+                m_enemies.begin(),
+                m_enemies.end(),
+                [&](Enemy* enemy)
+                {
+                    if (enemy->IsDead())
+                    {
+                        m_collision->Remove(enemy->GetObject());
+                        return true;
+                    }
+                    return false;
+                }
+            ),
+            m_enemies.end()
+        );
+
+        if (m_collision->CheckOverlap(playerAABB, enemyAABB))
+        {
+            DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+            DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
+
+            DirectX::XMFLOAT2 knockbackDir = {
                 playerPos.x - enemyPos.x,
                 playerPos.y - enemyPos.y
             };
 
-            m_player.TakeDamage(1, knockbackDir);
-            g_sound->Play(SOUND_LABEL_SE_Damage);
+            //リッパー君の場合は敵同士の衝突をチェック
+            if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
+            {
+                m_player.TakeDamage(1, knockbackDir);
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+
+            }
+            else if (needleflr->GetState() != NeedleFloor::State::Decorated)
+            {
+                m_player.TakeDamage(1, knockbackDir);
+                g_sound->Play(SOUND_LABEL_SE_Damage);
+
+            }
+
+
         }
     }
-
     //==================================================
     // (J) Remove dead enemies（ループ中erase禁止）
     //==================================================
-    m_enemies.erase(
+    /*m_enemies.erase(
         std::remove_if(
             m_enemies.begin(),
             m_enemies.end(),
@@ -686,7 +726,7 @@ void TutorialStage2::Update()
                 return false;
             }),
         m_enemies.end()
-    );
+    );*/
 
     //==================================================
     // (K) HP UI
@@ -802,13 +842,13 @@ void TutorialStage2::UnInit()
     m_enemies.clear();
 
     // spawnQueue（残ってたら解放）
-    for (size_t i = 0; i < m_spawnQueue.size(); ++i)
+   /* for (size_t i = 0; i < m_spawnQueue.size(); ++i)
     {
         if (!m_spawnQueue[i]) continue;
         m_spawnQueue[i]->UnInit();
         delete m_spawnQueue[i];
     }
-    m_spawnQueue.clear();
+    m_spawnQueue.clear();*/
 
     // Background / Player
     m_background.UnInit();

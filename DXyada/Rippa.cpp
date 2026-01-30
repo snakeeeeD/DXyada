@@ -42,6 +42,7 @@ void Rippa::Update(float deltaTime)
         break;
 
     case Type::Wandering:
+        CheckCollision();
         CheckWandering(deltaTime);
         break;
     }

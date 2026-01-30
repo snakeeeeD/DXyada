@@ -622,8 +622,7 @@ void Stage1::Update()
     }
 
     //==================================================
-    // (G) Player vs Enemy damage check
-    //   ¦ ‚±‚±‚Íu“GUpdate‚Ìfor“à‚Åerasev‚µ‚Ä‚½‚Ì‚ªŠëŒ¯‚È‚Ì‚Å•ª—£
+    // (G) Enemy
     //==================================================
     for (auto& enemy : m_enemies) {
         if (!enemy) continue;
@@ -716,7 +715,7 @@ void Stage1::Update()
     //==================================================
     // (H) Remove dead enemies (erase-remove)
     //==================================================
-    m_enemies.erase(
+ /*   m_enemies.erase(
         std::remove_if(
             m_enemies.begin(),
             m_enemies.end(),
@@ -734,7 +733,7 @@ void Stage1::Update()
                 return false;
             }),
         m_enemies.end()
-    );
+    );*/
 
     //==================================================
     // (I) HP UI update

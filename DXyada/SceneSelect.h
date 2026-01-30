@@ -11,6 +11,7 @@ private:
     Object m_stage2;
     Object m_stage3;
     Object m_cursor;
+    Object m_YesBack;
     Camera m_camera;
 
     int m_stage = 1;

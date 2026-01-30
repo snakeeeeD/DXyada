@@ -22,7 +22,7 @@
         void SetResoawnPos(DirectX::XMFLOAT3 respos);
 
         // --- Marker registration (Stage1ŒÝŠ·) ---
-        void RegisterEnemyMarker(Enemy* enemy, const char* markerTex);
+        void RegisterEnemyMarker(Enemy* enemy, const char* markerTex, bool isMove);
 
     private:
         //========================

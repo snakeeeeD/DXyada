@@ -16,17 +16,22 @@ void SceneSelect::Init() {
 
     m_stage1.Init();
     m_stage1.AddTexture("asset/UI/ステージ1_バナー.png");
-    m_stage1.SetPos(-400, -250, 0);
+    m_stage1.SetPos(-400, -200, 0);
     m_stage1.SetSize(700, 500, 0);
 
     m_stage2.Init();
     m_stage2.AddTexture("asset/UI/ステージ2_バナー.png");
-    m_stage2.SetPos(400, -250, 0);
+    m_stage2.SetPos(400, -200, 0);
     m_stage2.SetSize(700, 500, 0);
+
+    m_YesBack.Init();
+    m_YesBack.AddTexture("asset/UI/YesBack.png");
+    m_YesBack.SetPos(700, -500, 0);
+    m_YesBack.SetSize(400, 100, 0);
 
     m_cursor.Init();
     m_cursor.AddTexture("asset/UI/cursor.png");
-    m_cursor.SetPos(-650, -50, 0);
+    m_cursor.SetPos(-700, 30, 0);
     m_cursor.SetSize(200, 200, 0);
 
     TextureManager& tm = TextureManager::Instance();
@@ -56,6 +61,7 @@ void SceneSelect::Init() {
     tm.Enqueue("asset/UI/ステージ1_バナー.png");
     tm.Enqueue("asset/UI/ステージ2_バナー.png");
     tm.Enqueue("asset/UI/ステージ選択_背景.png");
+    tm.Enqueue("asset/UI/YesBack.png");
 
     tm.Enqueue("asset/Field/aa.png");
     tm.Enqueue("asset/Field/block.png");
@@ -111,7 +117,7 @@ void SceneSelect::Update(SceneManager& mgr)
         leftStickLTrigger)
     {
         m_stage = 1;
-        m_cursor.SetPos(-700, -50, 0);
+        m_cursor.SetPos(-700, 30, 0);
         g_sound->Play(SOUND_LABEL_SE_Select);
 
     }
@@ -121,7 +127,7 @@ void SceneSelect::Update(SceneManager& mgr)
         leftStickRTrigger)
     {
         m_stage = 2;
-        m_cursor.SetPos(100, -50, 0);
+        m_cursor.SetPos(100, 30, 0);
         g_sound->Play(SOUND_LABEL_SE_Select);
 
     }
@@ -175,6 +181,13 @@ void SceneSelect::Draw() {
         g_pPixelShader,
         g_pConstantBuffer
     );
+    m_YesBack.Draw(
+        g_pDeviceContext,
+        g_pInputLayout,
+        g_pVertexShader,
+        g_pPixelShader,
+        g_pConstantBuffer
+    );
     m_cursor.Draw(
         g_pDeviceContext,
         g_pInputLayout,
@@ -190,5 +203,6 @@ void SceneSelect::UnInit() {
     m_stage1.UnInit();
     m_stage2.UnInit();
     m_stage3.UnInit();
+    m_YesBack.UnInit();
     m_cursor.UnInit();
 }
