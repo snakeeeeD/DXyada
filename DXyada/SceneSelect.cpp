@@ -78,6 +78,7 @@ void SceneSelect::Init() {
 
 void SceneSelect::Update(SceneManager& mgr)
 {
+    g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
     g_sound->Play(SOUND_LABEL_BGM_SELECT);
 
     if (Loadtime == 2) {
@@ -140,10 +141,10 @@ void SceneSelect::Update(SceneManager& mgr)
         g_sound->Stop(SOUND_LABEL_BGM_SELECT);
     }
 
-    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
-        mgr.SetSelectedStage(99);
-        mgr.ChangeScene(SCENE_GAME);
-        g_sound->Play(SOUND_LABEL_SE_Ok);
+    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_B)) {
+        mgr.SetSelectedStage(SCENE_TITLE);
+        mgr.ChangeScene(SCENE_TITLE);
+        g_sound->Play(SOUND_LABEL_SE_Back);
         g_sound->Stop(SOUND_LABEL_BGM_SELECT);
     }
     m_prevLeftStick = m_stickNow;

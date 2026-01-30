@@ -75,19 +75,12 @@ void SceneTitle::Update(SceneManager& mgr) {
     }
 
     // スペースキーでゲーム開始
-    if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonPress(XINPUT_A)) {
+    if (input.GetKeyTrigger(VK_SPACE) || input.GetButtonTrigger(XINPUT_A) || input.GetButtonTrigger(XINPUT_B) || input.GetButtonTrigger(XINPUT_X) || input.GetButtonTrigger(XINPUT_Y)) {
         g_sound->Play(SOUND_LABEL_SE_Ok);
          g_sound->Stop(SOUND_LABEL_BGM_TITLE);
         mgr.ChangeScene(SCENE_SELECT);
     }
 
-    if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonPress(XINPUT_B)) {
-        g_sound->Play(SOUND_LABEL_SE_Ok);
-        g_sound->Stop(SOUND_LABEL_BGM_TITLE);
-        mgr.SetSelectedStage(99);
-        mgr.ChangeScene(SCENE_GAME);
-      
-    }
 }
 
 void SceneTitle::Draw() {
