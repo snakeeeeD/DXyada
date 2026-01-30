@@ -386,16 +386,6 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
         m_bgmClearPlaying = true;
     }
 
-    //g_sound->Play(SOUND_LABEL_BGM_CLEAR);
-
-    static bool bgmClearPlaying = false;
-
-    if (!bgmClearPlaying)
-    {
-        g_sound->Stop(SOUND_LABEL_BGM_GAME);
-        g_sound->Play(SOUND_LABEL_BGM_CLEAR);
-        bgmClearPlaying = true;
-    }
 
     const float dt = 1.0f / 60.0f;
     m_resultCam.t += dt;
@@ -483,8 +473,6 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
             m_bgmClearPlaying = false;
-
-            bgmClearPlaying = false;
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
         }

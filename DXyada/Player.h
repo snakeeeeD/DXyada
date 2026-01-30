@@ -31,6 +31,7 @@ private:
 	Object m_guideline;
 	Ribbon m_ribbon;
 	Object m_Circle;
+	Object m_justkiran;
 
 	float deltaTime;//ˆê“x“Ç‚İ‚Ş‚½‚Ñ‚É‰½•b•ª‚·‚·‚Ş‚©
 	float m_walkSETimer = 0.0f;
@@ -161,6 +162,7 @@ public:
 	Object* GetObject() { return &m_player; }
 	Object* GetGuideLineObject() { return &m_guideline; }
 	Object* GetCircle() { return &m_Circle; }
+	Object* GetJustkiran() { return &m_justkiran; }
 	void Init();
 	void SetPos(float Pos_X, float Pos_Y);
 	void Update(

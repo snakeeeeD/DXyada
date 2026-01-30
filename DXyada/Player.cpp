@@ -118,9 +118,15 @@ void Player::Init() {
     m_guideline.SetPos(g_StartPlayer.x, g_StartPlayer.y, 0);
     m_guideline.SetSize(m_baseGuidelineLength, 20, 0);
 
+    //アシスト用
     m_Circle.Init();
     m_Circle.AddTexture("asset/Player/Circle2.png");
     m_Circle.SetSize(100, 100, 0);
+
+    m_justkiran.Init();
+    m_justkiran.AddTexture("asset/Field/bbbbb.png");
+    m_justkiran.SetSize(300, 300, 0);
+
 
     m_ribbon.Init();
     m_ribbon.SetCollisionManager(m_collisionMgr);
@@ -640,7 +646,7 @@ void Player::Update(
                 m_holdRTTimer = 0.0f;
                 m_targetEnemy = nullptr;
                 hitEnemy->SetSlow(false);
-
+                m_justkiran.SetColor(1.0, 1.0, 1.0, 0.0);
             }
 
 
@@ -867,6 +873,10 @@ void Player::Update(
                                 m_isBack = false;
                             }
                         }
+                        else
+                        {
+                            m_justkiran.SetColor(1.0, 1.0, 1.0, 0.0);
+                        }
                         if (m_isKiran == false)
                         {
                             m_isKiran = true;
@@ -991,6 +1001,7 @@ void Player::Update(
             m_circleKind = 0;
             m_decoratingEffectBack.SetColor(1, 1, 1, 0);
             m_decoratingEffectFront.SetColor(1, 1, 1, 0);
+            m_justkiran.SetColor(1.0, 1.0, 1.0, 0.0);
             m_holdLTTimer = 0.0f;
             // 敵を掴んでいない時は凍結解除
             for (auto enemy : enemies)
@@ -1323,8 +1334,16 @@ void Player::Update(
             // ターゲットあり色
             m_guideline.SetColor(1, 0.5f, 0.5f, 0.8f);
 
+
+            if (0.2f < m_holdLTTimer && m_holdLTTimer < 0.4f)
+            {
+                 m_justkiran.SetColor(1.0, 1.0, 1.0, 1.0);
+            }
+         
+
             // ターゲット円表示
             m_Circle.SetPos(m_targetPosition.x, m_targetPosition.y, 0);
+            m_justkiran.SetPos(m_targetPosition.x, m_targetPosition.y, 0);
 
             //円の色の種類分け
             switch (m_circleKind)
@@ -1689,6 +1708,7 @@ void Player::Uninit()
     m_guideline.UnInit();
     m_ribbon.UnInit();
     m_Circle.UnInit();
+    m_justkiran.UnInit();
     m_decoratingEffectBack.UnInit();
     m_decoratingEffectFront.UnInit();
 }

@@ -202,6 +202,10 @@ void Stage1::BuildDrawList()
     item.layer = DrawLayer::Player;
     m_drawList.push_back(item);
 
+    item.obj = m_player.GetJustkiran();
+    item.layer = DrawLayer::Player;
+    m_drawList.push_back(item);
+
     for (auto* obj : m_player.GetRibbon().GetDrawObjects())
     {
         DrawItem it;
