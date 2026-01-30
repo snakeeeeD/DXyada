@@ -760,7 +760,12 @@ void TutorialStage2::Update()
         m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     }
-
+    if (m_isGoalReached == true)
+    {
+        m_HP_UI1.SetColor(0.0f, 0.0f, 0.0f, 0);
+        m_HP_UI2.SetColor(0.0f, 0.0f, 0.0f, 0);
+        m_HP_UI3.SetColor(0.0f, 0.0f, 0.0f, 0);
+    }
     //==================================================
     // (L) Markers（Stage1互換：飾った瞬間の表示）
     //==================================================

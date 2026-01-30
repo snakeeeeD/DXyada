@@ -52,7 +52,6 @@ private:
 
 	bool m_isPinJumping = false;
 	bool m_isAssist = true;
-	bool m_isAim = true;
 	bool m_isDecorate = true;
 	bool m_isKiran = true;
 	bool m_isBack = true;
