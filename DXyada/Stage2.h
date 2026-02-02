@@ -30,8 +30,8 @@ public:
     bool IsGoalReached() const override { return m_isGoalReached; }
 
     void Respawn();
-    DirectX::XMFLOAT3 GetRespawnPosition() const { return m_currentCheckpoint; }
-    void SetResoawnPos(DirectX::XMFLOAT3 respos);
+    DirectX::XMFLOAT3 GetRespawnPosition() const override { return m_currentCheckpoint; }
+    void SetRespawnPos(DirectX::XMFLOAT3 respos) override;
 
     void RegisterEnemyMarker(Enemy* enemy, const char* markerTex, bool isMove);
     void RegisterPinMarker(Pin* pin, const char* markerTex, bool isMove);
@@ -86,13 +86,13 @@ private:
     void BuildDrawList();
 
    
-    bool  m_isGoalReached = false;
+    //bool  m_isGoalReached = false;
     bool  m_isPlayerDead = false;
     float m_fallDeadLineY = -800.0f;
 
     
-    DirectX::XMFLOAT3 m_currentCheckpoint{};
-    bool              m_hasCheckpoint = false;
+    //DirectX::XMFLOAT3 m_currentCheckpoint{};
+    //bool              m_hasCheckpoint = false;
 
   
     void AddPlatform(const char* tex, float x, float y, float w, float h);

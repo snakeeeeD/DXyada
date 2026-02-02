@@ -1505,8 +1505,6 @@ void Player::Update(
             }
         }
 
-
-
         if (m_holdRTTimer >= m_holdRTRequired)
         {
             m_ribbon.Return();

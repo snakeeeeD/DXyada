@@ -200,19 +200,24 @@ void Stage1::BuildDrawList()
 }
 void Stage1::Init()
 {
-    g_cameraPos = { 0, 0, 0 };
-
     m_collision = new CollisionManager();
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(000, 150, 0);
+
+    DirectX::XMFLOAT3 startPos = m_currentCheckpoint;
+
+    if (m_hasCheckpoint) {
+        m_player.GetObject()->SetPos(m_currentCheckpoint.x, m_currentCheckpoint.y, m_currentCheckpoint.z);
+    }
+    else {
+        m_player.GetObject()->SetPos(0, 150, 0);
+        m_currentCheckpoint = { 0, 150, 0 };
+    }
+    m_player.GetObject()->SetPos(startPos.x, startPos.y, startPos.z);
 
     m_isGoalReached = false;
     m_isPlayerDead = false;
-
-    m_currentCheckpoint = { 0, 150, 0 };
-    m_hasCheckpoint = true;
 
     m_background.Init();
     m_background.AddTexture("asset/Field/ÉXÉeÅ[ÉWîwåi.png");
@@ -704,6 +709,7 @@ void Stage1::Update()
 
     if (m_player.isDead())
     {
+        SetRespawnPos(m_currentCheckpoint);
         m_isPlayerDead = true;
     }
 }
@@ -767,8 +773,6 @@ void Stage1::UnInit()
 
 void Stage1::Respawn()
 {
-    if (!m_hasCheckpoint)
-        return;
 
     m_player.SetInvincible(false);
 
@@ -782,7 +786,7 @@ void Stage1::Respawn()
 
 }
 
-void Stage1::SetResoawnPos(DirectX::XMFLOAT3 respawnpos)
+void Stage1::SetRespawnPos(DirectX::XMFLOAT3 respawnpos)
 {
     m_currentCheckpoint = respawnpos;
 }

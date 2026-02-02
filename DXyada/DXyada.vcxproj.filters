@@ -108,12 +108,20 @@
     <ClCompile Include="Stage2.cpp">
       <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
     </ClCompile>
-    <ClCompile Include="AssetList.cpp" />
-    <ClCompile Include="DecoMarker.cpp" />
-    <ClCompile Include="GoalPin.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="SceneLoad.cpp">
       <Filter>ソースファイル\10-Scene管理\04-SceneLoad</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetList.cpp">
+      <Filter>ソースファイル\04-描画関係\05-AssetList</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalPin.cpp">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\11-GoalPin</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>ソースファイル\01-Manager管理\04-TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DecoMarker.cpp">
+      <Filter>ソースファイル\04-描画関係\06-DecoMarker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,12 +239,20 @@
     <ClInclude Include="Stage2.h">
       <Filter>ソースファイル\20-Stage管理\02-Stage2</Filter>
     </ClInclude>
-    <ClInclude Include="AssetList.h" />
-    <ClInclude Include="DecoMarker.h" />
-    <ClInclude Include="GoalPin.h" />
-    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="SceneLoad.h">
       <Filter>ソースファイル\10-Scene管理\04-SceneLoad</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetList.h">
+      <Filter>ソースファイル\04-描画関係\05-AssetList</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalPin.h">
+      <Filter>ソースファイル\02-Object管理\05-Gimmick\11-GoalPin</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>ソースファイル\01-Manager管理\04-TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DecoMarker.h">
+      <Filter>ソースファイル\04-描画関係\06-DecoMarker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -386,6 +402,18 @@
     </Filter>
     <Filter Include="ソースファイル\10-Scene管理\04-SceneLoad">
       <UniqueIdentifier>{28f8f9f7-5d7e-452a-ae5f-15251ceeb505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係\05-AssetList">
+      <UniqueIdentifier>{ff17abb8-6ab1-48ab-8193-18c7ba70404b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\02-Object管理\05-Gimmick\11-GoalPin">
+      <UniqueIdentifier>{8f0e7f21-eca6-4a4f-81d9-bf2fd260946b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\01-Manager管理\04-TextureManager">
+      <UniqueIdentifier>{beac6a41-a7ce-4da0-baf2-c242bed54a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\04-描画関係\06-DecoMarker">
+      <UniqueIdentifier>{692af381-4407-49f4-b652-8e059aa8cda3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

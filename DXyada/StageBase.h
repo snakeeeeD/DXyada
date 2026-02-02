@@ -39,6 +39,10 @@ struct DrawItem {
 class StageBase {
 protected:
     bool m_isGoalReached = false;
+
+    DirectX::XMFLOAT3 m_currentCheckpoint = { 0, 0, 0 };
+    bool m_hasCheckpoint = false;
+
 public:
     virtual ~StageBase() {}
 
@@ -50,4 +54,8 @@ public:
     virtual bool IsPlayerDead() = 0;
     virtual bool IsGoalReached() const { return m_isGoalReached; }
 
+    virtual DirectX::XMFLOAT3 GetRespawnPosition() const { return m_currentCheckpoint; }
+    virtual void SetRespawnPos(DirectX::XMFLOAT3 respawnpos) { m_currentCheckpoint = respawnpos; }
+
+    friend class StageManager;
 };

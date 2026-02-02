@@ -206,7 +206,19 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    m_player.GetObject()->SetPos(0, 150, 0);
+    //m_player.GetObject()->SetPos(0, 150, 0);
+
+    DirectX::XMFLOAT3 startPos = m_currentCheckpoint;
+
+    if (m_hasCheckpoint) {
+        m_player.GetObject()->SetPos(m_currentCheckpoint.x, m_currentCheckpoint.y, m_currentCheckpoint.z);
+    }
+    else {
+        m_player.GetObject()->SetPos(0, 150, 0);
+        m_currentCheckpoint = { 0, 150, 0 };
+    }
+    m_player.GetObject()->SetPos(startPos.x, startPos.y, startPos.z);
+
 
     m_isGoalReached = false;
     m_isPlayerDead = false;
@@ -671,10 +683,21 @@ void TutorialStage2::Update()
         m_HP_UI3.SetColor(0.0f, 0.0f, 0.0f, 0);
     }
    
-    for (size_t i = 0; i < m_pinMarkers.size(); ++i)
+  /*  for (size_t i = 0; i < m_pinMarkers.size(); ++i)
     {
         pm.marker.Update(dt, pm.pin ? pm.pin->GetObject() : nullptr);
 
+        if (!pm.pin) continue;
+
+        const Pin::MarkerEvent ev = pm.pin->ConsumeMarkerEvent();
+        if (ev == Pin::MarkerEvent::None) continue;
+
+        pm.marker.ShowAtHead(pm.pin->GetObject(), 120.0f, 300.0f, 200.0f);
+    }*/
+
+    for (auto& pm : m_pinMarkers)
+    {
+        pm.marker.Update(dt);
         if (!pm.pin) continue;
 
         const Pin::MarkerEvent ev = pm.pin->ConsumeMarkerEvent();
@@ -806,7 +829,6 @@ void TutorialStage2::UnInit()
 
 void TutorialStage2::Respawn()
 {
-    if (!m_hasCheckpoint) return;
 
     m_player.SetInvincible(false);
 
@@ -819,7 +841,7 @@ void TutorialStage2::Respawn()
     m_isPlayerDead = false;
 }
 
-void TutorialStage2::SetResoawnPos(DirectX::XMFLOAT3 respawnpos)
+void TutorialStage2::SetRespawnPos(DirectX::XMFLOAT3 respawnpos)
 {
     m_currentCheckpoint = respawnpos;
 }

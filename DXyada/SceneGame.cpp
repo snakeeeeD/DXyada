@@ -35,10 +35,11 @@ SceneGame::SceneGame(int stageNum)
 void SceneGame::Init()
 {
    
+    m_bgmGamePlaying = false;
+    m_bgmClearPlaying = false;
+    m_bgmGameOverPlaying = false;
+
     m_stageManager.LoadStage(m_stageNumber);
-
-
-
 
     Pouse_BackGround.Init();
     Pouse_BackGround.AddTexture("asset/UI/Pouse.png");
@@ -88,7 +89,6 @@ void SceneGame::Update(SceneManager& mgr)
     switch (m_state)
     {
     case GameState::Playing:
-        //g_sound->Play(SOUND_LABEL_BGM_GAME);
         UpdatePlaying(mgr);
         break;
 
@@ -101,7 +101,6 @@ void SceneGame::Update(SceneManager& mgr)
         break;
 
     case GameState::GameOver:
-        //g_sound->Play(SOUND_LABEL_BGM_GAMEOVER);
         UpdateGameOver(mgr);
         break;
     }
@@ -110,8 +109,6 @@ void SceneGame::Update(SceneManager& mgr)
 void SceneGame::UpdatePlaying(SceneManager& mgr) {
     /*g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
     g_sound->Play(SOUND_LABEL_BGM_GAME);*/
-
-
 
     if (!m_bgmGamePlaying)
         /*g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
@@ -240,6 +237,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
 
     switch (m_cursorNum)
     {
+        //コンティニュー
     case 0:
         m_cursor.SetPos(g_cameraPos.x + 320, g_cameraPos.y + 145, 0);
         m_Buttoncontinue.SetSize(670, 185, 0);
@@ -257,6 +255,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         }
         break;
 
+        //リトライ
     case 1:
         m_cursor.SetPos(g_cameraPos.x + 320, g_cameraPos.y - 90, 0);
         m_Buttoncontinue.SetSize(572, 160, 0);
@@ -269,12 +268,17 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         m_ButtonStageselect.PlayAnimation("NotSerect");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
-            mgr.ChangeScene(SCENE_GAME);
+            /*mgr.ChangeScene(SCENE_GAME);*/
+            m_stageManager.ResetCheckpoint();
+            m_stageManager.LoadStage(m_stageNumber, false);  // fromRetry = true
+            m_state = GameState::Playing;
+
             g_sound->Play(SOUND_LABEL_SE_Ok);
             g_sound->Stop(SOUND_LABEL_BGM_GAME);
         }
         break;
 
+        //ステージセレクト
     case 2:
         m_cursor.SetPos(g_cameraPos.x + 320, g_cameraPos.y - 320, 0);
         m_Buttoncontinue.SetSize(572, 160, 0);
@@ -287,6 +291,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
         m_ButtonStageselect.PlayAnimation("Normal");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
+            m_stageManager.ResetCheckpoint();
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
             g_sound->Stop(SOUND_LABEL_BGM_GAME);
@@ -465,7 +470,13 @@ void SceneGame::UpdateResult(SceneManager& mgr) {
     if (x >= 1.0f)
     {
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A)) {
+            /*m_bgmClearPlaying = false;
+            mgr.ChangeScene(SCENE_SELECT);
+            g_sound->Play(SOUND_LABEL_SE_Ok);*/
+
             m_bgmClearPlaying = false;
+            g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
+            m_stageManager.ResetCheckpoint();
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
         }
@@ -526,6 +537,7 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
 
     switch (m_cursorNum)
     {
+        //リトライ
     case 0:
         m_cursor.SetPos(g_cameraPos.x - 420, g_cameraPos.y - 335, 0);
         m_Buttonretry.SetSize(670, 185, 0);
@@ -535,14 +547,21 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         m_ButtonStageselect.PlayAnimation("NotSerect");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
-            m_bgmGameOverPlaying = false;
+           /* m_bgmGameOverPlaying = false;
             g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
             mgr.ChangeScene(SCENE_GAME);
+            g_sound->Play(SOUND_LABEL_SE_Ok);*/
+
+            m_bgmGameOverPlaying = false;
+            g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+            m_stageManager.LoadStage(m_stageNumber, true);  // fromRetry = true
+            m_state = GameState::Playing;
             g_sound->Play(SOUND_LABEL_SE_Ok);
 
         }
         break;
 
+        //ステージセレクト
     case 1:
         m_cursor.SetPos(g_cameraPos.x + 420, g_cameraPos.y - 335, 0);
         m_Buttonretry.SetSize(572, 160, 0);
@@ -552,8 +571,14 @@ void SceneGame::UpdateGameOver(SceneManager& mgr) {
         m_ButtonStageselect.PlayAnimation("Normal");
         if (input.GetKeyTrigger(VK_RETURN) || input.GetButtonTrigger(XINPUT_A))
         {
+            /*m_bgmGameOverPlaying = false;
+            g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+            mgr.ChangeScene(SCENE_SELECT);
+            g_sound->Play(SOUND_LABEL_SE_Ok);*/
+
             m_bgmGameOverPlaying = false;
             g_sound->Stop(SOUND_LABEL_BGM_GAMEOVER);
+            m_stageManager.ResetCheckpoint();
             mgr.ChangeScene(SCENE_SELECT);
             g_sound->Play(SOUND_LABEL_SE_Ok);
         }
