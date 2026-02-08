@@ -123,6 +123,7 @@
     <ClCompile Include="DecoMarker.cpp">
       <Filter>ソースファイル\04-描画関係\06-DecoMarker</Filter>
     </ClCompile>
+    <ClCompile Include="Stage3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -254,6 +255,7 @@
     <ClInclude Include="DecoMarker.h">
       <Filter>ソースファイル\04-描画関係\06-DecoMarker</Filter>
     </ClInclude>
+    <ClInclude Include="Stage3.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="リソースファイル">

@@ -147,6 +147,12 @@ void SceneSelect::Update(SceneManager& mgr)
         g_sound->Play(SOUND_LABEL_SE_Back);
         g_sound->Stop(SOUND_LABEL_BGM_SELECT);
     }
+
+    if (input.GetKeyTrigger(VK_ESCAPE) || input.GetButtonTrigger(XINPUT_X)) {
+        mgr.SetSelectedStage(3);
+        mgr.ChangeScene(SCENE_LOAD);
+        g_sound->Stop(SOUND_LABEL_BGM_SELECT);
+    }
     m_prevLeftStick = m_stickNow;
 
 }
