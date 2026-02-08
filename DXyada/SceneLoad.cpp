@@ -226,14 +226,14 @@ void SceneLoad::Update(SceneManager& mgr)
         m_previewPlayer.UpdateForLoadPreview(dt);
     }
 
-    //if (m_done && m_gauge01 >= 1.0f)
-    //{
-    //    mgr.ChangeScene(m_next);
-    //    g_sound->Play(SOUND_LABEL_SE_Ok);
-    //    return;
-    //}
+    if (m_done && m_gauge01 >= 1.0f)
+    {
+        mgr.ChangeScene(m_next);
+        g_sound->Play(SOUND_LABEL_SE_Ok);
+        return;
+    }
 
-   // if (m_mode == MODE_MINI)
+    if (m_mode == MODE_MINI)
     {
         MiniUpdate(dt);
     }
@@ -250,7 +250,7 @@ void SceneLoad::Draw()
 
     m_ribbonGauge.Draw(g_pDeviceContext, g_pInputLayout, g_pVertexShader, g_pPixelShader, g_pConstantBuffer);
 
-   // if (m_done && m_mode == MODE_MINI)
+    if (m_done && m_mode == MODE_MINI)
     {
         MiniDraw();
     }

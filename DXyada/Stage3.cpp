@@ -206,7 +206,7 @@ void Stage3::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    //m_player.GetObject()->SetPos(0, 150, 0);
+    m_player.GetObject()->SetPos(0, 150, 0);
 
     DirectX::XMFLOAT3 startPos = m_currentCheckpoint;
 
@@ -298,20 +298,54 @@ void Stage3::Init()
         AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
-        float gap = TILE * 6.0f;
-
         AddDecorPin(x + 200, -317.0f, true);
-        AddDecorPin(x + 400, -317.0f, true);
+        AddDecorPin(x + 600, -317.0f, true);
 
 
-        x += gap;
+        float w2 = TILE * 25.0f;
 
-        float w2 = TILE * 1.0f;
-        AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f, LOW_Y, w2, H);
+        AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f + 900, LOW_Y, w2, H);
 
-        x += w2;
+        x += w2 + 450;
     }
+    //2
+    {
 
+    }
+    //3
+    {
+
+    }
+    //4
+    {
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
+        x += TILE * 3 + 500;
+
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
+        x += TILE * 3 + 500;
+
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 , LOW_Y, TILE * 3, H);
+        x += TILE * 3;
+
+    }
+    //5
+    {
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 5) / 2, LOW_Y + 200, TILE * 5, H + 200);
+        x += TILE * 5;
+    }
+    //6
+    {
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 5) / 2, LOW_Y, TILE * 5, H);
+        x += TILE * 5;
+    }
+    //7
+    {
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 6, H);
+        x += TILE * 6 + 500;
+
+        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
+        x += TILE * 3 + 500;
+    }
     BuildDrawList();
 
     maxHP = m_player.GetMaxHP();
