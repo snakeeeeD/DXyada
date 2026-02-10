@@ -13,7 +13,7 @@ Tutorial::Tutorial()
     , m_displayAlpha(0.0f)
     , m_fadeSpeed(3.0f)
     , m_hasChangedTexture(false)
-    , m_checkpointTexturePath("asset/Field/Boad_Decorated.png")
+    , m_checkpointTexturePath("")
 {
 }
 
@@ -40,11 +40,11 @@ void Tutorial::Init(
     m_object.AddAnimation("Normal",signTexturePath.c_str(),
         1, 1, 0, 0, 0, 0.0f, false, false, 0);
 
-    if (isCheckpoint)
-    {
-        m_object.AddAnimation("Activated", m_checkpointTexturePath.c_str(), 
-            1, 1, 0, 0, 0, 0.0f, false, false, 1);
-    }
+    //if (isCheckpoint)
+    //{
+    //    m_object.AddAnimation("Activated", m_checkpointTexturePath.c_str(), 
+    //        1, 1, 0, 0, 0, 0.0f, false, false, 1);
+    //}
 
     m_object.PlayAnimation("Normal");
     m_object.SetPos(posX, posY, 0);
@@ -191,11 +191,23 @@ void Tutorial::Update(float deltaTime, const DirectX::XMFLOAT3& playerPos)
 
     m_wasPlayerNear = isPlayerNear;
 
-    //テクスチャ切り替え
-    if (m_isActivated && !m_hasChangedTexture)
+    ////テクスチャ切り替え
+    //if (m_isActivated && !m_hasChangedTexture)
+    //{
+    //    m_object.PlayAnimation("Activated");
+    //    m_hasChangedTexture = true;
+    //}
+    if (m_isActivated && !m_hasChangedTexture && !m_checkpointTexturePath.empty())
     {
+        m_object.AddAnimation("Activated", m_checkpointTexturePath.c_str(),
+            1, 1, 0, 0, 0, 0.0f, false, false, 1);
+
         m_object.PlayAnimation("Activated");
         m_hasChangedTexture = true;
+
+        char buf[256];
+        sprintf_s(buf, "Tutorial: Switched to Activated texture: %s\n", m_checkpointTexturePath.c_str());
+        OutputDebugStringA(buf);
     }
  
 
@@ -229,3 +241,4 @@ void Tutorial::UnInit()
     m_object.UnInit();
     m_tutorialDisplay.UnInit();
 }
+

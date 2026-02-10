@@ -270,6 +270,7 @@ void Stage1::Init()
             300, 350    
         );
         tutorial1->SetRespawnPosition(1000, -150, 0);
+        tutorial1->SetActivateTexture("asset/Field/Boad_Decorated.png");
         m_tutorials.push_back(tutorial1);
 
         x += w;
@@ -331,6 +332,7 @@ void Stage1::Init()
             true,   
             true   
         );
+        tutorial1->SetActivateTexture("asset/Field/Boad_Decorated.png");
         tutorial1->InitTutorialImage(
             "asset/Field/Tutorial_NeedleFloor.png",
             1000, 500,  
@@ -482,6 +484,7 @@ void Stage1::Init()
             1000, 500,  
             300, 450     
         );
+        tutorial1->SetActivateTexture("asset/Field/Boad_Decorated.png");
         tutorial1->SetRespawnPosition(x - TILE * 2, -150, 0);
         m_tutorials.push_back(tutorial1);
         x += w1;

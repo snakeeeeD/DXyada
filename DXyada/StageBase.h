@@ -40,7 +40,7 @@ class StageBase {
 protected:
     bool m_isGoalReached = false;
 
-    DirectX::XMFLOAT3 m_currentCheckpoint = { 10000, 0, 0 };
+    DirectX::XMFLOAT3 m_currentCheckpoint = { 0, 0, 0 };
     bool m_hasCheckpoint = false;
 
 public:

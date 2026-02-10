@@ -355,6 +355,7 @@ DirectX::XMFLOAT3 SceneGame::GetResultGoalCamPos(int stageNum) const
     case 0: return { 8000, 100, 0 };
     case 1: return { 11000, 100, 0 };
     case 2: return { 9000, 100, 0 };
+    case 3: return { 12500,100,0 };
     }
 }
 

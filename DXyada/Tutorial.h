@@ -120,4 +120,15 @@ public:
     DirectX::XMFLOAT3 GetRespawnPosition() const { return m_respawnPosition; }
     bool IsPlayerNear() const { return m_wasPlayerNear; }
     float GetDisplayAlpha() const { return m_displayAlpha; }
+
+    void SetActivateTexture(const std::string& texturePath)
+    {
+        m_checkpointTexturePath = texturePath;
+
+        if (!texturePath.empty())
+        {
+            m_object.AddAnimation("Activated", texturePath.c_str(),
+                1, 1, 0, 0, 0, 0.0f, false, false, 1);
+        }
+    }
 };

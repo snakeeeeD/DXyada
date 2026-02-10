@@ -276,6 +276,7 @@ void TutorialStage2::Init()
             false,
             true
         );
+        tutorial1->SetActivateTexture("asset/Field/Boad_Decorated.png");
         tutorial1->SetRespawnPosition(1, -150, 0);
         m_tutorials.push_back(tutorial1);
 
@@ -708,7 +709,7 @@ void TutorialStage2::Update()
 
     for (auto& em : m_enemyMarkers)
     {
-        em.marker.Update(dt, em.enemy ? em.enemy->GetObject() : nullptr);
+        em.marker.Update(dt);
 
         if (em.enemy && em.enemy->ConsumeJustDecorated())
         {

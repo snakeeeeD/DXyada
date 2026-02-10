@@ -7,7 +7,7 @@ void SceneManager::Init(SceneID id)
     switch (id)
     {
     case SCENE_TITLE:  m_currentScene = new SceneTitle(); break;
-    case SCENE_LOAD:   m_currentScene = new SceneLoad(SCENE_GAME); break; // ó·ÅFÉçÅ[Éhå„Ç…SelectÇ÷
+    case SCENE_LOAD:   m_currentScene = new SceneLoad(SCENE_GAME); break;
     case SCENE_SELECT: m_currentScene = new SceneSelect(); break;
     case SCENE_GAME:   m_currentScene = new SceneGame(m_selectedStage); break;
     default:           m_currentScene = new SceneTitle(); break;

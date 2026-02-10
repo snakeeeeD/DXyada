@@ -160,6 +160,7 @@ void Rippa::CheckEnemyCollision(const std::vector<Enemy*>& enemies)
    /* if (m_type != Type::Normal)
         return;*/
 
+
     auto myPos = m_object.GetPos();
     auto mySize = m_object.GetSize();
 
