@@ -22,6 +22,7 @@ public:
     void RegisterEnemyMarker(Enemy* enemy, const char* markerTex, bool isMove);
 
     int  StageState = 0;
+
     bool on = false;
 
 private:
@@ -48,6 +49,7 @@ private:
     std::vector<Pin*>      m_pins;
     std::vector<Tutorial*> m_tutorials;
     std::vector<Goal*> m_goal;   
+    std::vector<Object> m_fuwafuwas;
 
     struct DecoLinkPin
     {

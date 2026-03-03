@@ -27,6 +27,28 @@ void Stage1::AddPlatform(const char* tex, float x, float y, float w, float h)
     Platform& back = m_platforms.back();
     m_collision->AddStatic(back.GetObject());
     m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
+
+
+    const float platformTopY = y + (h * 0.5f);
+
+    Object band;
+    band.Init();
+    band.AddTexture("asset/Field/‚Ó‚í‚Ó‚í.png");
+
+    const float bandH = 30.0f;
+
+    band.SetPos(x, platformTopY + (bandH * 0.5f)-10.0f, 0.0f);
+
+    band.SetSize(w, bandH, 0.0f);
+
+    band.SetUVMode(Object::UVMode::Loop);
+
+    const float repeatPer150 = w / 150.0f;
+    band.SetUVLength(repeatPer150);
+
+    band.SetUVScroll(0.0f);
+
+    m_fuwafuwas.push_back(band);
 }
 
 void Stage1::AddDecorPin(float x, float y, bool canDecorate)
@@ -124,7 +146,12 @@ void Stage1::BuildDrawList()
         m_drawList.push_back(item);
     }
 
-
+    for (size_t i = 0; i < m_fuwafuwas.size(); ++i)
+    {
+        item.obj = &m_fuwafuwas[i];
+        item.layer = DrawLayer::StageObject;
+        m_drawList.push_back(item);
+    }
 
     for (size_t i = 0; i < m_enemies.size(); ++i) {
      
@@ -770,6 +797,11 @@ void Stage1::UnInit()
         delete tutorial;
     }
 
+    for (size_t i = 0; i < m_fuwafuwas.size(); ++i)
+    {
+        m_fuwafuwas[i].UnInit();
+    }
+    m_fuwafuwas.clear();
     delete m_collision;
     m_collision = nullptr;
 }
