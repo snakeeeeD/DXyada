@@ -299,9 +299,9 @@ void TutorialStage2::Init()
         Tutorial* tutorial1 = new Tutorial();
         tutorial1->Init(
             "asset/Field/Boad.png",
-            1, -230, 0, 0,
+            1, -230, 200, 200,
             Tutorial::Type::Move,
-            false,
+            true,
             true
         );
         tutorial1->SetActivateTexture("asset/Field/Boad_Decorated.png");
@@ -332,6 +332,7 @@ void TutorialStage2::Init()
             true
         );
         tutorial->InitTutorialImage("asset/Field/チュートリアル看板2-2.png", 1000, 500, 300, 450);
+        tutorial->SetActivateTexture("asset/Field/Boad_Decorated.png");
         tutorial->SetRespawnPosition(x - 200, -150, 0);
         m_tutorials.push_back(tutorial);
 
@@ -371,6 +372,7 @@ void TutorialStage2::Init()
             true
         );
         tutorial->InitTutorialImage("asset/Field/チュートリアル看板2-4.png", 1000, 500, 300, 450);
+        tutorial->SetActivateTexture("asset/Field/Boad_Decorated.png");
         tutorial->SetRespawnPosition(x - 200, -150, 0);
         m_tutorials.push_back(tutorial);
 

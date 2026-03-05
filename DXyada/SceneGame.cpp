@@ -271,6 +271,7 @@ void SceneGame::UpdatePouse(SceneManager& mgr) {
             /*mgr.ChangeScene(SCENE_GAME);*/
             m_stageManager.ResetCheckpoint();
             m_stageManager.LoadStage(m_stageNumber, false);  // fromRetry = true
+            m_bgmGamePlaying = false;
             m_state = GameState::Playing;
 
             g_sound->Play(SOUND_LABEL_SE_Ok);

@@ -394,7 +394,7 @@ void Stage3::Init()
         m_collision->SetTag(JumpPin2->GetObject(), ColliderTag::Pin);
 
         JumpPin2->SetPinKind(PinKind::Jump);
-        RegisterPinMarker(JumpPin, "asset/Field/リボンちゃん ワッペン.png", true);
+        RegisterPinMarker(JumpPin2, "asset/Field/リボンちゃん ワッペン.png", true);
 
         AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
         x += TILE * 3 + 500;
@@ -410,7 +410,7 @@ void Stage3::Init()
         AddPlatform("asset/Field/床ブロック.png", x + (TILE * 5) / 2, HIGH_Y, TILE * 5, H + 200);
         
         Rippa* rippa = new Rippa(Rippa::Type::Wandering);
-        rippa->Init("asset/Field/rippa.png", x + 650, HIGH_Y + 350, 150, 150);
+        rippa->Init("asset/Field/rippa.png", x + 650, HIGH_Y + 450, 150, 150);
         rippa->SetCollisionManager(m_collision);
 
         rippa->SetTurnInterval(0.8f);
@@ -421,7 +421,7 @@ void Stage3::Init()
         x += TILE * 5;
 
         Rippa* rippa_2 = new Rippa(Rippa::Type::Normal);
-        rippa_2->Init("asset/Field/rippa.png", x + 1650, LOW_Y + 350, 150, 150);
+        rippa_2->Init("asset/Field/rippa.png", x + 0, LOW_Y + 350, 150, 150);
         rippa_2->SetCollisionManager(m_collision);
 
         rippa_2->SetTurnInterval(1.5f);
@@ -451,11 +451,11 @@ void Stage3::Init()
     {
         AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 500, LOW_Y, TILE * 6, H);
         
-        Rippa* rippa = new Rippa(Rippa::Type::Wandering);
-        rippa->Init("asset/Field/rippa.png", x + 1100, LOW_Y + 350, 150, 150);
+        Rippa* rippa = new Rippa(Rippa::Type::Normal);
+        rippa->Init("asset/Field/rippa.png", x + 600, LOW_Y + 350, 150, 150);
         rippa->SetCollisionManager(m_collision);
 
-        rippa->SetTurnInterval(1.5f);
+        rippa->SetTurnInterval(0.8f);
 
         m_enemies.push_back(rippa);
         RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
@@ -496,6 +496,15 @@ void Stage3::Init()
         m_goal.push_back(goalPin->GetGoal());
         
     }
+
+    Rippa* rippa = new Rippa(Rippa::Type::Normal);
+    rippa->Init("asset/Field/rippa.png", x + 95000, LOW_Y + 350, 150, 150);
+    rippa->SetCollisionManager(m_collision);
+
+    rippa->SetTurnInterval(0.8f);
+
+    m_enemies.push_back(rippa);
+    RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
     BuildDrawList();
 
     maxHP = m_player.GetMaxHP();
@@ -510,7 +519,7 @@ void Stage3::Update()
     {
         const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
 
-        if (playerPos.x > 8500.0f && playerPos.x < 9500.0f)
+        if (playerPos.x > 7500.0f && playerPos.x < 8500.0f)
             m_cameraTargetOffset = -150.0f;
         else
             m_cameraTargetOffset = 0.0f;
