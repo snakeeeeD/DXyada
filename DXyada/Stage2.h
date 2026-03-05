@@ -64,7 +64,7 @@ private:
     std::vector<Pin*>      m_pins;
     std::vector<Tutorial*> m_tutorials;
     std::vector<Goal*>     m_goal;
-
+    std::vector<Object> m_fuwafuwas;
    
     struct DecoLinkPin
     {
