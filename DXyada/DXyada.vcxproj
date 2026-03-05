@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="AssetList.h" />
     <ClInclude Include="BlockPin.h" />
+    <ClInclude Include="BossStage.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DebugStage.h" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetList.cpp" />
+    <ClCompile Include="BossStage.cpp" />
     <ClCompile Include="DecoMarker.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="BlockPin.cpp" />

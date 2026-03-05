@@ -57,7 +57,7 @@ void Stage3::AddPlatform(const char* tex, float x, float y, float w, float h)
 
     Object band;
     band.Init();
-    band.AddTexture("asset/Field/ふわふわ.png");
+    band.AddTexture("asset/Field/fwfw.png");
 
     const float bandH = 30.0f;
 
@@ -87,7 +87,7 @@ void Stage3::AddDecorPin(float x, float y, bool canDecorate)
     m_pins.push_back(pin);
     m_collision->SetTag(pin->GetObject(), ColliderTag::Pin);
 
-    RegisterPinMarker(pin, "asset/Field/星 ワッペン.png", false);
+    RegisterPinMarker(pin, "asset/Field/s_w.png", false);
 }
 
 BlockPin* Stage3::AddPullPin(float x, float y, bool canRollPin)
@@ -266,7 +266,7 @@ void Stage3::Init()
     m_hasCheckpoint = true;
 
     m_background.Init();
-    m_background.AddTexture("asset/Field/ステージ背景.png");
+    m_background.AddTexture("asset/Field/stage.png");
     m_background.SetPos(7200.0f, 0.0f, 0.0f);
     m_background.SetSize(23000.0f, 2100.0f, 0.0f);
     m_background.SetUVMode(Object::UVMode::Loop);
@@ -288,7 +288,7 @@ void Stage3::Init()
 
     float x = -300.0f;
 
-    const char* FLOOR_TEX = "asset/Field/床ブロック.png";
+    const char* FLOOR_TEX = "asset/Field/floar.png";
 
     m_platforms.clear();
     m_enemies.clear();
@@ -304,7 +304,7 @@ void Stage3::Init()
 
     {
         float w = TILE * 10.0f;
-        AddPlatform("asset/Field/床ブロック.png", x + w * 0.5f, LOW_Y, w, H);
+        AddPlatform("asset/Field/floar.png", x + w * 0.5f, LOW_Y, w, H);
 
         AddDecorPin(x + TILE * 10.0f + 0.85f * TILE, -317.0f, true);
 
@@ -314,7 +314,7 @@ void Stage3::Init()
 
     {
         float w1 = TILE * 2.0f;
-        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/floar.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
         float gap = TILE * 3.0f;
@@ -324,14 +324,14 @@ void Stage3::Init()
         x += gap;
 
         float w2 = TILE * 1.0f;
-        AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f, LOW_Y, w2, H);
+        AddPlatform("asset/Field/floar.png", x + w2 * 0.5f, LOW_Y, w2, H);
 
         x += w2;
     }
 
     {
         float w1 = TILE * 2.0f;
-        AddPlatform("asset/Field/床ブロック.png", x + w1 * 0.5f, LOW_Y, w1, H);
+        AddPlatform("asset/Field/floar.png", x + w1 * 0.5f, LOW_Y, w1, H);
         x += w1;
 
         AddDecorPin(x + 200, -317.0f, true);
@@ -339,21 +339,21 @@ void Stage3::Init()
 
         float w2 = TILE * 15.0f;
 
-        AddPlatform("asset/Field/床ブロック.png", x + w2 * 0.5f + 900, LOW_Y, w2, H);
+        AddPlatform("asset/Field/floar.png", x + w2 * 0.5f + 900, LOW_Y, w2, H);
 
         Rippa* rippa = new Rippa(Rippa::Type::Normal);
         rippa->Init("asset/Field/rippa.png", x + 1000, LOW_Y + 350, 140, 150);
         rippa->SetCollisionManager(m_collision);
         RegisterEnemyCollision(m_collision, rippa); // ★追加
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
+        RegisterEnemyMarker(rippa, "asset/Field/f_rippa.png", true);
 
         Rippa* rippa2 = new Rippa(Rippa::Type::Normal);
         rippa2->Init("asset/Field/rippa.png", x + 3000, LOW_Y + 350, 140, 150);
         rippa2->SetCollisionManager(m_collision);
         RegisterEnemyCollision(m_collision, rippa2); // ★追加
         m_enemies.push_back(rippa2);
-        RegisterEnemyMarker(rippa2, "asset/Field/フェルトワッペン リッパー.png", true);
+        RegisterEnemyMarker(rippa2, "asset/Field/f_rippa.png", true);
 
         WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
         wirippa->Init("asset/Field/Wing_Rippa.png", x + 3000, HIGH_Y + 400, 150, 150);
@@ -390,7 +390,7 @@ void Stage3::Init()
         JumpPin->SetPinKind(PinKind::Jump);
         RegisterPinMarker(JumpPin, "asset/Field/リボンちゃん ワッペン.png", true);
 
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
         x += TILE * 3 + 500;
 
         Pin* JumpPin2 = new Pin;
@@ -405,10 +405,10 @@ void Stage3::Init()
         JumpPin2->SetPinKind(PinKind::Jump);
         RegisterPinMarker(JumpPin2, "asset/Field/リボンちゃん ワッペン.png", true);
 
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 3) / 2 + 1000, LOW_Y, TILE * 3, H);
         x += TILE * 3 + 500;
 
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2, LOW_Y, TILE * 3, H);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 3) / 2, LOW_Y, TILE * 3, H);
         x += TILE * 3;
     }
 
@@ -416,7 +416,7 @@ void Stage3::Init()
     {
         AddPullPin(x + 50.0f, HIGH_Y + 600, false);
 
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 5) / 2, HIGH_Y, TILE * 5, H + 200);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 5) / 2, HIGH_Y, TILE * 5, H + 200);
 
         Rippa* rippa = new Rippa(Rippa::Type::Wandering);
         rippa->Init("asset/Field/rippa.png", x + 650, HIGH_Y + 450, 150, 150);
@@ -426,7 +426,7 @@ void Stage3::Init()
         rippa->SetTurnInterval(0.8f);
 
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
+        RegisterEnemyMarker(rippa, "asset/Field/f_rippa.png", true);
 
         x += TILE * 5;
 
@@ -438,12 +438,12 @@ void Stage3::Init()
         rippa_2->SetTurnInterval(1.5f);
 
         m_enemies.push_back(rippa_2);
-        RegisterEnemyMarker(rippa_2, "asset/Field/フェルトワッペン リッパー.png", true);
+        RegisterEnemyMarker(rippa_2, "asset/Field/f_rippa.png", true);
     }
 
     //6
     {
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 5) / 2, LOW_Y, TILE * 5, H);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 5) / 2, LOW_Y, TILE * 5, H);
 
         x += TILE * 5;
 
@@ -462,7 +462,7 @@ void Stage3::Init()
 
     //7
     {
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 500, LOW_Y, TILE * 6, H);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 3) / 2 + 500, LOW_Y, TILE * 6, H);
 
         Rippa* rippa = new Rippa(Rippa::Type::Normal);
         rippa->Init("asset/Field/rippa.png", x + 600, LOW_Y + 350, 150, 150);
@@ -472,7 +472,7 @@ void Stage3::Init()
         rippa->SetTurnInterval(0.8f);
 
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
+        RegisterEnemyMarker(rippa, "asset/Field/f_rippa.png", true);
 
         x += TILE * 5 + 500;
 
@@ -488,7 +488,7 @@ void Stage3::Init()
         JumpPin->SetPinKind(PinKind::Jump);
         RegisterPinMarker(JumpPin, "asset/Field/リボンちゃん ワッペン.png", true);
 
-        AddPlatform("asset/Field/床ブロック.png", x + (TILE * 3) / 2 + 600, LOW_Y, TILE * 6, H);
+        AddPlatform("asset/Field/floar.png", x + (TILE * 3) / 2 + 600, LOW_Y, TILE * 6, H);
 
         x += TILE * 3 + 500;
 
@@ -518,7 +518,7 @@ void Stage3::Init()
     rippa->SetTurnInterval(0.8f);
 
     m_enemies.push_back(rippa);
-    RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
+    RegisterEnemyMarker(rippa, "asset/Field/f_rippa.png", true);
 
     BuildDrawList();
 

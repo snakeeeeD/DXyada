@@ -42,8 +42,8 @@ namespace AssetList
     {
         "asset/Field/aa.png",
         "asset/Field/block.png",
-        "asset/Field/床ブロック.png",                 // ★追加
-        "asset/Field/ステージ背景.png",               // ★追加
+        "asset/Field/floar.png",                 // ★追加
+        "asset/Field/stage.png",               // ★追加
 
         "asset/Field/Boad.png",
 
@@ -52,8 +52,8 @@ namespace AssetList
         "asset/Field/PinPulled.png",                  // ★追加
         "asset/Field/PinJump.png",
 
-        "asset/Field/星 ワッペン.png",                // ★追加
-        "asset/Field/フェルトワッペン リッパー.png",  // ★追加
+        "asset/Field/s_w.png",                // ★追加
+        "asset/Field/f_rippa.png",  // ★追加
         "asset/Field/リボンちゃん ワッペン.png",       // ★追加
 
         "asset/Field/Tutorial_PinDeco.png",
@@ -104,8 +104,8 @@ namespace AssetList
         // Field
         "asset/Field/aa.png",
         "asset/Field/block.png",
-        "asset/Field/床ブロック.png",                 // ★追加
-        "asset/Field/ステージ背景.png",               // ★追加
+        "asset/Field/floar.png",                 // ★追加
+        "asset/Field/stage.png",               // ★追加
 
         "asset/Field/Boad.png",
 
@@ -114,8 +114,8 @@ namespace AssetList
         "asset/Field/PinPulled.png",                  // ★追加
         "asset/Field/PinJump.png",
 
-        "asset/Field/星 ワッペン.png",                // ★追加
-        "asset/Field/フェルトワッペン リッパー.png",  // ★追加
+        "asset/Field/s_w.png",                // ★追加
+        "asset/Field/f_rippa.png",  // ★追加
         "asset/Field/フェルトワッペン 羽リッパー.png",  // ★追加
         "asset/Field/リボンちゃん ワッペン.png",       // ★追加
 

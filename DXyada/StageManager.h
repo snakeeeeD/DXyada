@@ -7,6 +7,7 @@
 #include"Stage3.h"
 #include "TutorialStage.h"
 #include "DebugStage.h"
+#include"BossStage.h"
 
 class StageManager {
 private:
@@ -42,7 +43,7 @@ public:
         switch (stageNumber) {
         case 1:  m_currentStage = std::make_unique<Stage1>(); break;
         case 2:  m_currentStage = std::make_unique<TutorialStage2>(); break;
-        case 3:  m_currentStage = std::make_unique<Stage3>(); break;
+        case 3:  m_currentStage = std::make_unique<BossStage>(); break;
         case 99: m_currentStage = std::make_unique<DebugStage>(); break;
         default: m_currentStage = nullptr; break;
         }

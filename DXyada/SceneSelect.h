@@ -33,7 +33,7 @@ private:
     bool m_prevLeftStick = false;
 
     int m_stickNow = 0;
-
+    bool m_prevR2Pressed = false;
 public:
     void Init() override;
     void Update(SceneManager& mgr) override;

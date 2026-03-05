@@ -35,7 +35,12 @@ void SceneSelect::Init() {
     m_cursor.SetSize(200, 200, 0);
 
     TextureManager& tm = TextureManager::Instance();
-
+    tm.Enqueue("asset/Field/b_2.png");
+    tm.Enqueue("asset/Field/PinRoll.png");
+    tm.Enqueue("asset/Field/PinPulled.png");
+    tm.Enqueue("asset/Field/Goal.png");
+    tm.Enqueue("asset/Field/s_w.png");
+    tm.Enqueue("asset/Field/f_rippa.png");
     tm.Enqueue("asset/Player/Player_Idle.png");
     tm.Enqueue("asset/Player/Player_Walk.png");
     tm.Enqueue("asset/Player/Player_SmallJump.png");
@@ -72,21 +77,35 @@ void SceneSelect::Init() {
     tm.Enqueue("asset/Field/needle_floor.png");
     tm.Enqueue("asset/Field/rippa.png");
     tm.Enqueue("asset/Field/PinJump.png");
-    tm.Enqueue("asset/Field/床ブロック.png");
+    tm.Enqueue("asset/Field/floar.png");
 
 }
 
 void SceneSelect::Update(SceneManager& mgr)
 {
-    g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
-    g_sound->Play(SOUND_LABEL_BGM_SELECT);
+        input.Update(); 
 
-    if (Loadtime == 2) {
-        TextureManager::Instance().ProcessQueue(g_pDevice, 0.5);
-        Loadtime = 0;
-    }
-        
-    Loadtime++;
+        g_sound->Stop(SOUND_LABEL_BGM_CLEAR);
+        g_sound->Play(SOUND_LABEL_BGM_SELECT);
+
+        if (Loadtime == 2) {
+            TextureManager::Instance().ProcessQueue(g_pDevice, 0.5);
+            Loadtime = 0;
+        }
+        Loadtime++;
+
+        float r2 = input.GetRightTrigger();
+        bool r2Pressed = (r2 > 0.5f);
+        bool r2Trigger = (r2Pressed && !m_prevR2Pressed);
+
+        if (r2Trigger)
+        {
+            mgr.SetSelectedStage(3);         
+            mgr.ChangeScene(SCENE_LOAD);      
+            g_sound->Play(SOUND_LABEL_SE_Ok);
+            g_sound->Stop(SOUND_LABEL_BGM_SELECT);
+        }
+        m_prevR2Pressed = r2Pressed;
 
     DirectX::XMFLOAT2 leftStick = input.GetLeftAnalogStick();
     const float moveThreshold = 0.5f;  //左スティックのデッドゾーン
@@ -110,8 +129,6 @@ void SceneSelect::Update(SceneManager& mgr)
 
     
     int ButtonCount = 0;
-
-    input.Update();
 
     if (input.GetKeyTrigger(VK_LEFT) ||
         input.GetButtonTrigger(XINPUT_LEFT) ||

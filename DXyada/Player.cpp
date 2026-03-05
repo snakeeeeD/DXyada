@@ -1,4 +1,4 @@
-﻿#include "Player.h"
+#include "Player.h"
 #include "Input.h"
 #include "Renderer.h"
 #include "Texture.h"

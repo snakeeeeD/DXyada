@@ -21,6 +21,9 @@ bool Texture::Load(ID3D11Device* device, const char* filename)
     if (!pixels) 
     {
         MessageBoxA(NULL, filename, "Texture Load Error", MB_OK);
+        char buf[1024];
+        sprintf_s(buf, "[TextureLoadError] %s\n", filename);  // path‚ÍŽ¸”s‚µ‚½•¶Žš—ñ
+        OutputDebugStringA(buf);
         return false;
     }
 

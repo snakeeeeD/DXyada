@@ -104,7 +104,7 @@ void SceneLoad::Init()
     tm.Enqueue("asset/Player/Player_Damage.png");
     tm.Enqueue("asset/Player/Player_SmallJump.png");
     tm.Enqueue("asset/Field/ブロック 1.png");
-    tm.Enqueue("asset/Field/ブロック 2.png");
+    tm.Enqueue("asset/Field/b_2.png");
     tm.Enqueue("asset/Field/ブロック 3.png");
     tm.Enqueue("asset/Field/ブロック 4.png");
     tm.Enqueue("asset/Field/ブロック 5.png");

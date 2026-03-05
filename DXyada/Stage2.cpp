@@ -58,7 +58,7 @@ void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, flo
 
     Object band;
     band.Init();
-    band.AddTexture("asset/Field/ふわふわ.png");
+    band.AddTexture("asset/Field/fwfw.png");
 
     const float bandH = 30.0f;
 
@@ -88,7 +88,7 @@ void TutorialStage2::AddDecorPin(float x, float y, bool canDecorate)
     m_pins.push_back(pin);
     m_collision->SetTag(pin->GetObject(), ColliderTag::Pin);
 
-    RegisterPinMarker(pin, "asset/Field/星 ワッペン.png", false);
+    RegisterPinMarker(pin, "asset/Field/s_w.png", false);
 }
 
 BlockPin* TutorialStage2::AddPullPin(float x, float y, bool canRollPin)
@@ -266,7 +266,7 @@ void TutorialStage2::Init()
     m_hasCheckpoint = true;
 
     m_background.Init();
-    m_background.AddTexture("asset/Field/ステージ背景.png");
+    m_background.AddTexture("asset/Field/stage.png");
     m_background.SetPos(7200.0f, 0.0f, 0.0f);
     m_background.SetSize(23000.0f, 2100.0f, 0.0f);
     m_background.SetUVMode(Object::UVMode::Loop);
@@ -288,7 +288,7 @@ void TutorialStage2::Init()
 
     float x = -300.0f;
 
-    const char* FLOOR_TEX = "asset/Field/床ブロック.png";
+    const char* FLOOR_TEX = "asset/Field/floar.png";
 
     m_platforms.clear();
     m_enemies.clear();
@@ -424,7 +424,7 @@ void TutorialStage2::Init()
         rippa->SetCollisionManager(m_collision);
         RegisterEnemyCollision(m_collision, rippa); // ★追加（重要）
         m_enemies.push_back(rippa);
-        RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
+        RegisterEnemyMarker(rippa, "asset/Field/f_rippa.png", true);
 
         WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
         wirippa->Init("asset/Field/Wing_Rippa.png", x + 900, HIGH_Y + 550, 150, 150);
@@ -464,7 +464,7 @@ void TutorialStage2::Init()
             m_pins.push_back(hook);
             m_collision->SetTag(hook->GetObject(), ColliderTag::Pin);
 
-            RegisterPinMarker(hook, "asset/Field/星 ワッペン.png", true);
+            RegisterPinMarker(hook, "asset/Field/s_w.png", true);
         }
 
         x += 500;

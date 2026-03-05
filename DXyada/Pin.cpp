@@ -124,7 +124,7 @@ void Pin::OnHit()
     }
     m_object.SetColor(1, 0, 0, 1); // まず赤くして確認
     // 見た目を変える（リボン付き画像にするなど）
-    m_object.AddTexture("asset/床ブロック.png");
+    m_object.AddTexture("asset/floar.png");
 
     // 足場として登録する
     if (m_pCollision)

@@ -398,7 +398,9 @@ void Ribbon::Update(float deltaTime, const std::vector<Enemy*>& enemies, std::ve
         }
     }
 
-    //リボンが伸びている・保持している時
+    //リボンが伸びている
+    // 
+    // 保持している時
     if (m_state == State::Throwing || m_state == State::Holding)
     {
         //最大長に達していない場合のみスクロール

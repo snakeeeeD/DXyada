@@ -124,6 +124,9 @@
       <Filter>ソースファイル\04-描画関係\06-DecoMarker</Filter>
     </ClCompile>
     <ClCompile Include="Stage3.cpp" />
+    <ClCompile Include="BossStage.cpp">
+      <Filter>ソースファイル\20-Stage管理\10-BossStage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h">
@@ -256,6 +259,9 @@
       <Filter>ソースファイル\04-描画関係\06-DecoMarker</Filter>
     </ClInclude>
     <ClInclude Include="Stage3.h" />
+    <ClInclude Include="BossStage.h">
+      <Filter>ソースファイル\20-Stage管理\10-BossStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="リソースファイル">
@@ -416,6 +422,9 @@
     </Filter>
     <Filter Include="ソースファイル\04-描画関係\06-DecoMarker">
       <UniqueIdentifier>{692af381-4407-49f4-b652-8e059aa8cda3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\20-Stage管理\10-BossStage">
+      <UniqueIdentifier>{7d3d2fa2-a5ac-43ee-9543-db3b8d4db875}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
