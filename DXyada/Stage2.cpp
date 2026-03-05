@@ -1,10 +1,26 @@
-#include "Stage2.h"    
+#include "Stage2.h"
 #include "Renderer.h"
 #include <algorithm>
 #include "sound.h"
 
 extern Sound* g_sound;
 extern DirectX::XMFLOAT3 g_cameraPos;
+
+//=======================================
+// ★追加：敵をCollisionへ確実に登録する共通処理（Stage3と同じ）
+// - Rippa / WingRippa / NeedleFloor など「敵」は全部ここを通す
+// - 登録漏れがあると AABB が壊れたり、当たり判定が発生しなかったりする
+//=======================================
+static void RegisterEnemyCollision(CollisionManager* col, Enemy* e)
+{
+    if (!col || !e) return;
+
+    Object* obj = e->GetObject();
+    if (!obj) return;
+
+    col->AddDynamic(obj);
+    col->SetTag(obj, ColliderTag::Enemy);
+}
 
 void TutorialStage2::RegisterEnemyMarker(Enemy* enemy, const char* markerTex, bool isMove)
 {
@@ -38,7 +54,6 @@ void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, flo
     m_collision->AddStatic(back.GetObject());
     m_collision->SetTag(back.GetObject(), ColliderTag::Platform);
 
-
     const float platformTopY = y + (h * 0.5f);
 
     Object band;
@@ -48,7 +63,6 @@ void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, flo
     const float bandH = 30.0f;
 
     band.SetPos(x, platformTopY + (bandH * 0.5f) - 10.0f, 0.0f);
-
     band.SetSize(w, bandH, 0.0f);
 
     band.SetUVMode(Object::UVMode::Loop);
@@ -60,10 +74,11 @@ void TutorialStage2::AddPlatform(const char* tex, float x, float y, float w, flo
 
     m_fuwafuwas.push_back(band);
 }
+
 void TutorialStage2::AddDecorPin(float x, float y, bool canDecorate)
 {
     Pin* pin = new Pin();
-    pin->Init("asset/Field/PinDeco.png", x, y, 35, 35); 
+    pin->Init("asset/Field/PinDeco.png", x, y, 35, 35);
     pin->SetCollisionManager(m_collision);
 
     pin->SetcanRollPin(true);
@@ -152,9 +167,7 @@ void TutorialStage2::BuildDrawList()
         item.obj = pm.marker.GetObject();
         item.layer = DrawLayer::Enemy;
         m_drawList.push_back(item);
-
     }
-
 
     for (size_t i = 0; i < m_enemies.size(); ++i)
     {
@@ -234,7 +247,6 @@ void TutorialStage2::Init()
 
     m_player.Init();
     m_player.SetCollisionManager(m_collision);
-    //m_player.GetObject()->SetPos(0, 150, 0);
 
     DirectX::XMFLOAT3 startPos = m_currentCheckpoint;
 
@@ -246,7 +258,6 @@ void TutorialStage2::Init()
         m_currentCheckpoint = { 0, 150, 0 };
     }
     m_player.GetObject()->SetPos(startPos.x, startPos.y, startPos.z);
-
 
     m_isGoalReached = false;
     m_isPlayerDead = false;
@@ -411,12 +422,14 @@ void TutorialStage2::Init()
         Rippa* rippa = new Rippa(Rippa::Type::Wandering);
         rippa->Init("asset/Field/rippa.png", x + 700, HIGH_Y + 360, 140, 150);
         rippa->SetCollisionManager(m_collision);
+        RegisterEnemyCollision(m_collision, rippa); // ★追加（重要）
         m_enemies.push_back(rippa);
         RegisterEnemyMarker(rippa, "asset/Field/フェルトワッペン リッパー.png", true);
 
         WingRippa* wirippa = new WingRippa(WingRippa::Type::ZigZag);
         wirippa->Init("asset/Field/Wing_Rippa.png", x + 900, HIGH_Y + 550, 150, 150);
         wirippa->SetCollisionManager(m_collision);
+        RegisterEnemyCollision(m_collision, wirippa); // ★追加（本命）
         m_enemies.push_back(wirippa);
         RegisterEnemyMarker(wirippa, "asset/Field/フェルトワッペン 羽リッパー.png", true);
 
@@ -487,8 +500,8 @@ void TutorialStage2::Init()
         m_pullLimitFired = false;
         m_pullLimitAxis = BlockPin::MoveAxis::Horizontal;
 
-        m_pullLimitMinX = x ;
-        m_pullLimitMaxX = x -150;
+        m_pullLimitMinX = x;
+        m_pullLimitMaxX = x - 150;
         m_pullLimitMinY = -200.0f;
         m_pullLimitMaxY = -200.0f;
 
@@ -527,7 +540,6 @@ void TutorialStage2::Update()
 {
     const float dt = 1.0f / 60.0f;
 
-   
     {
         const DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
 
@@ -548,6 +560,7 @@ void TutorialStage2::Update()
         if (m_cameraNowPos.y < -500.0f)
             g_cameraPos = { g_cameraPos.x, -200.0f, g_cameraPos.z };
     }
+
     m_player.Update(dt, m_platforms, m_enemies, m_pins);
 
     {
@@ -575,7 +588,6 @@ void TutorialStage2::Update()
             m_collision->GetAABB(blockPin->GetObject());
     }
 
-   
     m_collision->CheckAll();
 
     {
@@ -610,9 +622,18 @@ void TutorialStage2::Update()
         }
     }
 
-    
-    
-        for (auto& enemy : m_enemies) {
+    //=========================================================
+    // ★Stage3と同じ：range-for中にeraseしない（クラッシュ原因）
+    // ★Rippa / WingRippa は「敵ならダメージ」を同じに
+    // ★NeedleFloorは「Decorated以外ならダメージ」
+    //=========================================================
+    {
+        Object* playerObj = m_player.GetObject();
+        auto playerAABB = m_collision->GetAABB(playerObj);
+
+        for (size_t i = 0; i < m_enemies.size(); ++i)
+        {
+            Enemy* enemy = m_enemies[i];
             if (!enemy) continue;
 
             enemy->Update(dt);
@@ -622,37 +643,14 @@ void TutorialStage2::Update()
                 rippa->CheckEnemyCollision(m_enemies);
             }
 
-            NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy);
-
             if (enemy->IsDead())
-            {
                 continue;
-            }
 
-
-            auto playerAABB = m_collision->GetAABB(m_player.GetObject());
             auto enemyAABB = m_collision->GetAABB(enemy->GetObject());
-
-            m_enemies.erase(
-                std::remove_if(
-                    m_enemies.begin(),
-                    m_enemies.end(),
-                    [&](Enemy* enemy)
-                    {
-                        if (enemy->IsDead())
-                        {
-                            m_collision->Remove(enemy->GetObject());
-                            return true;
-                        }
-                        return false;
-                    }
-                ),
-                m_enemies.end()
-            );
 
             if (m_collision->CheckOverlap(playerAABB, enemyAABB))
             {
-                DirectX::XMFLOAT3 playerPos = m_player.GetObject()->GetPos();
+                DirectX::XMFLOAT3 playerPos = playerObj->GetPos();
                 DirectX::XMFLOAT3 enemyPos = enemy->GetObject()->GetPos();
 
                 DirectX::XMFLOAT2 knockbackDir = {
@@ -660,23 +658,43 @@ void TutorialStage2::Update()
                     playerPos.y - enemyPos.y
                 };
 
-                if (Rippa* rippa = dynamic_cast<Rippa*>(enemy))
+                if (NeedleFloor* needleflr = dynamic_cast<NeedleFloor*>(enemy))
                 {
+                    if (needleflr->GetState() != NeedleFloor::State::Decorated)
+                    {
+                        m_player.TakeDamage(1, knockbackDir);
+                        g_sound->Play(SOUND_LABEL_SE_Damage);
+                    }
+                }
+                else
+                {
+                    // ★Rippa / WingRippa など：敵なら全部同じ
                     m_player.TakeDamage(1, knockbackDir);
                     g_sound->Play(SOUND_LABEL_SE_Damage);
-
                 }
-                else if (needleflr->GetState() != NeedleFloor::State::Decorated)
-                {
-                    m_player.TakeDamage(1, knockbackDir);
-                    g_sound->Play(SOUND_LABEL_SE_Damage);
-
-                }
-
-
             }
         }
 
+        // dead enemy の削除（まとめて）
+        m_enemies.erase(
+            std::remove_if(
+                m_enemies.begin(),
+                m_enemies.end(),
+                [&](Enemy* e)
+                {
+                    if (!e) return true;
+                    if (e->IsDead())
+                    {
+                        if (m_collision && e->GetObject())
+                            m_collision->Remove(e->GetObject());
+                        return true;
+                    }
+                    return false;
+                }
+            ),
+            m_enemies.end()
+        );
+    }
 
     currentHP = m_player.GetHP();
 
@@ -707,24 +725,13 @@ void TutorialStage2::Update()
         m_HP_UI3.SetColor(0.1f, 0.1f, 0.1f, 1);
         break;
     }
+
     if (m_isGoalReached == true)
     {
         m_HP_UI1.SetColor(0.0f, 0.0f, 0.0f, 0);
         m_HP_UI2.SetColor(0.0f, 0.0f, 0.0f, 0);
         m_HP_UI3.SetColor(0.0f, 0.0f, 0.0f, 0);
     }
-   
-  /*  for (size_t i = 0; i < m_pinMarkers.size(); ++i)
-    {
-        pm.marker.Update(dt, pm.pin ? pm.pin->GetObject() : nullptr);
-
-        if (!pm.pin) continue;
-
-        const Pin::MarkerEvent ev = pm.pin->ConsumeMarkerEvent();
-        if (ev == Pin::MarkerEvent::None) continue;
-
-        pm.marker.ShowAtHead(pm.pin->GetObject(), 120.0f, 300.0f, 200.0f);
-    }*/
 
     for (auto& pm : m_pinMarkers)
     {
@@ -757,7 +764,7 @@ void TutorialStage2::Update()
         {
             const DirectX::XMFLOAT3 p = obj->GetPos();
 
-            const float eps = 0.5f; 
+            const float eps = 0.5f;
             bool reached = false;
 
             if (m_pullLimitAxis == BlockPin::MoveAxis::Horizontal)
@@ -866,7 +873,6 @@ void TutorialStage2::UnInit()
 
 void TutorialStage2::Respawn()
 {
-
     m_player.SetInvincible(false);
 
     m_player.GetObject()->SetPos(
