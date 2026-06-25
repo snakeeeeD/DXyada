@@ -1,4 +1,4 @@
-# Ribbond
+# RibBond
 
 ## 概要
 コントローラーのスティックを回転させてリボンを巻き取り、
@@ -7,10 +7,10 @@
 チーム（プログラマー5名）で制作。
 
 ## スクリーンショット
-![Ribbondのタイトル画面](DXyada/asset/ScreenShots/Ribbond_Title.png)
-![Ribbondのプレイ画面1](DXyada/asset/ScreenShots/Ribbond_screenshot01.png)
-![Ribbondのプレイ画面2](DXyada/asset/ScreenShots/Ribbond_screenshot02.png)
-![Ribbondのプレイ画面3](DXyada/asset/ScreenShots/Ribbond_screenshot03.png)
+![RibBondのタイトル画面](DXyada/asset/ScreenShots/Ribbond_Title.png)
+![RibBondのプレイ画面1](DXyada/asset/ScreenShots/Ribbond_screenshot01.png)
+![RibBondのプレイ画面2](DXyada/asset/ScreenShots/Ribbond_screenshot02.png)
+![RibBondのプレイ画面3](DXyada/asset/ScreenShots/Ribbond_screenshot03.png)
 
 ## 使用技術
 C++ / DirectX11
