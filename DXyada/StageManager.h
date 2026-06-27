@@ -5,7 +5,6 @@
 #include "Stage1.h"
 #include "Stage2.h"
 #include"Stage3.h"
-#include "TutorialStage.h"
 #include "DebugStage.h"
 #include"BossStage.h"
 
